@@ -36,5 +36,14 @@ This log records how each bibliography entry was verified and flags anything an 
 | `willison-2025-lethal-trifecta` | 🔎 | Jun 2025; trifecta definition | Confirm the URL date path (/2025/Jun/16/) |
 | `pooja-2026-jkbank` | ✅ | *Pooja Ramesh Singh v. Jammu and Kashmir Bank Ltd. & Anr.*, 2026 INSC 668 (2 Jul 2026); Narasimha & Aradhe, JJ.; NCLT/NCLAT orders set aside; "no decision in the eyes of the law" | — |
 | `gadiya-2026-uoi` | ✅ | *Vijay Ghanshyam Gadiya v. Union of India & Anr.*, 2026 INSC 947, Civil Appeal No. 12155 of 2026 (2 Sep 2026); Datta & Nagu, JJ.; ₹425.27-crore customs penalty set aside | — |
+| `iso-2023-42001` | 🔎 | Published Dec 2023; harmonized management-system structure; 38 Annex A controls under 9 objectives (A.2–A.10) | Confirm iso.org URL (/standard/81230.html) and the exact Annex A objective titles against the purchased text |
+| `iso-2023-23894` | 🔎 | Published Feb 2023; guidance extending ISO 31000; not certifiable | Confirm iso.org URL (/standard/77304.html) |
+| `owasp-2025-agentic-top10` | 🔎 | Released 9 Dec 2025; ASI01 Agent Goal Hijack through ASI10 Rogue Agents | Confirm the resource URL slug on genai.owasp.org |
+| `mitre-atlas` | ✅ | Live knowledge base; origin as Adversarial ML Threat Matrix (MITRE + Microsoft, 2020); relaunched as ATLAS 2021; ATT&CK-style tactics/techniques/case studies | Counts change monthly, so Ch. 2 deliberately avoids hard numbers. Update the access date at publication |
+| `nist-airc-crosswalks` | 🔎 | NIST AIRC hosts community-contributed crosswalks incl. AI RMF ↔ ISO/IEC 42001 (contributed by Microsoft; NIST disclaimer applies) | Replace the root URL with the direct crosswalks page URL |
+
+**Chapter 2 facts also verified:** NIST AI RMF Core = 4 functions, 19 categories, 72 subcategories; NIST AI 600-1 = 12 risks and more than 200 suggested actions; EU AI Act Art. 40 = presumption of conformity for harmonised standards.
+
+*Last updated: 17 November 2026 (Front Matter, Chapters 1–2).*
 
 *Last updated: 15 November 2026 (Chapter 1).*

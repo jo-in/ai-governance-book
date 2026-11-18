@@ -59,6 +59,20 @@ He, Horace, and Thinking Machines Lab. "Defeating Nondeterminism in LLM Inferenc
 >
 > **Audience:** AI Engineers · CISO · Legal / Compliance · **Type:** Technical research essay · **Cited in:** [Ch. 1](chapters/01-why-ai-risk-is-different.md)
 
+<a id="iso-2023-23894"></a>
+International Organization for Standardization and International Electrotechnical Commission. *ISO/IEC 23894:2023, Information Technology — Artificial Intelligence — Guidance on Risk Management*. Geneva: ISO, February 2023. https://www.iso.org/standard/77304.html.
+
+> **Annotation:** International guidance on managing AI-specific risks, written as an extension of ISO 31000:2018. It shows how establishing context, risk identification, analysis, evaluation, and treatment change for systems that are probabilistic, data-dependent, and liable to drift after deployment. Not certifiable on its own; it is most useful as the risk-assessment method inside an ISO/IEC 42001 management system.
+>
+> **Audience:** CRO / Risk · Legal / Compliance · CIO · **Type:** International standard (guidance) · **Cited in:** [Ch. 2](chapters/02-reference-frameworks-at-a-glance.md)
+
+<a id="iso-2023-42001"></a>
+International Organization for Standardization and International Electrotechnical Commission. *ISO/IEC 42001:2023, Information Technology — Artificial Intelligence — Management System*. Geneva: ISO, December 2023. https://www.iso.org/standard/81230.html.
+
+> **Annotation:** The first certifiable international standard for an AI management system (AIMS). It follows the harmonized ISO management-system structure used by ISO/IEC 27001 and ISO 9001, built on a Plan-Do-Check-Act cycle, and includes 38 Annex A reference controls under nine objectives covering AI policy, internal organization, resources, impact assessment, life cycle, data, information for interested parties, use of AI, and third-party relationships. Increasingly requested in enterprise procurement as independent evidence of AI governance.
+>
+> **Audience:** CIO · CISO · Legal / Compliance · CRO · **Type:** International standard (certifiable) · **Cited in:** [Ch. 2](chapters/02-reference-frameworks-at-a-glance.md)
+
 <a id="kalai-2025-hallucinate"></a>
 Kalai, Adam Tauman, Ofir Nachum, Santosh S. Vempala, and Edwin Zhang. "Why Language Models Hallucinate." arXiv:2509.04664, September 2025. https://doi.org/10.48550/arXiv.2509.04664.
 
@@ -73,26 +87,40 @@ Magramo, Kathleen. "British Engineering Giant Arup Revealed as \$25 Million Deep
 >
 > **Audience:** Board · CFO / Finance · CISO · **Type:** News report · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md)
 
+<a id="mitre-atlas"></a>
+MITRE Corporation. "ATLAS: Adversarial Threat Landscape for Artificial-Intelligence Systems." Accessed November 17, 2026. https://atlas.mitre.org/.
+
+> **Annotation:** A free, continuously updated knowledge base of adversary tactics, techniques, real-world case studies, and mitigations for AI systems, modelled on MITRE ATT&CK. It began in 2020 as the Adversarial ML Threat Matrix, a collaboration between MITRE, Microsoft, and other partners, and now covers generative and agentic AI threats such as prompt injection, jailbreaks, and poisoning. The primary reference for AI threat modeling, red-team planning, and SOC detection engineering.
+>
+> **Audience:** CISO · Security Operations · Red Teams · AI Engineers · **Type:** Threat knowledge base · **Cited in:** [Ch. 2](chapters/02-reference-frameworks-at-a-glance.md)
+
 <a id="nist-2023-ai-rmf"></a>
 National Institute of Standards and Technology. *Artificial Intelligence Risk Management Framework (AI RMF 1.0)*. NIST AI 100-1. Gaithersburg, MD: NIST, January 2023. https://doi.org/10.6028/NIST.AI.100-1.
 
 > **Annotation:** The most widely referenced voluntary framework for AI risk management. It defines the characteristics of trustworthy AI and organizes risk activities into four functions: Govern, Map, Measure, and Manage. It treats AI systems as socio-technical, with risks arising from the interaction of technology, people, and context. It serves as a common baseline across sectors and countries, and many regulations and standards reference or align with it.
 >
-> **Audience:** All roles · **Type:** Government framework / standard · **Cited in:** [Ch. 1](chapters/01-why-ai-risk-is-different.md)
+> **Audience:** All roles · **Type:** Government framework / standard · **Cited in:** [Ch. 1](chapters/01-why-ai-risk-is-different.md), [Ch. 2](chapters/02-reference-frameworks-at-a-glance.md)
 
 <a id="nist-2024-genai-profile"></a>
 National Institute of Standards and Technology. *Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile*. NIST AI 600-1. Gaithersburg, MD: NIST, July 2024. https://doi.org/10.6028/NIST.AI.600-1.
 
 > **Annotation:** A companion to the AI RMF focused on generative AI. It identifies twelve risks that are unique to or made worse by GenAI, including confabulation, data privacy, information security, intellectual property, harmful bias, and value-chain integration. It maps hundreds of suggested actions to the RMF functions, making it one of the most practical government resources for building a GenAI control set.
 >
-> **Audience:** CISO · CDO / Data Stewards · Legal / Compliance · AI Engineers · **Type:** Government framework / standard · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md)
+> **Audience:** CISO · CDO / Data Stewards · Legal / Compliance · AI Engineers · **Type:** Government framework / standard · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md), [Ch. 2](chapters/02-reference-frameworks-at-a-glance.md)
+
+<a id="nist-airc-crosswalks"></a>
+National Institute of Standards and Technology. "Crosswalks to the NIST AI RMF." NIST AI Resource Center. Accessed November 17, 2026. https://airc.nist.gov/.
+
+> **Annotation:** A collection of community-contributed mappings between the NIST AI RMF and other frameworks and standards, including ISO/IEC 42001. A practical starting point for building a single control library that satisfies several frameworks at once. NIST hosts but does not endorse the specific interpretations, and some mappings were drafted against pre-publication versions of the standards.
+>
+> **Audience:** Legal / Compliance · CRO · CIO · **Type:** Government resource (crosswalks) · **Cited in:** [Ch. 2](chapters/02-reference-frameworks-at-a-glance.md)
 
 <a id="nvd-2025-echoleak"></a>
 National Institute of Standards and Technology. "CVE-2025-32711 Detail." National Vulnerability Database, June 2025. https://nvd.nist.gov/vuln/detail/CVE-2025-32711.
 
 > **Annotation:** The official record for "EchoLeak," an AI command-injection vulnerability in Microsoft 365 Copilot discovered by Aim Security's research team. It is widely described as the first zero-click prompt-injection exploit against a mainstream enterprise AI assistant. A key case for showing that indirect prompt injection is a practical, production-grade threat and not just a laboratory curiosity.
 >
-> **Audience:** CISO · AI Engineers · CIO · **Type:** Vulnerability record · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md)
+> **Audience:** CISO · AI Engineers · CIO · **Type:** Vulnerability record · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md), [Ch. 2](chapters/02-reference-frameworks-at-a-glance.md)
 
 <a id="nolan-2025-replit"></a>
 Nolan, Beatrice. "AI-Powered Coding Tool Wiped Out a Software Company's Database in 'Catastrophic Failure.'" *Fortune*, July 2025. https://fortune.com/2025/07/23/ai-coding-tool-replit-wiped-database-called-it-a-catastrophic-failure/.
@@ -113,7 +141,14 @@ OWASP Foundation. *OWASP Top 10 for LLM Applications 2025*. OWASP GenAI Security
 
 > **Annotation:** A community-built ranking of the ten most critical security risks for LLM applications: prompt injection, sensitive information disclosure, supply chain, data and model poisoning, improper output handling, excessive agency, system prompt leakage, vector and embedding weaknesses, misinformation, and unbounded consumption. It is the common vocabulary of AI application security and a practical checklist for design reviews.
 >
-> **Audience:** CISO · AI Engineers · **Type:** Industry standard (community) · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md)
+> **Audience:** CISO · AI Engineers · **Type:** Industry standard (community) · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md), [Ch. 2](chapters/02-reference-frameworks-at-a-glance.md)
+
+<a id="owasp-2025-agentic-top10"></a>
+OWASP Foundation. *OWASP Top 10 for Agentic Applications for 2026*. OWASP GenAI Security Project, December 2025. https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/.
+
+> **Annotation:** A companion to the LLM Top 10 focused on autonomous agents that plan, keep memory, use tools, and act with delegated authority. Its ten risks run from agent goal hijack (ASI01) and tool misuse (ASI02) through identity and privilege abuse, agentic supply chain, unexpected code execution, memory and context poisoning, insecure inter-agent communication, cascading failures, and human-agent trust exploitation, to rogue agents (ASI10). An essential design-review checklist for any agentic deployment.
+>
+> **Audience:** CISO · AI Engineers · CIO · **Type:** Industry standard (community) · **Cited in:** [Ch. 2](chapters/02-reference-frameworks-at-a-glance.md)
 
 <a id="sculley-2015-debt"></a>
 Sculley, D., Gary Holt, Daniel Golovin, Eugene Davydov, Todd Phillips, Dietmar Ebner, Vinay Chaudhary, Michael Young, Jean-François Crespo, and Dan Dennison. "Hidden Technical Debt in Machine Learning Systems." In *Advances in Neural Information Processing Systems 28* (NeurIPS 2015). https://papers.nips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems.
@@ -205,7 +240,7 @@ European Parliament and Council of the European Union. Regulation (EU) 2024/1689
 
 > **Annotation:** The world's first comprehensive horizontal AI law. It sorts AI systems by risk (prohibited, high-risk, transparency-obligation, and minimal), imposes obligations on providers and deployers, sets separate rules for general-purpose AI models, and provides penalties of up to €35 million or 7 percent of global turnover for prohibited practices. Article 113 sets the phased application dates. It applies to organizations outside the EU whose AI systems are placed on the EU market or whose outputs are used in the EU.
 >
-> **Audience:** Legal / Compliance · Board · CIO · CDO · **Type:** Statute (EU regulation) · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md)
+> **Audience:** Legal / Compliance · Board · CIO · CDO · **Type:** Statute (EU regulation) · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md), [Ch. 2](chapters/02-reference-frameworks-at-a-glance.md)
 
 <a id="eu-2026-digital-omnibus"></a>
 European Parliament and Council of the European Union. Regulation (EU) 2026/1744 Amending Regulation (EU) 2024/1689 (Digital Omnibus on AI). *Official Journal of the European Union*, July 24, 2026.
