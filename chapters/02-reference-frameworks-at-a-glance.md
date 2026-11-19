@@ -4,7 +4,7 @@
 
 > **In this chapter**
 >
-> - The five framework families every enterprise AI program will meet, and what question each one answers
+> - The five governance frameworks that every enterprise AI program will meet, and what question each one answers
 > - How the NIST AI RMF, ISO/IEC 42001, ISO/IEC 23894, the OWASP Top 10 lists, and MITRE ATLAS are structured
 > - What each framework does well, and where it stops
 > - How the frameworks fit together, and a practical "starter stack" for organizations of different sizes
