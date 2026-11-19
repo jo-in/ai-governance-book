@@ -41,9 +41,18 @@ This log records how each bibliography entry was verified and flags anything an 
 | `owasp-2025-agentic-top10` | 🔎 | Released 9 Dec 2025; ASI01 Agent Goal Hijack through ASI10 Rogue Agents | Confirm the resource URL slug on genai.owasp.org |
 | `mitre-atlas` | ✅ | Live knowledge base; origin as Adversarial ML Threat Matrix (MITRE + Microsoft, 2020); relaunched as ATLAS 2021; ATT&CK-style tactics/techniques/case studies | Counts change monthly, so Ch. 2 deliberately avoids hard numbers. Update the access date at publication |
 | `nist-airc-crosswalks` | 🔎 | NIST AIRC hosts community-contributed crosswalks incl. AI RMF ↔ ISO/IEC 42001 (contributed by Microsoft; NIST disclaimer applies) | Replace the root URL with the direct crosswalks page URL |
+| `caremark-1996` | ✅ | *In re Caremark International Inc. Derivative Litigation*, 698 A.2d 959 (Del. Ch. 1996); board duty of oversight | — |
+| `marchand-2019` | ✅ | *Marchand v. Barnhill*, 212 A.3d 805 (Del. 2019); Blue Bell Creameries mission-critical risk oversight | — |
+| `sebi-2015-lodr` | ✅ | SEBI (LODR) Regulations, 2015, reg. 21 & sched. II, pt. D; top 1,000 listed entities Risk Management Committee incl. cyber security | — |
+| `deloitte-2025-board-ai` | 🔎 | 2nd ed., 700 directors/executives across 56 countries; 66% limited/no AI knowledge, 31% not on agenda, 40% rethinking board composition | Confirm Deloitte URL slug |
+| `sec-2024-ai-washing` | ✅ | Press release 2024-36 (18 Mar 2024); Delphia (\$225k) & Global Predictions (\$175k), \$400k total | — |
+| `sec-2025-presto` | 🔎 | *In the Matter of Presto Automation Inc.* (14 Jan 2025); first public-company AI-washing action; cease-and-desist, no penalty | Replace root sec.gov URL with direct order/release URL |
+| `verisk-2026-genai-exclusions` | ✅ | Verisk/ISO CGL endorsements CG 40 47 (broad) & CG 40 48 (Coverage B only), effective 1 Jan 2026 | — |
+| `omb-2025-m25-21` | 🔎 | OMB M-25-21 (3 Apr 2025); rescinds M-24-10; CAIO & agency AI Governance Boards | Confirm whitehouse.gov PDF URL |
+| `iia-2020-three-lines` | 🔎 | IIA Three Lines Model (Jul 2020); replaces Three Lines of Defense; 6 principles | Confirm theiia.org URL slug |
+| `fed-2011-sr11-7` | ✅ | Federal Reserve SR 11-7 / OCC 2011-12 (4 Apr 2011); effective challenge (competence, independence/incentives, influence) | — |
+| `fed-2026-sr26-2` | 🔎 | Federal Reserve SR 26-2 / OCC 2026-13 / FDIC FIL-15-2026 (17 Apr 2026); supersedes SR 11-7; materiality-based; explicit GenAI/agentic AI carve-out | Confirm federalreserve.gov SR 26-2 URL slug |
 
 **Chapter 2 facts also verified:** NIST AI RMF Core = 4 functions, 19 categories, 72 subcategories; NIST AI 600-1 = 12 risks and more than 200 suggested actions; EU AI Act Art. 40 = presumption of conformity for harmonised standards.
 
-*Last updated: 17 November 2026 (Front Matter, Chapters 1–2).*
-
-*Last updated: 15 November 2026 (Chapter 1).*
+*Last updated: 19 November 2026 (Front Matter, Chapters 1–4).*

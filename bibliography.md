@@ -17,12 +17,33 @@ Entries are listed alphabetically by author (or by issuing organization). Court 
 
 ## Books, Articles, Reports, Standards, and Web Sources
 
+<a id="fed-2011-sr11-7"></a>
+Board of Governors of the Federal Reserve System and Office of the Comptroller of the Currency. *Supervisory Guidance on Model Risk Management*. SR 11-7 / OCC Bulletin 2011-12. Washington, DC, April 4, 2011. https://www.federalreserve.gov/supervisionreg/srletters/sr1107.htm.
+
+> **Annotation:** The landmark U.S. banking guidance that established Model Risk Management (MRM) and defined "effective challenge" as critical analysis by objective, informed parties combining competence, independence/incentives, and influence. Superseded in April 2026 by SR 26-2, though its challenge principles remain a cornerstone of enterprise AI governance across sectors.
+>
+> **Audience:** CRO · Internal Audit · CIO · Legal / Compliance · **Type:** Regulatory guidance (United States) · **Cited in:** [Ch. 4](chapters/04-ai-governance-operating-model.md)
+
+<a id="fed-2026-sr26-2"></a>
+Board of Governors of the Federal Reserve System, Office of the Comptroller of the Currency, and Federal Deposit Insurance Corporation. *Revised Guidance on Model Risk Management*. SR 26-2 / OCC Bulletin 2026-13 / FIL-15-2026. Washington, DC, April 17, 2026. https://www.federalreserve.gov/supervisionreg/srletters/sr2602.htm.
+
+> **Annotation:** Jointly supersedes SR 11-7 and SR 21-8, shifting U.S. banking model risk management toward materiality-based proportionality rather than rigid annual review calendars, and explicitly placing generative and agentic AI outside its narrow scope while expecting banks to govern them through broader enterprise risk management.
+>
+> **Audience:** CRO · Internal Audit · CIO · Legal / Compliance · **Type:** Regulatory guidance (United States) · **Cited in:** [Ch. 4](chapters/04-ai-governance-operating-model.md)
+
 <a id="ncsc-2025-prompt-injection"></a>
 Chismon, Dave. "Prompt Injection Is Not SQL Injection (It May Be Worse)." National Cyber Security Centre (UK), December 2025. https://www.ncsc.gov.uk/blog-post/prompt-injection-is-not-sql-injection.
 
 > **Annotation:** Written by the NCSC's Technical Director for Platforms Research, this post argues that the popular comparison between prompt injection and SQL injection is misleading. SQL injection has a definitive fix in parameterized queries; prompt injection may never be fully fixed, because LLMs do not separate instructions from data. The post describes LLMs as "inherently confusable deputies" and recommends secure-by-design limits on what models can do, rather than relying on filters. It is an authoritative government voice for setting realistic expectations with boards and risk committees.
 >
 > **Audience:** Board · CISO · AI Engineers · **Type:** Government guidance (blog) · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md)
+
+<a id="deloitte-2025-board-ai"></a>
+Deloitte Global Boardroom Program. *Governance of AI: A Critical Imperative for Today's Boards*. 2nd ed. Deloitte, 2025. https://www.deloitte.com/global/en/issues/trust/progress-on-ai-in-the-boardroom-but-room-to-accelerate.html.
+
+> **Annotation:** Global survey of roughly 700 board directors and executives across 56 countries tracking board AI literacy, agenda time, and composition. Finds that 66 percent of respondents still describe their boards as having limited to no knowledge or experience of AI, and 31 percent say AI is not yet on the board agenda.
+>
+> **Audience:** Board · CEO · Company Secretary · **Type:** Industry survey report · **Cited in:** [Ch. 3](chapters/03-board-and-executive-oversight.md)
 
 <a id="ec-2025-digital-omnibus"></a>
 European Commission. *Proposal for a Regulation Amending Regulation (EU) 2024/1689 as Regards the Simplification of the Implementation of Harmonised Rules on Artificial Intelligence (Digital Omnibus on AI)*. COM(2025) 836 final. Brussels, November 19, 2025.
@@ -59,6 +80,20 @@ He, Horace, and Thinking Machines Lab. "Defeating Nondeterminism in LLM Inferenc
 >
 > **Audience:** AI Engineers · CISO · Legal / Compliance · **Type:** Technical research essay · **Cited in:** [Ch. 1](chapters/01-why-ai-risk-is-different.md)
 
+<a id="iia-2020-three-lines"></a>
+Institute of Internal Auditors. *The IIA's Three Lines Model: An Update of the Three Lines of Defense*. Lake Mary, FL: IIA, July 2020. https://www.theiia.org/en/content/position-papers/2020/the-iias-three-lines-model-an-update-of-the-three-lines-of-defense/.
+
+> **Annotation:** Replaces the traditional "Three Lines of Defense" with six principles centred on creating and protecting value. Explicitly positions the governing body at the top, distinguishes first-line operational roles from second-line risk/compliance roles, and protects third-line internal audit independence.
+>
+> **Audience:** Board · CRO · Internal Audit · CIO · **Type:** Professional standard / position paper · **Cited in:** [Ch. 4](chapters/04-ai-governance-operating-model.md)
+
+<a id="verisk-2026-genai-exclusions"></a>
+Insurance Services Office, Inc. (Verisk). Commercial General Liability Endorsements CG 40 47 (*Exclusion — Generative Artificial Intelligence*) and CG 40 48 (*Exclusion — Generative Artificial Intelligence — Coverage B Only*). Effective January 1, 2026.
+
+> **Annotation:** Optional standard U.S. commercial general liability endorsements removing coverage for liabilities arising out of generative AI, defining generative AI broadly to include systems creating text, images, audio, video, or code. Marks the insurance market's move to eliminate "silent AI" coverage.
+>
+> **Audience:** Board · CRO · CFO · General Counsel · **Type:** Insurance standard form · **Cited in:** [Ch. 3](chapters/03-board-and-executive-oversight.md)
+
 <a id="iso-2023-23894"></a>
 International Organization for Standardization and International Electrotechnical Commission. *ISO/IEC 23894:2023, Information Technology — Artificial Intelligence — Guidance on Risk Management*. Geneva: ISO, February 2023. https://www.iso.org/standard/77304.html.
 
@@ -71,7 +106,7 @@ International Organization for Standardization and International Electrotechnica
 
 > **Annotation:** The first certifiable international standard for an AI management system (AIMS). It follows the harmonized ISO management-system structure used by ISO/IEC 27001 and ISO 9001, built on a Plan-Do-Check-Act cycle, and includes 38 Annex A reference controls under nine objectives covering AI policy, internal organization, resources, impact assessment, life cycle, data, information for interested parties, use of AI, and third-party relationships. Increasingly requested in enterprise procurement as independent evidence of AI governance.
 >
-> **Audience:** CIO · CISO · Legal / Compliance · CRO · **Type:** International standard (certifiable) · **Cited in:** [Ch. 2](chapters/02-reference-frameworks-at-a-glance.md)
+> **Audience:** CIO · CISO · Legal / Compliance · CRO · **Type:** International standard (certifiable) · **Cited in:** [Ch. 2](chapters/02-reference-frameworks-at-a-glance.md), [Ch. 3](chapters/03-board-and-executive-oversight.md), [Ch. 4](chapters/04-ai-governance-operating-model.md)
 
 <a id="kalai-2025-hallucinate"></a>
 Kalai, Adam Tauman, Ofir Nachum, Santosh S. Vempala, and Edwin Zhang. "Why Language Models Hallucinate." arXiv:2509.04664, September 2025. https://doi.org/10.48550/arXiv.2509.04664.
@@ -85,7 +120,7 @@ Magramo, Kathleen. "British Engineering Giant Arup Revealed as \$25 Million Deep
 
 > **Annotation:** Names Arup as the victim of the Hong Kong fraud in which an employee transferred HK\$200 million after a video call where every other participant was a deepfake. The defining case study for AI-enabled social engineering, and the clearest argument for verifying high-value payment requests through an independent channel.
 >
-> **Audience:** Board · CFO / Finance · CISO · **Type:** News report · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md)
+> **Audience:** Board · CFO / Finance · CISO · **Type:** News report · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md), [Ch. 3](chapters/03-board-and-executive-oversight.md)
 
 <a id="mitre-atlas"></a>
 MITRE Corporation. "ATLAS: Adversarial Threat Landscape for Artificial-Intelligence Systems." Accessed November 17, 2026. https://atlas.mitre.org/.
@@ -99,7 +134,7 @@ National Institute of Standards and Technology. *Artificial Intelligence Risk Ma
 
 > **Annotation:** The most widely referenced voluntary framework for AI risk management. It defines the characteristics of trustworthy AI and organizes risk activities into four functions: Govern, Map, Measure, and Manage. It treats AI systems as socio-technical, with risks arising from the interaction of technology, people, and context. It serves as a common baseline across sectors and countries, and many regulations and standards reference or align with it.
 >
-> **Audience:** All roles · **Type:** Government framework / standard · **Cited in:** [Ch. 1](chapters/01-why-ai-risk-is-different.md), [Ch. 2](chapters/02-reference-frameworks-at-a-glance.md)
+> **Audience:** All roles · **Type:** Government framework / standard · **Cited in:** [Ch. 1](chapters/01-why-ai-risk-is-different.md), [Ch. 2](chapters/02-reference-frameworks-at-a-glance.md), [Ch. 3](chapters/03-board-and-executive-oversight.md), [Ch. 4](chapters/04-ai-governance-operating-model.md)
 
 <a id="nist-2024-genai-profile"></a>
 National Institute of Standards and Technology. *Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile*. NIST AI 600-1. Gaithersburg, MD: NIST, July 2024. https://doi.org/10.6028/NIST.AI.600-1.
@@ -127,7 +162,14 @@ Nolan, Beatrice. "AI-Powered Coding Tool Wiped Out a Software Company's Database
 
 > **Annotation:** Recounts how Replit's AI agent deleted a production database during an explicit code freeze, misreported whether the data could be recovered, and prompted the vendor to add separation between development and production. A compact case study of excessive agency, and of the gap between instructions given in a prompt and controls enforced by infrastructure.
 >
-> **Audience:** CIO · CISO · AI Engineers · **Type:** News report · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md)
+> **Audience:** CIO · CISO · AI Engineers · **Type:** News report · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md), [Ch. 3](chapters/03-board-and-executive-oversight.md)
+
+<a id="omb-2025-m25-21"></a>
+Office of Management and Budget. *Accelerating Federal Use of AI through Innovation, Governance, and Public Trust*. Memorandum M-25-21. Washington, DC: Executive Office of the President, April 3, 2025. https://www.whitehouse.gov/wp-content/uploads/2025/02/M-25-21-Accelerating-Federal-Use-of-AI-through-Innovation-Governance-and-Public-Trust.pdf.
+
+> **Annotation:** Rescinds and replaces OMB M-24-10, requiring U.S. civilian federal agencies to designate a Chief AI Officer and maintain cross-functional AI Governance Boards chaired by a senior executive (such as a Deputy Secretary) alongside IT, privacy, legal, civil rights, and procurement leaders. A practical institutional model for enterprise AI councils.
+>
+> **Audience:** CIO · CAIO · General Counsel · Public Sector · **Type:** Government directive · **Cited in:** [Ch. 4](chapters/04-ai-governance-operating-model.md)
 
 <a id="openai-deprecations"></a>
 OpenAI. "Deprecations." OpenAI Platform Documentation. Accessed November 15, 2026. https://platform.openai.com/docs/deprecations.
@@ -178,6 +220,20 @@ Stanford Institute for Human-Centered Artificial Intelligence. *The AI Index 202
 >
 > **Audience:** Board · All roles · **Type:** Academic annual report · **Cited in:** [Ch. 1](chapters/01-why-ai-risk-is-different.md)
 
+<a id="sec-2024-ai-washing"></a>
+U.S. Securities and Exchange Commission. "SEC Charges Two Investment Advisers with Making False and Misleading Statements About Their Use of Artificial Intelligence." Press release 2024-36, March 18, 2024. https://www.sec.gov/newsroom/press-releases/2024-36.
+
+> **Annotation:** Announces the SEC's first "AI-washing" enforcement actions against Delphia (USA) Inc. and Global Predictions Inc., resulting in \$400,000 in combined civil penalties for false claims about AI-driven investment models. Establishes that public AI claims must be substantiated under securities law.
+>
+> **Audience:** Board · CFO · General Counsel · Marketing · **Type:** Regulatory enforcement release · **Cited in:** [Ch. 3](chapters/03-board-and-executive-oversight.md)
+
+<a id="sec-2025-presto"></a>
+U.S. Securities and Exchange Commission. *In the Matter of Presto Automation Inc.* Administrative proceeding, January 14, 2025. https://www.sec.gov/.
+
+> **Annotation:** The SEC's first AI-washing enforcement action against a public operating company, finding material misstatements regarding undisclosed third-party speech technology and overstated drive-thru automation rates. Underscores the need to bring AI capability claims inside formal disclosure controls.
+>
+> **Audience:** Board · CEO · CFO · General Counsel · **Type:** Regulatory enforcement order · **Cited in:** [Ch. 3](chapters/03-board-and-executive-oversight.md)
+
 <a id="weidinger-2022-taxonomy"></a>
 Weidinger, Laura, Jonathan Uesato, Maribeth Rauh, Conor Griffin, Po-Sen Huang, John Mellor, Amelia Glaese, et al. "Taxonomy of Risks Posed by Language Models." In *Proceedings of the 2022 ACM Conference on Fairness, Accountability, and Transparency (FAccT '22)*. New York: ACM, 2022. https://doi.org/10.1145/3531146.3533088.
 
@@ -203,6 +259,20 @@ Willison, Simon. "The Lethal Trifecta for AI Agents: Private Data, Untrusted Con
 
 ## Court and Tribunal Decisions
 
+<a id="caremark-1996"></a>
+*In re Caremark International Inc. Derivative Litigation*, 698 A.2d 959 (Del. Ch. 1996).
+
+> **Annotation:** The foundational Delaware corporate-law decision establishing that directors' fiduciary duty of loyalty includes a good-faith duty to ensure an adequate corporate information and reporting system exists for material risks.
+>
+> **Audience:** Board · CEO · General Counsel · **Type:** Case law (United States) · **Cited in:** [Ch. 3](chapters/03-board-and-executive-oversight.md)
+
+<a id="marchand-2019"></a>
+*Marchand v. Barnhill*, 212 A.3d 805 (Del. 2019).
+
+> **Annotation:** Delaware Supreme Court decision allowing *Caremark* oversight claims to proceed where a board had no committee, reporting protocol, or regular monitoring for a "mission-critical" risk (food safety at Blue Bell Creameries). Sets the template for board-level oversight of mission-critical AI.
+>
+> **Audience:** Board · CEO · General Counsel · **Type:** Case law (United States) · **Cited in:** [Ch. 3](chapters/03-board-and-executive-oversight.md)
+
 <a id="mata-2023-avianca"></a>
 *Mata v. Avianca, Inc.*, 678 F. Supp. 3d 443 (S.D.N.Y. 2023).
 
@@ -215,7 +285,7 @@ Willison, Simon. "The Lethal Trifecta for AI Agents: Private Data, Untrusted Con
 
 > **Annotation:** A small-claims tribunal decision holding Air Canada liable for negligent misrepresentation after its website chatbot misstated the bereavement-fare policy. The tribunal rejected the argument that the chatbot was responsible for its own statements, holding that a company is responsible for all information on its website, whether it comes from a static page or a chatbot. Although it sets no binding precedent outside its jurisdiction, it is the most cited example of corporate liability for AI-generated statements.
 >
-> **Audience:** Board · Legal / Compliance · Customer Experience · **Type:** Tribunal decision (Canada) · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md)
+> **Audience:** Board · Legal / Compliance · Customer Experience · **Type:** Tribunal decision (Canada) · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md), [Ch. 3](chapters/03-board-and-executive-oversight.md)
 
 <a id="pooja-2026-jkbank"></a>
 *Pooja Ramesh Singh v. Jammu and Kashmir Bank Ltd. & Anr.*, 2026 INSC 668 (Supreme Court of India, July 2, 2026).
@@ -240,7 +310,7 @@ European Parliament and Council of the European Union. Regulation (EU) 2024/1689
 
 > **Annotation:** The world's first comprehensive horizontal AI law. It sorts AI systems by risk (prohibited, high-risk, transparency-obligation, and minimal), imposes obligations on providers and deployers, sets separate rules for general-purpose AI models, and provides penalties of up to €35 million or 7 percent of global turnover for prohibited practices. Article 113 sets the phased application dates. It applies to organizations outside the EU whose AI systems are placed on the EU market or whose outputs are used in the EU.
 >
-> **Audience:** Legal / Compliance · Board · CIO · CDO · **Type:** Statute (EU regulation) · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md), [Ch. 2](chapters/02-reference-frameworks-at-a-glance.md)
+> **Audience:** Legal / Compliance · Board · CIO · CDO · **Type:** Statute (EU regulation) · **Cited in:** [Front Matter](chapters/00-front-matter.md), [Ch. 1](chapters/01-why-ai-risk-is-different.md), [Ch. 2](chapters/02-reference-frameworks-at-a-glance.md), [Ch. 3](chapters/03-board-and-executive-oversight.md)
 
 <a id="eu-2026-digital-omnibus"></a>
 European Parliament and Council of the European Union. Regulation (EU) 2026/1744 Amending Regulation (EU) 2024/1689 (Digital Omnibus on AI). *Official Journal of the European Union*, July 24, 2026.
@@ -248,3 +318,10 @@ European Parliament and Council of the European Union. Regulation (EU) 2026/1744
 > **Annotation:** The adopted form of the Digital Omnibus on AI. Among other changes, it defers obligations for stand-alone (Annex III) high-risk AI systems to December 2, 2027, and for high-risk AI embedded in regulated products (Annex I) to August 2, 2028. It leaves the rules on prohibited practices, general-purpose AI models, and Article 50 transparency on their own timelines. Essential for any compliance roadmap built on the original AI Act dates.
 >
 > **Audience:** Legal / Compliance · Board · CIO · **Type:** Statute (EU amending regulation) · **Cited in:** [Ch. 1](chapters/01-why-ai-risk-is-different.md)
+
+<a id="sebi-2015-lodr"></a>
+Securities and Exchange Board of India. Securities and Exchange Board of India (Listing Obligations and Disclosure Requirements) Regulations, 2015. Reg. 21 and sched. II, pt. D, as amended.
+
+> **Annotation:** Requires the top 1,000 listed Indian entities by market capitalization to maintain a board-level Risk Management Committee whose mandate expressly covers cyber security—providing an established governance home for AI risk oversight in Indian listed companies.
+>
+> **Audience:** Board · General Counsel · CRO · **Type:** Regulation (India) · **Cited in:** [Ch. 3](chapters/03-board-and-executive-oversight.md)
