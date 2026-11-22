@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chapter 30: Governance Maturity Model &amp; Roadmap — Building Guardrails for Enterprise AI</title>
+  <meta name="description" content="Hardening Enterprise AI Against Hallucinations, Hacks, and Liability" />
+  <script>
+    (function () {
+      var param = null;
+      var saved = null;
+      var winTheme = null;
+      try {
+        param = new URLSearchParams(window.location.search).get("theme");
+      } catch (e) {}
+      try {
+        saved = localStorage.getItem("book-theme");
+      } catch (e) {}
+      try {
+        var wm = (window.name || "").match(/^book-theme:(dark|light)$/);
+        if (wm) winTheme = wm[1];
+      } catch (e) {}
+      var explicit = (param === "dark" || param === "light")
+        ? param
+        : ((saved === "dark" || saved === "light")
+            ? saved
+            : ((winTheme === "dark" || winTheme === "light") ? winTheme : null));
+      if (explicit) {
+        try { localStorage.setItem("book-theme", explicit); } catch (e) {}
+        try { window.name = "book-theme:" + explicit; } catch (e) {}
+        document.documentElement.setAttribute("data-theme-explicit", "1");
+      }
+      var theme = explicit || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+  <script src="assets/search-index.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <span aria-hidden="true">&#9776;</span>
+      </button>
+      <a class="brand" href="index.html">
+        <span class="brand-title">Building Guardrails for Enterprise AI</span>
+      </a>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="search-focus-btn" type="button" title="Search (/ or Cmd+K)">Search <kbd>/</kbd></button>
+      <button class="icon-btn" id="theme-toggle" type="button" title="Toggle color theme" aria-label="Toggle color theme">&#9680;</button>
+    </div>
+  </header>
+
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <div class="layout">
+<aside class="sidebar" id="sidebar" aria-label="Book navigation">
+  <div class="sidebar-search">
+    <label class="sr-only" for="search-input">Search handbook</label>
+    <input id="search-input" class="search-input" type="search" placeholder="Search handbook… (/)" autocomplete="off" />
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-home" href="index.html">Contents &amp; Overview</a>
+    <div class="nav-group">
+      <div class="nav-group-title">Front Matter</div>
+      <ul class="nav-list">
+        <li><a href="00-front-matter.html">Front Matter</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part I: Foundations</div>
+      <ul class="nav-list">
+        <li><a href="01-why-ai-risk-is-different.html">Chapter 1: Why AI Risk Is Different</a></li>
+        <li><a href="02-reference-frameworks-at-a-glance.html">Chapter 2: Reference Frameworks at a Glance</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part II: Governance &amp; Accountability</div>
+      <ul class="nav-list">
+        <li><a href="03-board-and-executive-oversight.html">Chapter 3: Board &amp; Executive Oversight</a></li>
+        <li><a href="04-ai-governance-operating-model.html">Chapter 4: The AI Governance Operating Model</a></li>
+        <li><a href="05-policies-inventory-and-risk-tiering.html">Chapter 5: Policies, Inventory &amp; Risk Tiering</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part III: Data Risk</div>
+      <ul class="nav-list">
+        <li><a href="06-data-leakage-and-shadow-ai.html">Chapter 6: Data Leakage &amp; Shadow AI</a></li>
+        <li><a href="07-internal-over-exposure-and-permission-aware-ai.html">Chapter 7: Internal Over-Exposure &amp; Permission-Aware AI</a></li>
+        <li><a href="08-data-provenance-consent-and-sovereignty.html">Chapter 8: Data Provenance, Consent &amp; Sovereignty</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part IV: Security</div>
+      <ul class="nav-list">
+        <li><a href="09-ai-threat-landscape.html">Chapter 9: The AI Threat Landscape</a></li>
+        <li><a href="10-prompt-injection-and-manipulation.html">Chapter 10: Prompt Injection &amp; Manipulation</a></li>
+        <li><a href="11-securing-ai-agents.html">Chapter 11: Securing AI Agents</a></li>
+        <li><a href="12-model-and-supply-chain-security.html">Chapter 12: Model &amp; Supply Chain Security</a></li>
+        <li><a href="13-infrastructure-and-operational-security.html">Chapter 13: Infrastructure &amp; Operational Security</a></li>
+        <li><a href="14-ai-enabled-external-threats.html">Chapter 14: AI-Enabled External Threats</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part V: Output, Trust &amp; Liability</div>
+      <ul class="nav-list">
+        <li><a href="15-hallucinations-and-reliability.html">Chapter 15: Hallucinations &amp; Reliability</a></li>
+        <li><a href="16-bias-fairness-and-discrimination.html">Chapter 16: Bias, Fairness &amp; Discrimination</a></li>
+        <li><a href="17-human-oversight-and-automation-bias.html">Chapter 17: Human Oversight &amp; Automation Bias</a></li>
+        <li><a href="18-transparency-disclosure-and-content-provenance.html">Chapter 18: Transparency, Disclosure &amp; Content Provenance</a></li>
+        <li><a href="19-intellectual-property-and-licensing.html">Chapter 19: Intellectual Property &amp; Licensing</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VI: Regulation &amp; Compliance</div>
+      <ul class="nav-list">
+        <li><a href="20-the-global-regulatory-landscape.html">Chapter 20: The Global Regulatory Landscape</a></li>
+        <li><a href="21-sector-specific-requirements.html">Chapter 21: Sector-Specific Requirements</a></li>
+        <li><a href="22-auditability-assessments-and-evidence.html">Chapter 22: Auditability, Assessments &amp; Evidence</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VII: Third-Party &amp; Lifecycle Risk</div>
+      <ul class="nav-list">
+        <li><a href="23-vendor-and-third-party-ai-risk.html">Chapter 23: Vendor &amp; Third-Party AI Risk</a></li>
+        <li><a href="24-model-lifecycle-and-change-management.html">Chapter 24: Model Lifecycle &amp; Change Management</a></li>
+        <li><a href="25-operational-resilience-and-business-continuity.html">Chapter 25: Operational Resilience &amp; Business Continuity</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VIII: Operationalizing the Guardrails</div>
+      <ul class="nav-list">
+        <li><a href="26-testing-evaluation-and-red-teaming.html">Chapter 26: Testing, Evaluation &amp; Red-Teaming</a></li>
+        <li><a href="27-ai-incident-response.html">Chapter 27: AI Incident Response</a></li>
+        <li><a href="28-metrics-kris-and-reporting.html">Chapter 28: Metrics, KRIs &amp; Reporting</a></li>
+        <li><a href="29-building-a-risk-aware-ai-culture.html">Chapter 29: Building a Risk-Aware AI Culture</a></li>
+        <li><a href="30-governance-maturity-model-and-roadmap.html" class="is-active" aria-current="page">Chapter 30: Governance Maturity Model &amp; Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Appendices</div>
+      <ul class="nav-list">
+        <li><a href="31-appendices.html">Appendices: Templates, Checklists &amp; Reference Toolkit</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Reference</div>
+      <ul class="nav-list">
+        <li><a href="bibliography.html">Annotated Bibliography</a></li>
+      </ul>
+    </div>
+  </nav>
+</aside>
+    <main class="main" id="main">
+      <article class="content">
+        <div class="doc-meta-bar"><span class="doc-eyebrow">Part VIII: Operationalizing the Guardrails</span><span class="doc-reading-meta">4,870 words · ~20 min read</span></div>
+        <h1>Chapter 30: Governance Maturity Model &amp; Roadmap</h1>
+<p><em>Part VIII: Operationalizing the Guardrails</em></p>
+<blockquote>
+<p><strong>In this chapter</strong></p>
+<ul>
+<li><strong>30.1 The Five-Level AI Governance Maturity Model</strong> — Assessing organizational capability realistically across five structured tiers while matching target maturity to workload materiality.</li>
+<li><strong>30.2 A 30/60/90-Day Action Plan</strong> — Sequencing pragmatic operational wins across Days 1–30, 31–60, 61–90, and Months 4–12 using every template across Appendices A–J.</li>
+<li><strong>30.3 From Point-in-Time Sign-Off to Continuous Governance</strong> — Replacing brittle annual checklists with living registries, Policy-as-Code gates, closed-loop telemetry, and the guardrails-enable-speed mindset.</li>
+</ul>
+</blockquote>
+<p>Across twenty-nine chapters, we have unpacked the full anatomy of enterprise AI risk: foundational technical architecture, board oversight, inventory and risk tiering, data security and copyright, adversarial threats, fairness and human oversight, global regulation, third-party and lifecycle dependencies, resilience, red-teaming, incident response, KRIs, and speak-up culture. Reading three hundred pages of controls can create a predictable paralysis: <em>Where does our organization actually stand today, and what should we build first on Monday morning without stalling every engineering team for a year?</em> Attempting to launch every control simultaneously guarantees bureaucratic collapse; writing policies without engineering plumbing guarantees shadow bypasses. Closing Part VIII—and the core body of this handbook—this chapter equips leaders with a five-level maturity benchmark, a disciplined 30/60/90-day implementation sequence, and an operating blueprint for continuous governance.</p>
+<hr />
+<h3 id="illustrative-composite-scenario-from-compliance-binder-to-continuous-guardrails-in-ninety-days">Illustrative Composite Scenario: From &quot;Compliance Binder&quot; to Continuous Guardrails in Ninety Days <a class="heading-anchor" href="#illustrative-composite-scenario-from-compliance-binder-to-continuous-guardrails-in-ninety-days" aria-label="Link to section">#</a></h3>
+<p><em>(This composite scenario is illustrative; it is not drawn from a specific organization or incident.)</em></p>
+<p>Two comparable regional insurers began building AI governance programs the same quarter. The first appointed a steering committee that spent nine months drafting a 140-page policy manual modeled on every possible future statute, freezing new vendor approvals until legal review forms reached perfection. Engineers promptly spun up unauthorized cloud model endpoints on team credit cards (<code>78%</code> shadow adoption), zombie sandboxes proliferated unmonitored, and the steering committee still could not answer the board's first question: <em>&quot;How many AI tools are touching policyholder claims today?&quot;</em> The second insurer ran an honest two-day maturity diagnostic using this book's intake templates. Recognizing it sat at Level 1, leadership shelved perfection: within <strong>30 days</strong>, IT shipped a single-click SSO workspace backed by zero-data-retention terms alongside a plain-English acceptable-use guide and a billing-reconciled starter inventory. By <strong>Day 60</strong>, all inference traffic routed through one gateway enforcing PII redaction, automated blind golden-dataset CI checks, and a 90-day pilot sunset gate. By <strong>Day 90</strong>, the team conducted a live outage-and-injection game day and delivered its first one-page quarterly KRI scorecard to the Risk Committee—turning governance into the fastest track from experiment to safe production.</p>
+<hr />
+<h2 id="301-the-five-level-ai-governance-maturity-model">30.1 The Five-Level AI Governance Maturity Model <a class="heading-anchor" href="#301-the-five-level-ai-governance-maturity-model" aria-label="Link to section">#</a></h2>
+<p>Organizations rarely progress from chaos to full automation overnight. Software engineering learned decades ago through Paulk, Curtis, Chrissis, and Weber's foundational <strong>Capability Maturity Model (<code>CMM v1.1</code>, 1993)</strong> that trying to enforce advanced quantitative controls atop ad-hoc foundations produces brittle paperwork rather than repeatable execution.<sup class="fn-ref"><a href="#fn-c30-01" id="fnref-c30-01" title="Jump to note 1">[1]</a></sup> Modern cybersecurity and enterprise risk frameworks mirror that staged insight: NIST's <strong>Cybersecurity Framework 2.0 (<code>CSWP 29</code>, February 26, 2024)</strong> elevates governance across its core functions and organizes organizational progression through four <strong>Implementation Tiers</strong> (<code>Partial</code>, <code>Risk Informed</code>, <code>Repeatable</code>, and <code>Adaptive</code>).<sup class="fn-ref"><a href="#fn-c30-02" id="fnref-c30-02" title="Jump to note 2">[2]</a></sup> Adapted specifically for probabilistic AI alongside <strong>NIST AI RMF 1.0</strong><sup class="fn-ref"><a href="#fn-c30-03" id="fnref-c30-03" title="Jump to note 3">[3]</a></sup> and <strong>ISO/IEC 42001:2023</strong>,<sup class="fn-ref"><a href="#fn-c30-04" id="fnref-c30-04" title="Jump to note 4">[4]</a></sup> Table 30.1 establishes a <strong>Five-Level AI Governance Maturity Model</strong> uniting technical, legal, and cultural execution.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Maturity Level</th>
+<th style="text-align:left">Board Oversight &amp; Culture</th>
+<th style="text-align:left">Security, Data &amp; Lifecycle Controls</th>
+<th style="text-align:left">Testing, Resilience &amp; FinOps</th>
+<th style="text-align:left">Overall Risk Posture</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Level 1: Ad Hoc / Shadow</strong></td>
+<td style="text-align:left">No AI committee or RACI; board lacks AI visibility (<code>66%</code> literacy gap); reactive bans spark unchecked <code>BYOAI</code></td>
+<td style="text-align:left">Uninventoried APIs &amp; shadow SaaS; public web uploads leaking IP/PII; consumer keys sitting in notebooks</td>
+<td style="text-align:left">Informal developer &quot;vibe checks&quot;; zero fallback or ZDR checks; unmonitored idle pilot burn</td>
+<td style="text-align:left"><strong>Exposed &amp; Unmapped:</strong> Severe breach (<code>+$670k</code> shadow penalty), IP, and unexpected regulatory exposure</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Level 2: Foundational / Policy-Driven</strong></td>
+<td style="text-align:left">Executive owner &amp; RACI (<code>App. B</code>); plain-English AUP (<code>App. E</code>); baseline Art. 4 literacy; v1 CMDB inventory</td>
+<td style="text-align:left">Billing-reconciled asset list (<code>App. C</code>); vendor ZDR checklist (<code>App. D</code>); central API gateway &amp; secrets vault launched</td>
+<td style="text-align:left">Ad-hoc staging benchmarks; basic logging (<code>OTel</code>); manual fallback notes documented cleanly</td>
+<td style="text-align:left"><strong>Visible &amp; Triageable:</strong> Core leakage vectors slowing; major reliance still rests on manual review</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Level 3: Defined &amp; Gated</strong></td>
+<td style="text-align:left">Materiality tiers governing all AI (<code>Ch. 5/24</code>); role-based labs (<code>Table 29.1</code>); anonymous speak-up channel wired</td>
+<td style="text-align:left">Mandatory ZDR/DPA clauses; permission-aware RAG ACLs; <code>Appendix F</code> Go/No-Go gates; <code>FRCP 37(e)</code> legal-hold pause</td>
+<td style="text-align:left">Quarantined blind <code>gate-eval</code> sets; CI <code>garak</code> scans; fail-closed PII sidecars; 90-day pilot sunsets</td>
+<td style="text-align:left"><strong>Repeatable Pre-Flight Control:</strong> High-risk deployments blocked cleanly when unsafe; shadow demand absorbed on paved roads</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Level 4: Measured &amp; Automated</strong></td>
+<td style="text-align:left">Monthly KRI/KPI telemetry (<code>App. G</code> crosswalks); quarterly <code>Table 28.1</code> Board Dashboard; <code>Good Catch</code> incentives</td>
+<td style="text-align:left">Automated CMDB discovery; blue/green vector re-indexing; immutable WORM <code>gen_ai.*</code> traces; IAM agent kill switches</td>
+<td style="text-align:left">Adaptive <code>PyRIT</code> + independent red teams; <code>RAGAS</code> drift alerts &amp; auto-rollbacks; FinOps unit economics &amp; ESG watts tracked</td>
+<td style="text-align:left"><strong>Proactively Governed:</strong> Regressions &amp; bias drift trigger automated containment before external complaints arrive</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Level 5: Adaptive &amp; Board-Optimized</strong></td>
+<td style="text-align:left">Continuous third-line audit validation (<code>IIA</code>); optional <code>ISO 42001</code> cert; dynamic appetite recalibration</td>
+<td style="text-align:left">Policy-as-Code enforcement across CI/CD, gateways, &amp; cross-cloud DR vaults; multi-provider active portability</td>
+<td style="text-align:left">Live chaos &amp; manual-shift game days; incident-to-blind-gate flywheel (<code>&lt;24h</code>); full CSRD Scope 2/3 &amp; regulatory readiness</td>
+<td style="text-align:left"><strong>Continuous Resilience:</strong> Governance runs invisibly at platform speed—accelerating safe enterprise AI scaling</td>
+</tr>
+</tbody>
+</table></div>
+<p><em>Table 30.1: The Five-Level AI Governance Maturity Model aligning oversight, technical guardrails, assurance engineering, and economic accountability.</em></p>
+<p>Here leaders must avoid the classic maturity trap: <strong>do not gold-plate every workload to Level 5</strong>. Applying bank-grade independent red-teaming, third-line audits, and multi-cloud hot standby infrastructure to an internal marketing brainstorming assistant wastes scarce engineering bandwidth and drives teams straight back onto personal tools. Mirroring the materiality-based proportionality embedded in April 2026 U.S. banking supervision (<code>SR 26-2</code> / <code>OCC 2026-13</code> / <code>FIL-15-2026</code>), target maturity deliberately by risk tier:<sup class="fn-ref"><a href="#fn-c30-05" id="fnref-c30-05" title="Jump to note 5">[5]</a></sup></p>
+<ul>
+<li><strong>Target Level 3</strong> globally as an enterprise floor for low-risk Tier 3 internal productivity workloads (paved SSO portal, ZDR contracts, automated baseline CI checks).</li>
+<li><strong>Target Level 4</strong> unconditionally across Tier 1 and regulated Tier 2 deployments handling customer eligibility, personal data, financial commitments, healthcare triage, or autonomous agent writes.</li>
+<li><strong>Target Level 5</strong> selectively for mission-critical infrastructure, heavily supervised financial/medical systems, and frontier model developers facing intense statutory scrutiny.</li>
+</ul>
+<p>Confronting baseline honesty matters too. Empirical benchmarks explain why rushing out of Level 1 cannot wait: IBM Security's <em>Cost of a Data Breach Report 2025</em> documented <code>20%</code> shadow-AI involvement adding an average <code>+$670,000</code> in breach costs,<sup class="fn-ref"><a href="#fn-c30-06" id="fnref-c30-06" title="Jump to note 6">[6]</a></sup> while Deloitte's global board survey found <code>31%</code> of boards still lack AI on their agendas and <code>66%</code> report limited or no board AI fluency.<sup class="fn-ref"><a href="#fn-c30-07" id="fnref-c30-07" title="Jump to note 7">[7]</a></sup> To compute an unvarnished baseline score rather than grading on intention, evaluate your weakest operational link across four concrete probes: <em>(1) Compare cloud AI API invoices and CASB logs directly against your official CMDB inventory to expose real discovery gaps; (2) Sample your last five Tier 1 or Tier 2 releases for quarantined blind-eval evidence and independent red-team sign-offs; (3) Test whether a customer-facing safety guardrail fails closed under simulated network timeout; and (4) Check how many minutes it takes to pull a production kill switch on a live autonomous agent.</em> Measuring honestly where your company sits today—even if the candid average sits near <code>1.4</code>—turns abstract maturity tables into an actionable funding and sequencing mandate.</p>
+<h3 id="the-guardrails">The Guardrails <a class="heading-anchor" href="#the-guardrails" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Run an unvarnished baseline diagnostic across engineering, security, legal, and finance:</strong> Score each business unit honestly against Table 30.1 using hard billing, CASB, and eval evidence rather than aspirational policy slideware.</li>
+<li><strong>Assign explicit Level 3 / Level 4 / Level 5 target states per risk tier:</strong> Prohibit both &quot;wildcard Level 1 production&quot; on Tier 1 models and &quot;bloated Level 5 committee sign-off&quot; on harmless internal productivity scripts.</li>
+<li><strong>Treat shadow discovery as a positive governance upgrade:</strong> Never penalize business units for surfacing previously uninventoried tools during baseline discovery; onboard or replace them gracefully onto Level 2/3 paved roads.</li>
+</ul>
+<hr />
+<h2 id="302-a-306090-day-action-plan">30.2 A 30/60/90-Day Action Plan <a class="heading-anchor" href="#302-a-306090-day-action-plan" aria-label="Link to section">#</a></h2>
+<p>Executive momentum evaporates when AI governance arrives as a vague multi-year transformation program. Conversely, a tightly sequenced <strong>90-day operational sprint</strong> captures fast visibility, removes engineering friction via paved roads, and wires core guardrails before sprawling pilots harden into unmanageable debt. The urgency is unmistakable: with <code>78%</code> of employees bringing their own tools (<code>BYOAI</code>) per Microsoft and LinkedIn,<sup class="fn-ref"><a href="#fn-c30-08" id="fnref-c30-08" title="Jump to note 8">[8]</a></sup> Gartner warning over <code>40%</code> of agentic AI projects face cancellation by 2027 due to runaway cost and weak risk controls,<sup class="fn-ref"><a href="#fn-c30-09" id="fnref-c30-09" title="Jump to note 9">[9]</a></sup> and <code>98%</code> of FinOps practitioners now managing AI spend actively per the FinOps Foundation's 2026 report,<sup class="fn-ref"><a href="#fn-c30-10" id="fnref-c30-10" title="Jump to note 10">[10]</a></sup> disciplined execution in the first ninety days directly protects capital as well as compliance.</p>
+<p><strong>Table 30.2</strong> translates this entire handbook into a concrete <strong>30/60/90-Day Action Plan</strong> (followed by Months 4–12 institutionalization), pairing exact executive owners with ready-to-use templates in <strong>Appendices A through I</strong>.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Horizon &amp; Focus</th>
+<th style="text-align:left">Core Operational Deliverables</th>
+<th style="text-align:left">Primary Owners</th>
+<th style="text-align:left">Handbook References &amp; Templates</th>
+<th style="text-align:left">Exit / Verification Gate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Days 1–30: Stop the Bleeding &amp; See the Estate</strong></td>
+<td style="text-align:left">Charter Governance Committee &amp; RACI; launch 1-click SSO ZDR AI portal + plain-English AUP; reconcile cloud/SaaS invoices &amp; CASB into v1 Inventory; start Art. 4 role-proportioned literacy baseline; wire Tier 1 manual kill switches</td>
+<td style="text-align:left">CIO, CISO, CRO, General Counsel, CHRO</td>
+<td style="text-align:left">Chapters 3–6, 25, 29; <strong>App. B</strong> (RACI), <strong>App. C</strong> (Intake Form), <strong>App. E</strong> (AUP)</td>
+<td style="text-align:left"><code>&gt;=85%</code> AI spend mapped in CMDB; public ZDR portal live; <code>100%</code> Tier 1 apps hold named emergency owner</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Days 31–60: Paved Roads &amp; Tiered Gates</strong></td>
+<td style="text-align:left">Enforce Risk Tiers 1–3 &amp; Change-Materiality Matrix; mandate ZDR/exit addenda on vendor contracts; deploy central gateway (<code>OTel gen_ai.*</code> + fail-closed PII); require blind <code>gate-eval</code> + <code>garak</code> CI checks; set <code>Sev-1/2</code> response playbooks &amp; 90-day pilot sunsets</td>
+<td style="text-align:left">AI Engineering, Procurement, AppSec, Privacy/DPO, FinOps</td>
+<td style="text-align:left">Chapters 7–15, 23–27; <strong>App. D</strong> (Vendor DDQ), <strong>App. F</strong> (Pre-Flight), <strong>App. H</strong> (Incident Playbook)</td>
+<td style="text-align:left">Zero new Tier 1/2 deploys bypass central gateway or <code>App. D/F</code>; blind <code>gate-eval</code> live in CI; <code>Sev-1/2</code> clocks mapped</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Days 61–90: Automate Telemetry, Drills &amp; Board Brief</strong></td>
+<td style="text-align:left">Execute first Tier 1 adaptive red-team (<code>PyRIT</code>) &amp; outage/manual-fallback game day; launch rolling KRIs (<code>App. G</code> crosswalks) &amp; one-page <code>Table 28.1</code> Board Dashboard; verify <code>Art. 87</code>/<code>SB 53</code>/<code>Rule 21F-17</code> NDA carve-outs &amp; anonymous portal</td>
+<td style="text-align:left">CRO, Red Team, Business Owners, Ethics/Legal, CFO</td>
+<td style="text-align:left">Chapters 16–22, 26–29; <strong>App. A</strong> (Cheat Sheets), <strong>App. G</strong> (Regulatory Crosswalk), <strong>App. I</strong> (Glossary)</td>
+<td style="text-align:left">First <code>Table 28.1</code> dashboard reviewed by Board Audit/Risk; Tier 1 DR fallback &amp; incident drill signed off; zombie pilots retired at Day 90</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Months 4–12: Steady-State Assurance &amp; Scale</strong></td>
+<td style="text-align:left">Integrate third-line Internal Audit (<code>IIA 2025</code> testing); automate continuous metadata lineage &amp; WORM evidence packs; evaluate optional external <code>ISO/IEC 42001</code> registration (<code>ISO 42006</code>); prep statutory deadlines (<code>EU Digital Omnibus</code> Annex III <code>Dec 2027</code> / Annex I <code>Aug 2028</code>)</td>
+<td style="text-align:left">Internal Audit, CRO, General Counsel, CIO</td>
+<td style="text-align:left">Chapters 20–22, 24, 28, 30; <strong>App. A–J</strong> integrated lifecycle</td>
+<td style="text-align:left">Closed third-line audit cycles; <code>&gt;=95%</code> live inventory match; roadmap locked ahead of global statutory cutoffs</td>
+</tr>
+</tbody>
+</table></div>
+<p><em>Table 30.2: Sequenced 30/60/90-Day Action Plan and Months 4–12 scale roadmap tying deliverables to executive accountability and handbook appendices.</em></p>
+<p>Notice how cleanly <strong>Months 4–12</strong> align technical milestones with shifting legal clocks. Under the <strong>EU Digital Omnibus on AI (<code>Regulation (EU) 2026/1744</code>)</strong>, high-risk rules for Annex III systems were deferred to <strong>December 2, 2027</strong> and Annex I embedded-product systems to <strong>August 2, 2028</strong>, while prohibited practices, AI literacy (<code>Art. 4</code>), GPAI duties, and <code>Article 50</code> synthetic-content transparency remained on active schedules.<sup class="fn-ref"><a href="#fn-c30-11" id="fnref-c30-11" title="Jump to note 11">[11]</a></sup><sup class="fn-ref"><a href="#fn-c30-12" id="fnref-c30-12" title="Jump to note 12">[12]</a></sup> Organizations executing Table 30.2 in ninety days gain clean multi-quarter runway ahead of 2027–2028 compliance deadlines rather than scrambling in crisis mode. Meanwhile, maturing enterprises engaging third-line internal audit under the <strong>IIA Global Internal Audit Standards</strong> (effective January 9, 2025)<sup class="fn-ref"><a href="#fn-c30-13" id="fnref-c30-13" title="Jump to note 13">[13]</a></sup> and pursuing independent <strong>ISO/IEC 42001</strong> certification—governed cleanly by accredited registrars operating under <strong>ISO/IEC 42006:2025</strong><sup class="fn-ref"><a href="#fn-c30-14" id="fnref-c30-14" title="Jump to note 14">[14]</a></sup>—reuse the exact telemetry, evaluation artifacts, and control logs already generated automatically by engineering pipelines.</p>
+<h3 id="the-guardrails-2">The Guardrails <a class="heading-anchor" href="#the-guardrails-2" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Sequence infrastructure enablement alongside control gates in Days 1–60:</strong> Never roll out enforcement blocks or lengthy intake checklists before launching the 1-click ZDR enterprise workspace and <code>&lt;48h</code> Tier 3 fast lane.</li>
+<li><strong>Anchor every 30-day milestone on verifiable artifacts, not committee meetings:</strong> Count a milestone complete only when code commits, gateway logs, signed ZDR addenda, blind eval results, or signed drill postmortems exist cleanly in version control.</li>
+<li><strong>Eliminate orphaned pilots aggressively at Day 90:</strong> Enforce automated token revocation and cloud GPU teardown for unpromoted proof-of-concept endpoints so FinOps savings self-fund ongoing platform guardrails.</li>
+</ul>
+<hr />
+<h2 id="303-from-point-in-time-sign-off-to-continuous-governance">30.3 From Point-in-Time Sign-Off to Continuous Governance <a class="heading-anchor" href="#303-from-point-in-time-sign-off-to-continuous-governance" aria-label="Link to section">#</a></h2>
+<p>Even the sharpest 90-day implementation fails by Year 2 if an enterprise slips back into traditional annual compliance snapshots. Annual risk sign-offs evolved for static ERP releases whose code changed semi-annually and whose vendors stayed fixed for years. In AI operations, foundation-model weights shift quarterly, vendors trigger 60-day deprecation clocks, user phrasing drifts seasonally, new prompt-injection techniques publish weekly, and RAG corpora absorb thousands of altered documents every afternoon. A system cleared as low-risk on January 10 can silently violate fairness parity, data-residency guarantees, or accuracy tolerances by March 15 while its paper approval certificate still reads &quot;Valid through December 31.&quot;</p>
+<p>Durable AI governance must therefore mirror the architectural transition codified in <strong>NIST Special Publication 800-137 (<em>Information Security Continuous Monitoring — ISCM</em>)</strong>: moving from periodic point-in-time authorization toward <strong>continuous, automated awareness</strong> of system state, active threats, control effectiveness, and real-world risk posture supporting live authorization decisions.<sup class="fn-ref"><a href="#fn-c30-15" id="fnref-c30-15" title="Jump to note 15">[15]</a></sup> Operationalizing continuous governance rests on four enduring architectural habits:</p>
+<ol>
+<li><strong>Living, Auto-Discovered Registries:</strong> Replace static intake spreadsheets with dynamic inventories synchronized daily against cloud GPU billing, AI gateway API tokens, SSO app assignments, and MCP tool manifests (<code>Chapter 5 &amp; 28</code>).</li>
+<li><strong>Policy-as-Code Enforcement in Delivery Pipelines:</strong> Embed tier rules directly into CI/CD pipelines and gateway configs—blocking deploys lacking ZDR tags, golden blind-eval passes, schema validation wrappers, fail-closed safety sidecars, or valid executive waivers without relying on human memory (<code>Chapters 24–26</code>).</li>
+<li><strong>Automated Drift &amp; Incident-to-Regression Flywheels:</strong> Wire rolling <code>RAGAS</code> metrics, <code>OTel gen_ai.*</code> unit-cost spikes, fairness slice telemetry, and human override surges directly to gateway circuit breakers and KRI escalation—feeding every incident and near-miss permanently into blind CI regression suites (<code>Chapters 24, 27–28</code>).</li>
+<li><strong>Shared Socio-Technical Ownership (<code>App. A</code> Role Loops):</strong> Ensure every executive and operational practitioner keeps role-specific questions sharp (codified in <strong>Appendix A: Role-Based Cheat Sheets</strong>), reinforced by embedded AI Champions, non-retaliatory Stop-the-Line authority, and clean third-line audit verification (<code>Chapters 22 &amp; 29</code>).</li>
+</ol>
+<figure class="mermaid-wrap"><pre class="mermaid">flowchart LR
+    DEV[&quot;Change / Prompt / Corpus / Model Update&quot;] --&gt; PAC[&quot;Policy-as-Code Gate (Tiers, ZDR, Schema, Garak, Blind Eval)&quot;]
+    PAC --&gt;|&quot;Pass&quot;| GW[&quot;Central AI Gateway (PTU Failover, PII Fail-Closed, OTel gen_ai.*)&quot;]
+    PAC --&gt;|&quot;Block&quot;| FIX[&quot;Engineering Fix / Pre-Flight Re-Test&quot;]
+    FIX --&gt; PAC
+    GW --&gt; MON[&quot;Continuous Telemetry (Faithfulness, Bias, Overrides, Unit Cost, Watts)&quot;]
+    MON --&gt;|&quot;Within Appetite&quot;| KRI[&quot;Live CMDB &amp; Quarterly Board Scorecard (Table 28.1)&quot;]
+    MON --&gt;|&quot;Drift / Anomaly / Incident&quot;| ACT[&quot;Kill Switch / Fallback Circuit + Closed-Loop Postmortem&quot;]
+    ACT --&gt; PAC
+    KRI --&gt; GOV[&quot;Executive &amp; Board Risk Appetite Recalibration&quot;]
+    GOV --&gt; PAC</pre></figure>
+<p>Notice what happens inside this continuous governance loop: <strong>guardrails stop acting as external traffic cops and become internal speed multipliers</strong>. Engineers ship faster with confidence because automated blind evals, gateway PII scrubbers, deterministic output schemas, and one-click ZDR fallbacks absorb predictable failure modes automatically. Legal and Risk teams evaluate fewer ad-hoc exceptions because Tier 3 self-serve lanes handle routine demand safely while clear Table 26.1 and Table 28.1 metrics isolate genuine Tier 1 risks cleanly. Procurement negotiates sharper, portable contracts faster using Appendix D. Boards oversee transformation through crisp quarterly decision briefs rather than blind faith or panic bans.</p>
+<p>That shift—from static fear to instrumented enablement—completes the operational arc of this handbook. Whether your organization stands today at Level 1 scrambling to contain off-grid consumer chatbots or at Level 4 automating global regulatory compliance across multi-agent deployments, the next move is concrete: pick your first 30-day cohort from Table 30.2, adapt the ready-to-use charter, intake, vendor, AUP, pre-flight, crosswalk, and incident-playbook templates waiting immediately in <strong>Appendices A through J</strong>, and put your first continuous guardrail loop into production this quarter. Guardrails do not slow enterprise AI down—they are precisely what allow an enterprise to scale AI safely without regret.</p>
+<h3 id="the-guardrails-3">The Guardrails <a class="heading-anchor" href="#the-guardrails-3" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Replace static &quot;annual recertification&quot; calendars with continuous risk-triggered authorization:</strong> Tie continued production authority directly to live telemetry health, valid blind-gate passes, active ZDR contracts, and unexpired waivers (<code>NIST SP 800-137</code>).</li>
+<li><strong>Maintain Policy-as-Code parity across internal builds and SaaS vendor integrations:</strong> Subject both custom RAG/agent stacks and third-party vendor upgrades to automated discovery, gateway monitoring, and drift checks.</li>
+<li><strong>Review and refresh the governance charter semi-annually against evolving laws and model capabilities:</strong> Recalibrate Tier rules, golden benchmarks, role training, and Appendix G crosswalks whenever new frontier capabilities (autonomous agents, multimodal tooling) or binding effective dates arrive.</li>
+</ul>
+<hr />
+<h2 id="why-every-role-cares">Why Every Role Cares <a class="heading-anchor" href="#why-every-role-cares" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">What Changes for Your Team</th>
+<th style="text-align:left">Primary Roadmap Risk if Ignored</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board / Audit &amp; Risk Committee</strong></td>
+<td style="text-align:left">Demand an honest Table 30.1 baseline score, approve tiered target maturity (Levels 3–5 by materiality), and review the 90-day exit metrics via Table 28.1.</td>
+<td style="text-align:left">Governing blindly off complacent green compliance decks while <code>78%</code> BYOAI and unmonitored agent risks compound invisibly underneath.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CEO / Executive Sponsors</strong></td>
+<td style="text-align:left">Champion the 30/60/90-day sprint as an enablement paved-road initiative—funding ZDR workspace tooling alongside risk controls.</td>
+<td style="text-align:left">Fragmented committee turf wars that stall product innovation into 9-month binder projects while competitors scale safely.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO / CTO / Platform Lead</strong></td>
+<td style="text-align:left">Prioritize Day-30 SSO portals and gateway telemetry before strict blocking, then wire Policy-as-Code CI/CD gates and ISCM continuous monitoring.</td>
+<td style="text-align:left">Unenforceable paper bans rejected by engineers, fractured cloud spend, and fragile ad-hoc production pipelines.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Chief Risk Officer / Compliance</strong></td>
+<td style="text-align:left">Sequence materiality-proportional targets (<code>SR 26-2</code> / <code>NIST AI RMF</code>), connect <code>App. G</code> crosswalks ahead of 2027–2028 EU cutoffs, and maintain live KRIs.</td>
+<td style="text-align:left">Either over-engineering Level 5 bureaucracy for harmless Tier 3 workflows or under-governing high-risk systems into statutory violations.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CFO / Procurement</strong></td>
+<td style="text-align:left">Track Days 1–30 invoice discovery, Day-60 <code>App. D</code> ZDR/exit contract clauses, and Day-90 zombie-pilot retirements yielding direct compute savings.</td>
+<td style="text-align:left">Unchecked token/GPU sprawl (<code>&gt;40%</code> agentic cancellation risk) alongside non-portable vendor lock-in.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Internal Audit / Ethics</strong></td>
+<td style="text-align:left">Transition from late paper sampling to verifying automated Policy-as-Code evidence trails, speak-up readiness, and <code>IIA 2025</code> / <code>ISO 42006</code> readiness.</td>
+<td style="text-align:left">Point-in-time audit clearances invalidated weeks later by silent vendor updates, corpus drift, or unlogged production exceptions.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="chapter-summary">Chapter Summary <a class="heading-anchor" href="#chapter-summary" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Governance Pillar</th>
+<th style="text-align:left">Core Objective</th>
+<th style="text-align:left">Key Frameworks, Metrics &amp; Templates</th>
+<th style="text-align:left">Strategic Outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Five-Level Maturity Model (30.1)</strong></td>
+<td style="text-align:left">Baseline actual organizational posture candidly and target Levels 3/4/5 proportionally by risk materiality</td>
+<td style="text-align:left"><code>Table 30.1</code> Maturity Matrix; <code>CMM v1.1</code>; <code>NIST CSF 2.0</code> (<code>CSWP 29</code>); <code>NIST AI RMF</code>; <code>ISO 42001</code>; Fed <code>SR 26-2</code>; IBM <code>+$670k</code> shadow penalty</td>
+<td style="text-align:left">Prevents both reckless Level 1 exposure and wasteful gold-plated bureaucracy on low-risk tools</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>30/60/90-Day Action Plan (30.2)</strong></td>
+<td style="text-align:left">Deliver immediate visibility and ZDR paved roads in 30 days, gated pipelines in 60 days, and live drills/board reporting in 90 days</td>
+<td style="text-align:left"><code>Table 30.2</code> Roadmap; <code>Appendices A–I</code>; Microsoft <code>78%</code> BYOAI; Gartner <code>&gt;40%</code> attrition; FinOps <code>98%</code> spend tracking; <code>EU Digital Omnibus</code></td>
+<td style="text-align:left">Turns fragmented handbooks into sequenced execution ahead of 2027–2028 regulatory mandates</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Continuous Governance Flywheel (30.3)</strong></td>
+<td style="text-align:left">Shift permanently from annual point-in-time approvals to living registries, Policy-as-Code gates, and closed-loop assurance</td>
+<td style="text-align:left"><code>NIST SP 800-137</code> (<code>ISCM</code>); <code>IIA 2025</code> Standards; <code>ISO/IEC 42006:2025</code>; Continuous Flywheel Diagram; <strong>Appendices A–J</strong></td>
+<td style="text-align:left">Embeds guardrails inside engineering velocity so governance accelerates safe enterprise AI</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="key-takeaways">Key Takeaways <a class="heading-anchor" href="#key-takeaways" aria-label="Link to section">#</a></h2>
+<ul>
+<li><strong>Baseline honestly before chasing perfection:</strong> Most enterprises begin near Level 1–2 on <strong>Table 30.1</strong>; match target maturity proportionally to risk materiality (Level 3 baseline floor, Level 4 for Tier 1/high-risk, Level 5 selectively) rather than paralyzing low-risk teams.</li>
+<li><strong>Lead the first 30 days with visibility and paved roads:</strong> Reconcile cloud billing into a v1 inventory, publish a plain-English acceptable-use standard, and ship an attractive 1-click ZDR enterprise portal <em>before</em> tightening egress blocks.</li>
+<li><strong>Treat Day 90 as the launchpad for continuous controls monitoring:</strong> Gate CI/CD releases with Policy-as-Code blind evals, run real outage and red-team chaos drills, deliver unified quarterly KRI board scorecards, and kill stagnant 90-day zombie pilots.</li>
+<li><strong>Guardrails enable speed at enterprise scale:</strong> When live registries, deterministic gateways, calibrated oversight, speak-up safety, and <code>Appendices A–J</code> templates operate continuously (<code>NIST SP 800-137</code>), safe innovation scales faster and cleaner than ungoverned improvisation.</li>
+</ul>
+<hr />
+<h2 id="questions-to-ask">Questions to Ask <a class="heading-anchor" href="#questions-to-ask" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Target Team</th>
+<th style="text-align:left">Concrete Diagnostic Question</th>
+<th style="text-align:left">What a Strong Answer Looks Like</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Executive Committee / CRO</strong></td>
+<td style="text-align:left"><em>&quot;Which exact Table 30.1 maturity level (1–5) reflects empirical billing, shadow-AI, and test logs today—and what target tier applies cleanly to each risk class?&quot;</em></td>
+<td style="text-align:left">We scored candidly at Level 2.1 on discovery/evals and committed formally to Level 3 baseline across Tier 3 and Level 4 across all Tier 1 customer/decision workflows.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Governance PMO / CIO</strong></td>
+<td style="text-align:left"><em>&quot;What concrete artifacts will ship in the next 30, 60, and 90 days—and how do we avoid nine months of sterile policy drafting?&quot;</em></td>
+<td style="text-align:left">Day 30 delivers our SSO ZDR portal, <strong>Appendix E</strong> AUP, and billing-backed inventory; Day 60 adds central <code>OTel</code> gateway gates (<code>App. D/F</code>); Day 90 completes live chaos drills and our first <code>Table 28.1</code> board brief.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Platform / MLOps / AppSec</strong></td>
+<td style="text-align:left"><em>&quot;Which governance rules run automatically as Policy-as-Code inside our CI/CD and gateway pipelines today rather than manual email approvals?&quot;</em></td>
+<td style="text-align:left">ZDR enforcement, PII fail-closed routing, JSON schema validation, <code>garak</code> probes, blind <code>gate-eval</code> minimums, and 90-day sandbox token expiry all block automatically in code without waiting on manual sign-off.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Legal / Regulatory Affairs</strong></td>
+<td style="text-align:left"><em>&quot;How does our 90-day and Months 4–12 plan stage compliance ahead of fixed EU Digital Omnibus Annex III (<code>Dec 2027</code>) / Annex I (<code>Aug 2028</code>) and active transparency/state ADMT laws?&quot;</em></td>
+<td style="text-align:left"><strong>Appendix G</strong> crosswalks map active 2025–2026 mandates (literacy, transparency, state ADMT, whistleblowing) immediately while building automated <code>Annex IV</code>/<code>ISO 42001</code> files ahead of 2027–2028 high-risk dates.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Internal Audit &amp; CFO</strong></td>
+<td style="text-align:left"><em>&quot;How do we verify continuously—between annual audits—that retired zombie savings stay reclaimed and approved Tier 1 systems have not drifted?&quot;</em></td>
+<td style="text-align:left">Continuous <code>ISCM</code> dashboards reconcile live billing against the CMDB weekly, surface override/bias KRIs automatically, and trigger unscheduled third-line <code>IIA 2025</code> sampling across production traces.</td>
+</tr>
+</tbody>
+</table></div>
+
+<section class="footnotes" id="notes" aria-label="Notes">
+<h2>References</h2>
+<ol class="footnote-list">
+<li id="fn-c30-01"><span class="fn-body">Mark C. Paulk, Bill Curtis, Mary Beth Chrissis, and Charles V. Weber, &quot;Capability Maturity Model, Version 1.1,&quot; <em>IEEE Software</em> 10, no. 4 (July 1993): 18–27, doi:10.1109/52.219617. <strong>Annotation:</strong> Foundational five-level software process maturity architecture demonstrating why repeatable baseline controls must precede quantitative optimization rather than attempting advanced statistical governance atop ad-hoc foundations. <a href="bibliography.html#paulk-1993-cmm">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c30-01" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c30-02"><span class="fn-body">National Institute of Standards and Technology, <em>The NIST Cybersecurity Framework (CSF) 2.0</em>, NIST Cybersecurity White Paper CSWP 29 (Gaithersburg, MD: NIST, February 26, 2024), doi:10.6028/NIST.CSWP.29. <strong>Annotation:</strong> Elevates <code>Govern</code> to an overarching sixth framework function alongside four organizational Implementation Tiers (<code>Partial</code>, <code>Risk Informed</code>, <code>Repeatable</code>, <code>Adaptive</code>) informing Table 30.1's tiered maturity framing. <a href="bibliography.html#nist-2024-csf-2">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c30-02" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c30-03"><span class="fn-body">National Institute of Standards and Technology, <em>Artificial Intelligence Risk Management Framework (AI RMF 1.0)</em>, NIST AI 100-1 (Gaithersburg, MD: NIST, January 2023), doi:10.6028/NIST.AI.100-1. <strong>Annotation:</strong> Organizes enterprise socio-technical AI governance across <code>Govern</code>, <code>Map</code>, <code>Measure</code>, and <code>Manage</code> functions across all five maturity stages and roadmap horizons. <a href="bibliography.html#nist-2023-ai-rmf">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c30-03" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c30-04"><span class="fn-body">International Organization for Standardization and International Electrotechnical Commission, <em>ISO/IEC 42001:2023, Information Technology — Artificial Intelligence — Management System</em> (Geneva: ISO, December 2023). <strong>Annotation:</strong> Certifiable Plan-Do-Check-Act AI Management System standard linking maturity progression from policy baseline (Level 2) through continuous performance evaluation and continual improvement (Levels 4–5). <a href="bibliography.html#iso-2023-42001">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c30-04" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c30-05"><span class="fn-body">Board of Governors of the Federal Reserve System, Office of the Comptroller of the Currency, and Federal Deposit Insurance Corporation, <em>Revised Guidance on Model Risk Management</em>, SR 26-2 / OCC Bulletin 2026-13 / FIL-15-2026 (Washington, DC, April 17, 2026). <strong>Annotation:</strong> Establishes materiality-based proportionality—aligning validation and control rigor directly to model risk impact rather than uniform fixed schedules across every tier. <a href="bibliography.html#fed-2026-sr26-2">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c30-05" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c30-06"><span class="fn-body">IBM Security and Ponemon Institute, <em>Cost of a Data Breach Report 2025</em> (Armonk, NY: IBM, 2025). <strong>Annotation:</strong> Empirically measures the financial cost of staying at Level 1 Ad Hoc governance, finding 20 percent shadow-AI breach involvement and an average +$670,000 breach cost penalty under high shadow sprawl. <a href="bibliography.html#ibm-2025-breach">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c30-06" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c30-07"><span class="fn-body">Deloitte Global Boardroom Program, <em>Governance of AI: A Critical Imperative for Today's Boards</em>, 2nd ed. (Deloitte, 2025). <strong>Annotation:</strong> Quantifies the executive oversight baseline challenge—66 percent of surveyed directors reporting limited/no AI fluency and 31 percent reporting AI absent from board agendas—addressed directly across Days 1–90 of Table 30.2. <a href="bibliography.html#deloitte-2025-board-ai">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c30-07" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c30-08"><span class="fn-body">Microsoft and LinkedIn, <em>2024 Work Trend Index Annual Report: AI at Work Is Here. Now Comes the Hard Part</em> (May 8, 2024). <strong>Annotation:</strong> Demonstrates why Days 1–30 prioritize shipping an effortless SSO enterprise ZDR workspace over punitive prohibition to absorb the 78 percent BYOAI workplace reality. <a href="bibliography.html#microsoft-2024-work-trend">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c30-08" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c30-09"><span class="fn-body">Gartner, Inc., &quot;Gartner Predicts Over 40% of Agentic AI Projects Will Be Canceled by End of 2027&quot; (Press release, June 25, 2025). <strong>Annotation:</strong> Highlights why the Day 60–90 roadmap embeds FinOps unit-cost tracking and mandatory 90-day pilot sunsets before stalled agentic experiments compound capital waste. <a href="bibliography.html#gartner-2025-agentic">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c30-09" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c30-10"><span class="fn-body">FinOps Foundation, <em>State of FinOps 2026</em> (San Francisco: Linux Foundation / FinOps Foundation, 2026). <strong>Annotation:</strong> Documents 98 percent enterprise AI spend management adoption in 2026, linking financial governance directly to CI/CD token tagging and zombie-pilot decommissioning across the 90-day roadmap. <a href="bibliography.html#finops-2026-state">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c30-10" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c30-11"><span class="fn-body">European Parliament and Council of the European Union, <em>Regulation (EU) 2026/1744 Amending Regulation (EU) 2024/1689 (Digital Omnibus on AI)</em>, Official Journal of the EU, July 24, 2026. <strong>Annotation:</strong> Establishes adjusted compliance runway timelines deferring stand-alone Annex III high-risk obligations to December 2, 2027 and Annex I embedded products to August 2, 2028 while keeping earlier core prohibitions and transparency rules active. <a href="bibliography.html#eu-2026-digital-omnibus">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c30-11" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c30-12"><span class="fn-body">European Parliament and Council of the European Union, <em>Regulation (EU) 2024/1689 (Artificial Intelligence Act)</em>, Official Journal of the EU L, 2024/1689, July 12, 2024. <strong>Annotation:</strong> Anchor EU AI statute whose phased obligations across literacy (<code>Art. 4</code>), GPAI documentation, synthetic transparency (<code>Art. 50</code>), serious incident reporting (<code>Art. 73</code>), whistleblowing (<code>Art. 87</code>), and high-risk conformity structure the 30/60/90-day and Months 4–12 implementation plan. <a href="bibliography.html#eu-2024-ai-act">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c30-12" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c30-13"><span class="fn-body">Institute of Internal Auditors, <em>Global Internal Audit Standards</em> (Lake Mary, FL: IIA, January 2024; effective January 9, 2025). <strong>Annotation:</strong> Guides Months 4–12 independent third-line assurance testing across AI maturity claims, continuous controls evidence, and overdue action tracking. <a href="bibliography.html#iia-2025-standards">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c30-13" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c30-14"><span class="fn-body">International Organization for Standardization and International Electrotechnical Commission, <em>ISO/IEC 42006:2025, Information Technology — Artificial Intelligence — Requirements for Bodies Providing Audit and Certification of Artificial Intelligence Management Systems</em> (Geneva: ISO, July 2025). <strong>Annotation:</strong> Sets accredited Stage 1/Stage 2 external audit requirements for enterprises electing formal <code>ISO/IEC 42001</code> certification during Level 4–5 maturation. <a href="bibliography.html#iso-2025-42006">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c30-14" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c30-15"><span class="fn-body">National Institute of Standards and Technology (Kelley Dempsey, Nirali Shah Chawla, Arnold Johnson, Ronald Johnston, Alicia Clay Jones, Angela Orebaugh, Matthew Scholl, and Kevin Stine), <em>Information Security Continuous Monitoring (ISCM) for Federal Information Systems and Organizations</em>, NIST Special Publication 800-137 (Gaithersburg, MD: NIST, September 2011), doi:10.6028/NIST.SP.800-137. <strong>Annotation:</strong> Establishes the architectural blueprint for continuous controls monitoring—replacing brittle annual authorization checklists with automated ongoing awareness of posture, vulnerabilities, and risk tolerances. <a href="bibliography.html#nist-2011-800-137">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c30-15" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+</ol>
+</section>
+        <nav class="pager" aria-label="Chapter navigation"><a class="pager-card pager-prev" href="29-building-a-risk-aware-ai-culture.html"><span class="pager-dir">&larr; Previous</span><span class="pager-title">Chapter 29: Building a Risk-Aware AI Culture</span></a><a class="pager-card pager-next" href="31-appendices.html"><span class="pager-dir">Next &rarr;</span><span class="pager-title">Appendices: Templates, Checklists &amp; Reference Toolkit</span></a></nav>
+      </article>
+      <footer class="doc-footer">
+        Building Guardrails for Enterprise AI &middot; Built 2026-11-22
+      </footer>
+    </main>
+<aside class="page-toc" aria-label="On this page">
+  <div class="page-toc-inner">
+    <div class="page-toc-title">On this page</div>
+    <ul><li class="toc-l3"><a href="#illustrative-composite-scenario-from-compliance-binder-to-continuous-guardrails-in-ninety-days">Illustrative Composite Scenario: From &quot;Compliance Binder&quot; to Continuous Guardrails in Ninety Days</a></li><li class="toc-l2"><a href="#301-the-five-level-ai-governance-maturity-model">30.1 The Five-Level AI Governance Maturity Model</a></li><li class="toc-l3"><a href="#the-guardrails">The Guardrails</a></li><li class="toc-l2"><a href="#302-a-306090-day-action-plan">30.2 A 30/60/90-Day Action Plan</a></li><li class="toc-l3"><a href="#the-guardrails-2">The Guardrails</a></li><li class="toc-l2"><a href="#303-from-point-in-time-sign-off-to-continuous-governance">30.3 From Point-in-Time Sign-Off to Continuous Governance</a></li><li class="toc-l3"><a href="#the-guardrails-3">The Guardrails</a></li><li class="toc-l2"><a href="#why-every-role-cares">Why Every Role Cares</a></li><li class="toc-l2"><a href="#chapter-summary">Chapter Summary</a></li><li class="toc-l2"><a href="#key-takeaways">Key Takeaways</a></li><li class="toc-l2"><a href="#questions-to-ask">Questions to Ask</a></li><li class="toc-l2"><a href="#notes">Notes</a></li></ul>
+  </div>
+</aside>
+  </div>
+</body>
+</html>

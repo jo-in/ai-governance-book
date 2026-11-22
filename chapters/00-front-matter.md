@@ -156,7 +156,7 @@ One of the quietest obstacles to AI governance is that executives, lawyers, secu
 
 ---
 
-## Notes
+## References
 
 [^fm-01]: Alex Singla et al., "The State of AI in 2025: Agents, Innovation, and Transformation," McKinsey & Company, November 5, 2025, https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai. **Annotation:** Reports that 88 percent of organizations use AI in at least one function and 62 percent are experimenting with agents, while roughly two-thirds remain in pilot/experimentation stages. [↗ Bibliography](../bibliography.md#mckinsey-2025-state-of-ai)
 

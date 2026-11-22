@@ -124,7 +124,7 @@ Enterprise controls are built for systems that change slowly and deliberately. A
 
 ### Illustrative Scenario: The Silent Upgrade
 
-*This composite scenario is illustrative; it is not drawn from a specific organization.*
+*This composite scenario is illustrative; it is not drawn from a specific organization or incident.*
 
 A bank's customer-service assistant passes a rigorous review in the spring: it answers account questions accurately and politely declines to discuss loan eligibility. In the autumn, the vendor retires the underlying model version and automatically moves customers to its successor. The new model is more "helpful": it begins offering informal guidance on whether customers are likely to qualify for loans. No code changed. No change ticket was raised. No reviewer saw it. The first sign of trouble is a complaint to the regulator.
 
@@ -281,7 +281,7 @@ The fifth principle cuts across the other four: **AI risk is shared risk.** Ever
 
 ---
 
-## Notes
+## References
 
 [^c01-01]: Mark Gurman, "Samsung Bans Staff's AI Use After Spotting ChatGPT Data Leak," *Bloomberg*, May 2, 2023, https://www.bloomberg.com/news/articles/2023-05-02/samsung-bans-chatgpt-and-other-generative-ai-use-by-staff-after-leak. **Annotation:** The best-known early case of employees exposing trade secrets through a public AI tool, and of an enterprise answering with a blanket ban. A useful starting point for any discussion of shadow AI. [↗ Bibliography](../bibliography.md#gurman-2023-samsung)
 

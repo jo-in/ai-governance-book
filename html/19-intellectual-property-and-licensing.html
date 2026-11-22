@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chapter 19: Intellectual Property &amp; Licensing — Building Guardrails for Enterprise AI</title>
+  <meta name="description" content="Hardening Enterprise AI Against Hallucinations, Hacks, and Liability" />
+  <script>
+    (function () {
+      var param = null;
+      var saved = null;
+      var winTheme = null;
+      try {
+        param = new URLSearchParams(window.location.search).get("theme");
+      } catch (e) {}
+      try {
+        saved = localStorage.getItem("book-theme");
+      } catch (e) {}
+      try {
+        var wm = (window.name || "").match(/^book-theme:(dark|light)$/);
+        if (wm) winTheme = wm[1];
+      } catch (e) {}
+      var explicit = (param === "dark" || param === "light")
+        ? param
+        : ((saved === "dark" || saved === "light")
+            ? saved
+            : ((winTheme === "dark" || winTheme === "light") ? winTheme : null));
+      if (explicit) {
+        try { localStorage.setItem("book-theme", explicit); } catch (e) {}
+        try { window.name = "book-theme:" + explicit; } catch (e) {}
+        document.documentElement.setAttribute("data-theme-explicit", "1");
+      }
+      var theme = explicit || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+  <script src="assets/search-index.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <span aria-hidden="true">&#9776;</span>
+      </button>
+      <a class="brand" href="index.html">
+        <span class="brand-title">Building Guardrails for Enterprise AI</span>
+      </a>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="search-focus-btn" type="button" title="Search (/ or Cmd+K)">Search <kbd>/</kbd></button>
+      <button class="icon-btn" id="theme-toggle" type="button" title="Toggle color theme" aria-label="Toggle color theme">&#9680;</button>
+    </div>
+  </header>
+
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <div class="layout">
+<aside class="sidebar" id="sidebar" aria-label="Book navigation">
+  <div class="sidebar-search">
+    <label class="sr-only" for="search-input">Search handbook</label>
+    <input id="search-input" class="search-input" type="search" placeholder="Search handbook… (/)" autocomplete="off" />
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-home" href="index.html">Contents &amp; Overview</a>
+    <div class="nav-group">
+      <div class="nav-group-title">Front Matter</div>
+      <ul class="nav-list">
+        <li><a href="00-front-matter.html">Front Matter</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part I: Foundations</div>
+      <ul class="nav-list">
+        <li><a href="01-why-ai-risk-is-different.html">Chapter 1: Why AI Risk Is Different</a></li>
+        <li><a href="02-reference-frameworks-at-a-glance.html">Chapter 2: Reference Frameworks at a Glance</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part II: Governance &amp; Accountability</div>
+      <ul class="nav-list">
+        <li><a href="03-board-and-executive-oversight.html">Chapter 3: Board &amp; Executive Oversight</a></li>
+        <li><a href="04-ai-governance-operating-model.html">Chapter 4: The AI Governance Operating Model</a></li>
+        <li><a href="05-policies-inventory-and-risk-tiering.html">Chapter 5: Policies, Inventory &amp; Risk Tiering</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part III: Data Risk</div>
+      <ul class="nav-list">
+        <li><a href="06-data-leakage-and-shadow-ai.html">Chapter 6: Data Leakage &amp; Shadow AI</a></li>
+        <li><a href="07-internal-over-exposure-and-permission-aware-ai.html">Chapter 7: Internal Over-Exposure &amp; Permission-Aware AI</a></li>
+        <li><a href="08-data-provenance-consent-and-sovereignty.html">Chapter 8: Data Provenance, Consent &amp; Sovereignty</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part IV: Security</div>
+      <ul class="nav-list">
+        <li><a href="09-ai-threat-landscape.html">Chapter 9: The AI Threat Landscape</a></li>
+        <li><a href="10-prompt-injection-and-manipulation.html">Chapter 10: Prompt Injection &amp; Manipulation</a></li>
+        <li><a href="11-securing-ai-agents.html">Chapter 11: Securing AI Agents</a></li>
+        <li><a href="12-model-and-supply-chain-security.html">Chapter 12: Model &amp; Supply Chain Security</a></li>
+        <li><a href="13-infrastructure-and-operational-security.html">Chapter 13: Infrastructure &amp; Operational Security</a></li>
+        <li><a href="14-ai-enabled-external-threats.html">Chapter 14: AI-Enabled External Threats</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part V: Output, Trust &amp; Liability</div>
+      <ul class="nav-list">
+        <li><a href="15-hallucinations-and-reliability.html">Chapter 15: Hallucinations &amp; Reliability</a></li>
+        <li><a href="16-bias-fairness-and-discrimination.html">Chapter 16: Bias, Fairness &amp; Discrimination</a></li>
+        <li><a href="17-human-oversight-and-automation-bias.html">Chapter 17: Human Oversight &amp; Automation Bias</a></li>
+        <li><a href="18-transparency-disclosure-and-content-provenance.html">Chapter 18: Transparency, Disclosure &amp; Content Provenance</a></li>
+        <li><a href="19-intellectual-property-and-licensing.html" class="is-active" aria-current="page">Chapter 19: Intellectual Property &amp; Licensing</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VI: Regulation &amp; Compliance</div>
+      <ul class="nav-list">
+        <li><a href="20-the-global-regulatory-landscape.html">Chapter 20: The Global Regulatory Landscape</a></li>
+        <li><a href="21-sector-specific-requirements.html">Chapter 21: Sector-Specific Requirements</a></li>
+        <li><a href="22-auditability-assessments-and-evidence.html">Chapter 22: Auditability, Assessments &amp; Evidence</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VII: Third-Party &amp; Lifecycle Risk</div>
+      <ul class="nav-list">
+        <li><a href="23-vendor-and-third-party-ai-risk.html">Chapter 23: Vendor &amp; Third-Party AI Risk</a></li>
+        <li><a href="24-model-lifecycle-and-change-management.html">Chapter 24: Model Lifecycle &amp; Change Management</a></li>
+        <li><a href="25-operational-resilience-and-business-continuity.html">Chapter 25: Operational Resilience &amp; Business Continuity</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VIII: Operationalizing the Guardrails</div>
+      <ul class="nav-list">
+        <li><a href="26-testing-evaluation-and-red-teaming.html">Chapter 26: Testing, Evaluation &amp; Red-Teaming</a></li>
+        <li><a href="27-ai-incident-response.html">Chapter 27: AI Incident Response</a></li>
+        <li><a href="28-metrics-kris-and-reporting.html">Chapter 28: Metrics, KRIs &amp; Reporting</a></li>
+        <li><a href="29-building-a-risk-aware-ai-culture.html">Chapter 29: Building a Risk-Aware AI Culture</a></li>
+        <li><a href="30-governance-maturity-model-and-roadmap.html">Chapter 30: Governance Maturity Model &amp; Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Appendices</div>
+      <ul class="nav-list">
+        <li><a href="31-appendices.html">Appendices: Templates, Checklists &amp; Reference Toolkit</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Reference</div>
+      <ul class="nav-list">
+        <li><a href="bibliography.html">Annotated Bibliography</a></li>
+      </ul>
+    </div>
+  </nav>
+</aside>
+    <main class="main" id="main">
+      <article class="content">
+        <div class="doc-meta-bar"><span class="doc-eyebrow">Part V: Output, Trust &amp; Liability</span><span class="doc-reading-meta">5,458 words · ~23 min read</span></div>
+        <h1>Chapter 19: Intellectual Property &amp; Licensing</h1>
+<p><em>Part V: Output, Trust &amp; Liability</em></p>
+<blockquote>
+<p><strong>In this chapter</strong></p>
+<ul>
+<li>Why generative AI outputs still expose enterprises to copyright, trademark, and trade-dress infringement—illustrated by <em>Getty Images v. Stability AI</em> and <em>Thomson Reuters v. Ross Intelligence</em>.</li>
+<li>Why raw AI outputs fail human-authorship copyright rules in the United States (<em>Thaler v. Perlmutter</em>, USCO Part 2), diverge globally (<em>Li v. Liu</em>, UK CDPA § 9(3)), and require deliberate IP strategy.</li>
+<li>Why popular <code>&quot;open-weight&quot;</code> models (<code>Llama</code>, <code>Gemma</code>, <code>Mistral</code>) are not OSI Open Source—and how MAU caps, attribution duties, AUP flow-downs, and research-only traps restrict enterprise deployment.</li>
+<li>How AI coding assistants can introduce <code>GPL</code>/<code>AGPL</code> copyleft contamination and open-source breach claims (<em>Doe v. GitHub</em>), and how <code>SPDX 3.0</code> + CI/CD snippet scanning mitigate acquisition risk.</li>
+<li>Why vendor IP indemnities (Microsoft CCC, Google Cloud, OpenAI Copyright Shield) vanish if you disable built-in filters or overlook trademark exclusions and liability caps.</li>
+</ul>
+</blockquote>
+<p><strong>Closing the value-and-ownership ledger.</strong> Chapters 15 through 18 focused on ensuring enterprise AI produces accurate, fair, overseen, and transparent outputs. Chapter 19 closes Part V by answering the commercial questions boards and investors ask right before scale or acquisition: <em>Do we have the legal right to use and ship this model, could its outputs infringe someone else's intellectual property, and do we actually own—and can we defend—what the AI helps us build?</em> Across marketing assets, open-weight downloads, coding copilots, and vendor indemnity contracts, AI reshapes traditional software and creative IP boundaries faster than standard legal playbooks expect.</p>
+<hr />
+<h3 id="illustrative-composite-scenario-the-unprotectable-campaign-and-the-copyleft-microservice">Illustrative Composite Scenario: The Unprotectable Campaign and the Copyleft Microservice <a class="heading-anchor" href="#illustrative-composite-scenario-the-unprotectable-campaign-and-the-copyleft-microservice" aria-label="Link to section">#</a></h3>
+<p>A fast-growing B2B SaaS provider integrates generative AI into both brand marketing and platform engineering ahead of a Series D diligence process. Marketing produces its flagship annual campaign visuals from text prompts using a third-party diffusion platform; weeks before launch, trademark counsel spots a warped, faint stock-agency watermark embedded inside the background texture of two hero graphics—and advises the CMO that prompt-generated images cannot even be registered or enforced against copycat competitors under U.S. copyright law.</p>
+<p>Meanwhile, a backend squad pulls a flagship open-weight LLM hosted on a public hub under the assumption that <code>&quot;all weights from this family are Apache 2.0&quot;</code>, inadvertently deploying a variant governed by a non-commercial research license into a billed enterprise API. Worse, automated M&amp;A code diligence flags a <code>45</code>-line telemetry-parsing helper suggested verbatim by a coding assistant that originated inside an <code>AGPLv3</code>-licensed repository without attribution headers—threatening forced source disclosure across the surrounding SaaS service. When General Counsel looks to the cloud vendor's IP indemnity for defense relief, Security admits an engineer turned off the API's built-in copy-detection filter months earlier to trim median response latency, immediately voiding coverage and forcing an emergency clean-room rewrite before deal closing.</p>
+<p><em>(This composite scenario is illustrative; it is not drawn from a specific organization or incident.)</em></p>
+<hr />
+<h2 id="191-inbound-risk-generated-output-that-infringes-someone-elses-rights">19.1 Inbound Risk: Generated Output That Infringes Someone Else's Rights <a class="heading-anchor" href="#191-inbound-risk-generated-output-that-infringes-someone-elses-rights" aria-label="Link to section">#</a></h2>
+<p>Organizations often treat AI intellectual property risk solely as a debate among foundation-model developers over whether web scraping counts as copyright fair use. Even if your company never pre-trains a foundation model from scratch, <strong>inbound output infringement</strong> lands squarely on the enterprise deploying or publishing generated outputs.</p>
+<p>At the technical root lies <strong>memorization</strong>: neural models trained repeatedly on popular texts, codebases, photographs, and corporate logos can emit near-verbatim replicas under ordinary prompting (<code>Carlini et al., 2021</code>).<sup class="fn-ref"><a href="#fn-c19-01" id="fnref-c19-01" title="Jump to note 1">[1]</a></sup> When those artifacts surface inside product interfaces, external advertising, customer training portals, or fine-tuned commercial search tools, three distinct legal exposures trigger regardless of how clean the vendor claimed its dataset was:</p>
+<ul>
+<li><strong>Trademark &amp; Watermark Infringement (<code>Getty Images v. Stability AI</code>):</strong> On November 4, 2025, Mrs Justice Joanna Smith of the High Court of England and Wales delivered a landmark judgment in <em><strong>Getty Images (US) Inc &amp; Ors v. Stability AI Ltd</strong></em> (<code>[2025] EWHC 2863 (Ch)</code>).<sup class="fn-ref"><a href="#fn-c19-02" id="fnref-c19-02" title="Jump to note 2">[2]</a></sup> While Getty dropped its UK primary training-copyright claims for territorial reasons and the High Court dismissed secondary copyright infringement over downloaded model weights (granting permission to appeal that novel issue in <code>[2025] EWHC 3343 (Ch)</code>), the Court <strong>upheld limited trademark infringement under Trade Marks Act 1994 §§ 10(1) and 10(2)</strong> where early Stable Diffusion releases generated distorted <code>Getty</code> and <code>iStock</code> watermarks inside image outputs. For enterprise marketing and product teams, the takeaway is crystal clear: even where copyright claims over model weights stall, <strong>emitting recognizable third-party brand marks, trade dress, or distorted stock watermarks creates strict trademark exposure</strong>.</li>
+<li><strong>Market-Substituting Fine-Tuning &amp; Fair-Use Rejection (<code>Thomson Reuters v. Ross Intelligence</code>):</strong> Enterprises training internal classifiers or domain-specific models on licensed competitor content also face sharp fair-use boundaries. On February 11, 2025, Third Circuit Judge Stephanos Bibas (sitting by designation in Delaware) issued a landmark revised summary-judgment ruling in <em><strong>Thomson Reuters Enterprise Centre GmbH v. Ross Intelligence Inc.</strong></em> (<code>No. 1:20-cv-0613-SB</code>), granting partial summary judgment for Thomson Reuters on copyright infringement and rejecting Ross's fair-use defense.<sup class="fn-ref"><a href="#fn-c19-03" id="fnref-c19-03" title="Jump to note 3">[3]</a></sup> Because Ross built an AI legal-search engine trained on contractor-written <code>Bulk Memos</code> copied from proprietary <code>Westlaw</code> headnotes to create a competing commercial substitute, fair use failed decisively—particularly on market substitution (factor four).</li>
+<li><strong>Trade-Dress and Style Replication Risk:</strong> Prompting tools with <code>&quot;recreate [competitor product interface]&quot;</code> or <code>&quot;render in the distinct visual style of [living commercial illustrator]&quot;</code> invites both copyright substantial-similarity disputes and unfair-competition / passing-off claims even if individual training weights never violate statute.</li>
+</ul>
+<h3 id="the-guardrails">The Guardrails <a class="heading-anchor" href="#the-guardrails" aria-label="Link to section">#</a></h3>
+<ol>
+<li><strong>Ban Brand, Artist, and Trademark Prompts Externally:</strong> Prohibit employees and marketing agencies from referencing living artists, protected characters, competitor product designs, or <code>&quot;stock photo watermark&quot;</code> terms in prompts generating external-facing media or UI concepts.</li>
+<li><strong>Lock On Vendor Similarity &amp; Regurgitation Filters:</strong> Keep foundation-model copyright/recitation blockers, similarity classifiers, and content filters permanently enabled across all corporate tenants (<code>19.5</code>).</li>
+<li><strong>Clear External AI Visuals Before Publication:</strong> Run commercial AI marketing assets through reverse-image search, trademark screening, and watermark-artifact inspection (<code>Getty v. Stability AI</code>) with the same rigor applied to agency stock licenses.<sup class="fn-ref"><a href="#fn-c19-02" id="fnref-c19-02-2" title="Jump to note 2">[2]</a></sup></li>
+<li><strong>Prohibit Fine-Tuning on Unlicensed Commercial or Competitor Content:</strong> Require explicit Data Provenance &amp; Legal sign-off (Chapter 8) before ingesting competitor documentation, paywalled datasets, or vendor knowledge bases into custom training or fine-tuning corpora (<code>Thomson Reuters v. Ross</code>).<sup class="fn-ref"><a href="#fn-c19-03" id="fnref-c19-03-2" title="Jump to note 3">[3]</a></sup></li>
+</ol>
+<hr />
+<h2 id="192-outbound-risk-who-owns-and-can-protect-ai-generated-work">19.2 Outbound Risk: Who Owns and Can Protect AI-Generated Work? <a class="heading-anchor" href="#192-outbound-risk-who-owns-and-can-protect-ai-generated-work" aria-label="Link to section">#</a></h2>
+<p>Inbound risk asks whether your AI output infringes someone else's work; <strong>outbound risk</strong> asks whether your company owns—and can stop rivals from copying—the code, documentation, UI designs, drug candidates, or media your teams build with AI. Across global markets, copyright protection fragments along sharp human-authorship borders.</p>
+<p>In the United States, federal courts and regulators draw a firm boundary excluding autonomous or prompt-only AI outputs:</p>
+<ul>
+<li><strong>U.S. Copyright Office Guidance (<code>Part 2: Copyrightability</code>, January 2025):</strong> Reviewing thousands of stakeholder submissions, the U.S. Copyright Office concluded that supplying detailed text prompts—no matter how iterative, lengthy, or refined—generally functions as providing unprotectable <em>ideas</em> or directions rather than controlling final expressive form.<sup class="fn-ref"><a href="#fn-c19-04" id="fnref-c19-04" title="Jump to note 4">[4]</a></sup> Copyright subsists <em>only</em> where a human contributes perceptible original expression, such as materially editing outputs, integrating AI elements into an original human composition, or exercising creative selection and arrangement—and applicants must explicitly disclaim appreciable AI-generated portions on registration filings.</li>
+<li><strong>Federal Appellate Affirmation (<code>Thaler v. Perlmutter</code>, March 18, 2025):</strong> In <code>130 F.4th 1039</code> (D.C. Cir. 2025), a unanimous panel led by Judge Patricia Ann Millett affirmed that the Copyright Act of 1976 requires <strong>human authorship</strong> as a non-negotiable statutory precondition, upholding denial of copyright registration for an artwork autonomously created by Stephen Thaler's <code>&quot;Creativity Machine.&quot;</code><sup class="fn-ref"><a href="#fn-c19-05" id="fnref-c19-05" title="Jump to note 5">[5]</a></sup> (Because Thaler disclaimed human creative control administratively, the D.C. Circuit left open exactly how much human post-editing transforms an AI-assisted asset into registrable expression.)</li>
+</ul>
+<p>Outside the United States, major commercial jurisdictions diverge significantly, creating patchwork IP portfolios for multinational firms:</p>
+<ul>
+<li><strong>China (<code>Li v. Liu</code>, November 27, 2023):</strong> In <code>(2023) Jing 0491 Min Chu No. 11279</code>, the Beijing Internet Court recognized copyright protection in a Stable Diffusion image because the human user's progressive prompt crafting, negative prompts, parameter selection, and iterative curation reflected original <code>&quot;intellectual investment&quot;</code> and aesthetic judgment.<sup class="fn-ref"><a href="#fn-c19-06" id="fnref-c19-06" title="Jump to note 6">[6]</a></sup></li>
+<li><strong>United Kingdom (<code>CDPA 1988 § 9(3)</code>):</strong> Under Section <code>9(3)</code> of the UK <em>Copyright, Designs and Patents Act 1988</em>, <code>&quot;computer-generated&quot;</code> works lacking a human author receive statutory protection vesting in <em>&quot;the person by whom the arrangements necessary for the creation of the work are undertaken&quot;</em>—a distinct regime currently under active policy review that differs from both U.S. exclusion and Chinese prompt-authorship reasoning.<sup class="fn-ref"><a href="#fn-c19-07" id="fnref-c19-07" title="Jump to note 7">[7]</a></sup></li>
+</ul>
+<p>For enterprise executives, the strategic risk is straightforward: <strong>if competitors legally scrape your marketing copy, UI assets, customer manuals, or boilerplate software code produced purely via prompts, U.S. copyright may offer zero enforcement remedy.</strong> Worse, submitting unedited AI assets in federal filings without disclosing AI portions risks invalidating copyright registrations during enforcement litigation. High-value commercial assets therefore require intentional protection layers beyond raw copyright: substantial documented human authorship, <strong>trade-secret governance</strong> (confidential internal algorithms, customer workflows, non-public weights), registered trademarks, and design or utility patents (which likewise require documented human inventorship).</p>
+<h3 id="the-guardrails-2">The Guardrails <a class="heading-anchor" href="#the-guardrails-2" aria-label="Link to section">#</a></h3>
+<ol>
+<li><strong>Preserve Crown-Jewel Works Under Human-Authored Craft:</strong> Require substantial, documented human creative transformation—editing, architectural design, composition, and selection—on proprietary source code cores, brand marks, flagship UX assets, and key commercial content intended for copyright enforcement (<code>USCO Part 2</code>).<sup class="fn-ref"><a href="#fn-c19-04" id="fnref-c19-04-2" title="Jump to note 4">[4]</a></sup></li>
+<li><strong>Maintain Immutable Creation &amp; Edit Logs:</strong> Retain prompt drafts, intermediate asset versions, human-redline commits, and Git history proving human authorship contributions ahead of copyright registration (<code>USCO</code> disclaimers) or IP disputes.</li>
+<li><strong>Shift Unregistrable Outputs to Trade-Secret &amp; Contract Protections:</strong> Treat unedited internal AI analytics, synthetic datasets, and proprietary workflow prompts as <strong>trade secrets</strong> guarded by Chapter 6–7 access controls, NDAs, and customer terms of service rather than assuming automatic copyright protection.</li>
+<li><strong>Update Employee &amp; Contractor IP Assignment Clauses:</strong> Require agencies, contractors, and vendors delivering brand assets or software code to disclose material generative-AI usage and certify compliance with your IP creation policies before milestone acceptance.</li>
+</ol>
+<hr />
+<h2 id="193-open-weight-model-licenses-and-their-usage-restrictions">19.3 Open-Weight Model Licenses and Their Usage Restrictions <a class="heading-anchor" href="#193-open-weight-model-licenses-and-their-usage-restrictions" aria-label="Link to section">#</a></h2>
+<p>Engineering teams routinely call downloadable foundation models (<code>Llama</code>, <code>Gemma</code>, <code>Mistral</code>, <code>Qwen</code>) <code>&quot;open source&quot;</code> because their weights sit publicly on Hugging Face. That shorthand creates severe commercial compliance mistakes. Very few leading generative weights actually meet traditional open-source standards.</p>
+<p>In October 2024, the <strong>Open Source Initiative (OSI)</strong> published <em><strong>The Open Source AI Definition — Version 1.0 (<code>OSAID 1.0</code>)</strong></em> establishing that true Open Source AI requires freedom to use, study, modify, and share <em>including</em> sufficient training-data information to recreate an equivalent model, with zero field-of-use or scale restrictions.<sup class="fn-ref"><a href="#fn-c19-08" id="fnref-c19-08" title="Jump to note 8">[8]</a></sup> Virtually all mainstream downloadable weights fail <code>OSAID 1.0</code>—and are properly classified as <strong>open-weight</strong> (source-available) models carrying custom commercial caps, branding rules, and Acceptable Use Policies (<code>AUPs</code>) whose breach voids the license entirely:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">License Family</th>
+<th style="text-align:left">Illustrative Models</th>
+<th style="text-align:left">Key Restrictions &amp; Triggers</th>
+<th style="text-align:left">Enterprise Operational Trap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Permissive OSI Licenses (<code>Apache 2.0</code> / <code>MIT</code>)</strong></td>
+<td style="text-align:left">Select open weights (e.g., <code>Mistral 7B</code>, <code>Qwen 2.5</code> subsets)</td>
+<td style="text-align:left">Full commercial use, modification, and redistribution with copyright/notice retention and standard patent peace clauses.</td>
+<td style="text-align:left">Teams assume <em>every</em> checkpoint under the same vendor brand carries <code>Apache 2.0</code>, missing custom licenses on newer or larger variants.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Meta Llama Community License (<sup class="fn-ref"><a href="#fn-c19-09" id="fnref-c19-09" title="Jump to note 9">[9]</a></sup>)</strong></td>
+<td style="text-align:left"><code>Llama 3</code>, <code>Llama 3.1</code>, <code>Llama 3.3</code>, <code>Llama 4</code> series</td>
+<td style="text-align:left"><strong><code>700 million</code> monthly active user (MAU)</strong> cap requires direct Meta commercial license; mandatory <code>&quot;Built with Llama&quot;</code> notice on UI/docs; public derivatives must start with <code>&quot;Llama&quot;</code>; binding Acceptable Use Policy (<code>AUP</code>).</td>
+<td style="text-align:left">Consumer apps or fast-scaling acquisitions approach <code>700M</code> MAU across affiliate products, or ship SaaS portals without <code>&quot;Built with Llama&quot;</code> attribution.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Google Gemma Terms of Use</strong></td>
+<td style="text-align:left">Open-weight <code>Gemma</code> model releases (model-specific check required)</td>
+<td style="text-align:left">Commercial permission conditioned on a strict <strong>Prohibited Use Policy</strong> that adopters must <strong>flow down</strong> into downstream customer terms, plus remote compliance enforcement clauses.</td>
+<td style="text-align:left">Enterprises embed Gemma behind APIs without cascading Prohibited Use restrictions into customer MSAs or mobile EULAs.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Custom Research / Non-Commercial Licenses</strong></td>
+<td style="text-align:left">Flagship/preview checkpoints (<code>Mistral Research License</code>, <code>CC BY-NC</code>)</td>
+<td style="text-align:left">Explicitly prohibits commercial monetization, production customer inference, or internal commercial deployment (<code>research only</code>).</td>
+<td style="text-align:left">Engineers pull flagship preview weights via Hugging Face defaults into production pricing or billing APIs, committing unlicensed copyright infringement.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Unlike <code>Apache 2.0</code>, violating a custom open-weight license's <code>AUP</code> (<code>&quot;no unauthorized clinical/legal advice&quot;</code>), omitting <code>&quot;Built with Llama&quot;</code> attribution, or breaching non-commercial scope terminates your license grant automatically—turning production inference into unpermitted copyright exposure right during customer audits or M&amp;A diligence.</p>
+<h3 id="the-guardrails-3">The Guardrails <a class="heading-anchor" href="#the-guardrails-3" aria-label="Link to section">#</a></h3>
+<ol>
+<li><strong>Enforce an Approved Open-Weight Registry Allow-List:</strong> Configure private internal model registries (mirroring Chapter 12 supply-chain gates) so engineers can pull <em>only</em> weights whose exact SPDX/custom license identifier (<code>Apache-2.0</code>, <code>Llama-3.1-Community</code>, <code>Gemma-Terms</code>) has been cleared by Legal.</li>
+<li><strong>Block Non-Commercial &amp; Research-Only Weights in CI/CD:</strong> Automatically fail build pipelines if container manifests, Hugging Face <code>config</code> references, or AI-BOM records (<code>SPDX 3.0</code> / <code>CycloneDX</code>) pull models carrying <code>NC</code> (<code>NonCommercial</code>) or research-only clauses into staging or production environments.</li>
+<li><strong>Operationalize Attribution &amp; Policy Flow-Downs:</strong> Build mandatory <code>&quot;Built with Llama&quot;</code> UI/docs attribution checks and <code>Llama AUP</code> / <code>Gemma Prohibited Use</code> flow-down templates directly into enterprise product release checklists (<sup class="fn-ref"><a href="#fn-c19-09" id="fnref-c19-09-2" title="Jump to note 9">[9]</a></sup>).</li>
+<li><strong>Track MAU Scale Thresholds Across Corporate Affiliates:</strong> Alert Legal and M&amp;A teams whenever consumer products or merged portfolio entities approach license scale triggers (<code>700M</code> MAU under Llama).</li>
+</ol>
+<hr />
+<h2 id="194-open-source-license-contamination-in-ai-generated-code">19.4 Open-Source License Contamination in AI-Generated Code <a class="heading-anchor" href="#194-open-source-license-contamination-in-ai-generated-code" aria-label="Link to section">#</a></h2>
+<p>Software teams using AI coding assistants face a parallel IP contamination threat inside application source repositories. Foundation coding models trained across billions of public GitHub lines periodically emit verbatim or near-verbatim utility functions originally licensed under <strong>permissive licenses requiring attribution (<code>MIT</code>, <code>BSD</code>, <code>Apache 2.0</code>)</strong>—or far worse, <strong>strong copyleft licenses (<code>GPLv3</code>, <code>AGPLv3</code>)</strong> stripped cleanly of their original copyright notices and license headers.</p>
+<p>For commercial SaaS and enterprise software vendors, <code>AGPLv3</code> snippet contamination is existential: unlike ordinary <code>GPL</code> (triggered upon binary distribution), <strong><code>AGPLv3</code> requires offering full corresponding source code over the network to every user interacting with the service</strong>. Even when a vendor believes it merely borrowed forty lines of parsing or retry logic suggested by a copilot, undisclosed copyleft code discovered during automated M&amp;A code scanning can force emergency product halts, escrowed indemnities, or costly clean-room rewrites.</p>
+<p>Federal litigation confirms this is not purely theoretical. In <em><strong>Doe 1 v. GitHub, Inc.</strong></em> (<code>No. 4:22-cv-06823-JST</code>, <code>2024 WL 235484</code>), developers sued GitHub, Microsoft, and OpenAI arguing that AI coding suggestions reproduced open-source snippets without preserving author names, copyright notices, or license terms.<sup class="fn-ref"><a href="#fn-c19-10" id="fnref-c19-10" title="Jump to note 10">[10]</a></sup> In orders issued in January and June 2024, U.S. District Judge Jon S. Tigar ultimately dismissed Digital Millennium Copyright Act (<code>DMCA § 1202(b)</code>) Copyright Management Information claims under an <code>&quot;identicality&quot;</code> requirement (certifying that statutory question for interlocutory appeal to the Ninth Circuit)—<strong>but decisively allowed plaintiffs' common-law breach-of-contract claims for violated open-source license conditions to proceed</strong>. Whether or not DMCA statutory damages apply, breaking an open-source license's attribution or copyleft terms remains a live contractual breach.</p>
+<p>Stopping AI-induced license contamination uses the same engineering rigor teams already apply to third-party open-source packages, updated for <em>snippet-level</em> AI suggestions and documented via <strong>SPDX Version 3.0 (<sup class="fn-ref"><a href="#fn-c19-11" id="fnref-c19-11" title="Jump to note 11">[11]</a></sup>)</strong> bills of materials.</p>
+<h3 id="the-guardrails-4">The Guardrails <a class="heading-anchor" href="#the-guardrails-4" aria-label="Link to section">#</a></h3>
+<ol>
+<li><strong>Enforce Public-Code Matching Blockers Organization-Wide:</strong> Configure enterprise AI coding assistants (GitHub Copilot Enterprise, internal code-completion IDEs) centrally to <strong>block completions matching public open-source code</strong>, removing individual developer discretion to turn off matching filters.</li>
+<li><strong>Add Snippet-Level Software Composition Analysis (<code>SCA</code>) to CI/CD:</strong> Run commercial open-source snippet scanners (not just package-manifest scanners reading <code>package.json</code> or <code>requirements.txt</code>) on pull requests to flag pasted or AI-generated verbatim blocks matching <code>GPL</code>, <code>AGPL</code>, or unattributed <code>Apache/MIT</code> code before merge.</li>
+<li><strong>Restrict Unreviewed Copilot Code Inside Crown-Jewel Modules:</strong> Prohibit pasting large multi-function AI generations (<code>&gt;20–30</code> lines) into proprietary encryption, licensing, billing, or core differentiating algorithms without senior architecture review and clean-room refactoring.</li>
+<li><strong>Track Code Provenance in <code>SPDX 3.0</code> &amp; Developer Guidelines:</strong> Require engineers to retain original license headers whenever intentionally adopting permissive open-source snippets and maintain continuous <code>SPDX 3.0</code> (<sup class="fn-ref"><a href="#fn-c19-11" id="fnref-c19-11-2" title="Jump to note 11">[11]</a></sup>) software bills of materials verified prior to external releases or corporate transactions.</li>
+</ol>
+<hr />
+<h2 id="195-vendor-ip-indemnification-what-it-covers-and-what-it-doesnt">19.5 Vendor IP Indemnification: What It Covers and What It Doesn't <a class="heading-anchor" href="#195-vendor-ip-indemnification-what-it-covers-and-what-it-doesnt" aria-label="Link to section">#</a></h2>
+<p>Recognizing that copyright uncertainty was freezing enterprise AI procurement, major cloud and AI vendors launched customer IP indemnification programs in late 2023—anchored by <strong>Microsoft's Copilot / Customer Copyright Commitment</strong> (<code>September 7, 2023</code>)<sup class="fn-ref"><a href="#fn-c19-12" id="fnref-c19-12" title="Jump to note 12">[12]</a></sup> and <strong>Google Cloud's Generative AI IP Indemnity</strong> (<code>October 12, 2023</code>), alongside OpenAI's <em>Copyright Shield</em>.<sup class="fn-ref"><a href="#fn-c19-13" id="fnref-c19-13" title="Jump to note 13">[13]</a></sup> Microsoft pledged to defend commercial customers sued by third parties over copyright infringement caused by Copilot outputs, while Google Cloud introduced a two-pronged model protecting customers against both <strong>training-data infringement claims</strong> (<code>Prong 1</code>) and <strong>generated-output copyright claims</strong> (<code>Prong 2</code>).</p>
+<p>Executive sponsors frequently read headlines announcing <code>&quot;unlimited vendor IP protection&quot;</code> and cancel internal compliance checks. Careful contract inspection exposes <strong>five sharp exclusions</strong> where enterprise buyers routinely discover coverage vanishes when a lawsuit actually lands:</p>
+<ol>
+<li><strong>Mandatory Built-In Filter &amp; Guardrail Prerequisite:</strong> Both Microsoft's Customer Copyright Commitment and Google Cloud's indemnity strictly condition protection on keeping vendor <strong>content filters, copy-blocking detectors, metaprompts, and grounding citations enabled</strong>.<sup class="fn-ref"><a href="#fn-c19-12" id="fnref-c19-12-2" title="Jump to note 12">[12]</a></sup>,<sup class="fn-ref"><a href="#fn-c19-13" id="fnref-c19-13-2" title="Jump to note 13">[13]</a></sup> If an engineering team toggles off copy-detection filters in Azure OpenAI or disables safety filters via an API flag to reduce latency, IP indemnification evaporates retroactively.</li>
+<li><strong>Intentional Prompting &amp; Unlicensed Input Carve-Outs:</strong> Indemnities never cover customers who deliberately prompt <code>&quot;generate Mickey Mouse&quot;</code> or <code>&quot;rewrite this competitor textbook&quot;</code>, nor claims arising from copyrighted documents uploaded by the <em>customer</em> into RAG indexes or fine-tuning jobs.</li>
+<li><strong>Aggregate Liability Caps vs. Super-Caps:</strong> Outside bespoke enterprise agreements, default API terms often fold IP indemnification under general limitation-of-liability caps (<code>12 months of trailing fees</code>)—trivial relative to multi-million-dollar copyright defense costs.</li>
+<li><strong>Trademark, Trade-Dress &amp; Patent Exclusions:</strong> Many headline commitments explicitly protect only third-party <em>copyright</em> infringement, leaving <em>Getty</em>-style trademark, right-of-publicity, and patent infringement claims completely unindemnified unless negotiated explicitly.</li>
+<li><strong>Hosted Third-Party &amp; Open-Weight Model Exclusions:</strong> Calling a cloud marketplace endpoint hosting <code>Llama</code>, <code>Mistral</code>, or community models—or fine-tuning base weights with enterprise data—often sits <em>outside</em> the cloud host's first-party generative indemnity unless specifically scheduled by addendum.</li>
+</ol>
+<p>Nor can casualty insurance bail out unindemnified copyright or advertising disputes: as Chapter 3 and Chapter 15 noted, <strong>ISO / Verisk Commercial General Liability endorsements <code>CG 40 47</code> and <code>CG 40 48</code> (effective January 1, 2026)</strong> exclude generative-AI liabilities—including <code>&quot;personal and advertising injury&quot;</code> copyright and slogan claims—making vendor contract gaps directly exposed on the corporate balance sheet.<sup class="fn-ref"><a href="#fn-c19-14" id="fnref-c19-14" title="Jump to note 14">[14]</a></sup></p>
+<figure class="mermaid-wrap"><pre class="mermaid">flowchart LR
+    Start[&quot;AI Asset or Code Workflow&quot;] --&gt; Lic[&quot;Model License Gate (OSI vs. Open-Weight AUP &amp; Caps)&quot;]
+    Lic --&gt; Guard{&quot;Vendor Filters &amp; Guardrails Active?&quot;}
+    Guard --&gt;|&quot;No&quot;| Void[&quot;Indemnity Voided — Block Release&quot;]
+    Guard --&gt;|&quot;Yes&quot;| Scan[&quot;CI/CD Code SCA (GPL/AGPL) &amp; Brand Trademark Clearance&quot;]
+    Scan --&gt; Auth[&quot;Human Authorship Log or Trade Secret Tag&quot;]
+    Auth --&gt; Ship[&quot;Cleared Commercial Release + SPDX 3.0 Record&quot;]</pre></figure>
+<p><em>Caption: Enterprise AI IP and licensing clearance pipeline. Vendor indemnification remains valid only while centralized guardrails remain locked on, complemented by open-weight license checks, snippet SCA scanning, brand clearance, and human-authorship documentation.</em></p>
+<h3 id="the-guardrails-5">The Guardrails <a class="heading-anchor" href="#the-guardrails-5" aria-label="Link to section">#</a></h3>
+<ol>
+<li><strong>Lock Vendor Copyright Filters via Centralized Policy:</strong> Enforce Azure/Vertex/OpenAI content filters, duplication detectors, and public-code blockers programmatically via IAM and Terraform policy guardrails so application engineers cannot disable indemnity prerequisites (<sup class="fn-ref"><a href="#fn-c19-12" id="fnref-c19-12-3" title="Jump to note 12">[12]</a></sup>, <sup class="fn-ref"><a href="#fn-c19-13" id="fnref-c19-13-3" title="Jump to note 13">[13]</a></sup>).</li>
+<li><strong>Negotiate Explicit Coverage Scope, Super-Caps &amp; Model Schedules:</strong> Have Procurement and IP Counsel confirm in MSAs whether IP indemnification covers <em>both</em> training-data and output claims, extends to trademarks and hosted third-party models, and carries uncapped or dedicated multi-million-dollar defense super-caps (<code>&gt; 12 months fees</code>).</li>
+<li><strong>Quarantine Third-Party Inputs &amp; Prompt Hygiene:</strong> Never rely on vendor indemnity for outputs shaped by customer-uploaded unlicensed documents (<code>Thomson Reuters</code> style corpora); apply prompt-sanitization checks blocking protected brand/artist references.</li>
+<li><strong>Treat Vendor Indemnity as a Backstop—And Audit Insurance Gaps:</strong> Pair contractual IP commitments with internal <code>19.1–19.4</code> clearance gates and verify Media Liability / Tech E&amp;O renewals explicitly cover generative-AI claims excluded under ISO <code>CG 40 47</code>/<code>40 48</code> (<sup class="fn-ref"><a href="#fn-c19-14" id="fnref-c19-14-2" title="Jump to note 14">[14]</a></sup>).</li>
+</ol>
+<hr />
+<h2 id="why-every-role-cares">Why Every Role Cares <a class="heading-anchor" href="#why-every-role-cares" aria-label="Link to section">#</a></h2>
+<p>AI IP and licensing traps cut straight across valuation, M&amp;A diligence, marketing launches, software delivery, and vendor procurement.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">Primary Stakes in This Chapter</th>
+<th style="text-align:left">First Actions to Take</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board / M&amp;A Committee</strong></td>
+<td style="text-align:left"><code>AGPL</code> snippet contamination, unprotectable core IP, breached open-weight MAU/research licenses, and CGL <code>CG 40 47</code> gaps directly erode enterprise valuation and stall deals.</td>
+<td style="text-align:left">Require clean AI IP &amp; open-source snippet due-diligence status in quarterly audit packs and pre-M&amp;A readiness reviews.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>General Counsel / IP Counsel</strong></td>
+<td style="text-align:left"><em>Getty</em> (<code>trademarks</code>), <em>Thomson Reuters</em> (<code>fair use</code>), <em>Thaler</em> / <code>USCO</code> (<code>human authorship</code>), <em>Doe v. GitHub</em> (<code>license breach</code>), and conditional CCC/Cloud indemnities reshape exposure.</td>
+<td style="text-align:left">Update vendor indemnity playbooks, agency IP clauses, copyright-registration documentation SOPs, and <code>Media Liability</code> / <code>Tech E&amp;O</code> renewals.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CMO / Brand &amp; Creative</strong></td>
+<td style="text-align:left">Distorted watermarks trigger trademark claims (<code>Getty</code>), while raw prompt graphics cannot be copyrighted against copycats (<code>USCO Part 2</code>).</td>
+<td style="text-align:left">Mandate trademark/reverse-image clearance on external AI media; maintain human editorial design logs; ban <code>&quot;style of [artist]&quot;</code> prompts.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CTO / VP Engineering</strong></td>
+<td style="text-align:left">AI coding assistants inject unattributed <code>GPL</code>/<code>AGPL</code> snippets (<em>Doe</em>), and developers accidentally deploy non-commercial research weights into SaaS products.</td>
+<td style="text-align:left">Enforce public-code blockers on coding copilots, add snippet-level <code>SCA</code> scanners in CI/CD, and block <code>NC</code>/research model IDs at registry level.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO / Platform &amp; Cloud Ops</strong></td>
+<td style="text-align:left">An engineer toggling off API content/copy filters silently voids Microsoft CCC and Google Cloud IP indemnification across the tenant (<code>19.5</code>).</td>
+<td style="text-align:left">Lock vendor content/copyright filters via central tenant IAM/IaC policy and emit alerts on filter configuration drift.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Procurement / Vendor Risk</strong></td>
+<td style="text-align:left">Marketplace open-weight models and <code>12-month fee</code> liability caps leave large defense gaps hidden behind <code>&quot;AI Indemnity&quot;</code> marketing claims.</td>
+<td style="text-align:left">Enforce contract checklists covering Prong 1+2 training/output defense, trademark claims, scheduled models, and guardrail notice terms.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CISO / AppSec &amp; FinOps</strong></td>
+<td style="text-align:left">Model-registry governance and <code>SPDX 3.0</code> provenance bridge Chapters 12 and 19 to prevent counterfeit weights, unapproved licenses, and exposed secrets.</td>
+<td style="text-align:left">Enforce <code>SPDX 3.0</code> / <code>CycloneDX</code> AI-BOM tracking for every deployed weight and SaaS codebase release.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="chapter-summary">Chapter Summary <a class="heading-anchor" href="#chapter-summary" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Section</th>
+<th style="text-align:left">Core IP / Licensing Risk</th>
+<th style="text-align:left">Mandatory Enterprise Guardrail</th>
+<th style="text-align:left">Evidence &amp; Anchors</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Inbound Infringement</strong> (<code>19.1</code>)</td>
+<td style="text-align:left">Memorized artifacts recreate brand marks/watermarks (<em>Getty</em> trademark ruling) while unlicensed commercial fine-tuning fails fair use (<em>Thomson Reuters</em>).</td>
+<td style="text-align:left">Ban brand/artist prompt mimicry; keep copy/similarity filters on; run trademark/reverse-image clearance; gate fine-tuning corpora via Legal.</td>
+<td style="text-align:left">Carlini et al. (<sup class="fn-ref"><a href="#fn-c19-01" id="fnref-c19-01-2" title="Jump to note 1">[1]</a></sup>); <em>Getty v. Stability AI</em> (<sup class="fn-ref"><a href="#fn-c19-02" id="fnref-c19-02-3" title="Jump to note 2">[2]</a></sup>); <em>Thomson Reuters v. Ross</em> (<sup class="fn-ref"><a href="#fn-c19-03" id="fnref-c19-03-3" title="Jump to note 3">[3]</a></sup>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Outbound Ownership</strong> (<code>19.2</code>)</td>
+<td style="text-align:left">Pure prompt outputs lack U.S. copyright (<em>USCO Part 2</em>, <em>Thaler</em>), leaving global divergence (<em>Li v. Liu</em>, UK <code>§ 9(3)</code>) and weak exclusivity against rivals.</td>
+<td style="text-align:left">Preserve documented human authorship on crown-jewel IP; keep edit logs; guard raw AI assets as trade secrets/trademarks; update contractor IP terms.</td>
+<td style="text-align:left"><code>USCO Part 2</code> (<sup class="fn-ref"><a href="#fn-c19-04" id="fnref-c19-04-3" title="Jump to note 4">[4]</a></sup>); <em>Thaler v. Perlmutter</em> (<sup class="fn-ref"><a href="#fn-c19-05" id="fnref-c19-05-2" title="Jump to note 5">[5]</a></sup>); <em>Li v. Liu</em> (<sup class="fn-ref"><a href="#fn-c19-06" id="fnref-c19-06-2" title="Jump to note 6">[6]</a></sup>); UK <code>CDPA § 9(3)</code> (<sup class="fn-ref"><a href="#fn-c19-07" id="fnref-c19-07-2" title="Jump to note 7">[7]</a></sup>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Open-Weight Model Licenses</strong> (<code>19.3</code>)</td>
+<td style="text-align:left">Open-weight models fail <code>OSAID 1.0</code>, embedding <code>700M</code> MAU triggers (<code>Llama</code>), <code>&quot;Built with Llama&quot;</code> / Gemma <code>AUP</code> flow-downs, and non-commercial research traps.</td>
+<td style="text-align:left">Maintain a Legal-cleared model registry allow-list; block <code>NC</code>/research licenses in CI/CD; enforce attribution notices, <code>AUP</code> flow-downs, and MAU tracking.</td>
+<td style="text-align:left"><code>OSAID 1.0</code> (<sup class="fn-ref"><a href="#fn-c19-08" id="fnref-c19-08-2" title="Jump to note 8">[8]</a></sup>); <em>Meta Llama License</em> (<sup class="fn-ref"><a href="#fn-c19-09" id="fnref-c19-09-3" title="Jump to note 9">[9]</a></sup>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Code License Contamination</strong> (<code>19.4</code>)</td>
+<td style="text-align:left">AI code assistants emit <code>GPL</code>/<code>AGPL</code> or unattributed <code>MIT/Apache</code> snippets, risking breach-of-contract suits (<em>Doe v. GitHub</em>) and M&amp;A source-disclosure traps.</td>
+<td style="text-align:left">Enforce public-code suggestion blockers centrally; run CI/CD snippet-level <code>SCA</code> scans; log code provenance in <code>SPDX 3.0</code> SBOMs.</td>
+<td style="text-align:left"><em>Doe 1 v. GitHub</em> (<sup class="fn-ref"><a href="#fn-c19-10" id="fnref-c19-10-2" title="Jump to note 10">[10]</a></sup>); <code>SPDX 3.0</code> (<sup class="fn-ref"><a href="#fn-c19-11" id="fnref-c19-11-3" title="Jump to note 11">[11]</a></sup>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Vendor IP Indemnities</strong> (<code>19.5</code>)</td>
+<td style="text-align:left">Vendor commitments void if safety filters are disabled, cap payouts at <code>12 months</code> fees, exclude trademarks/third-party models, and collide with CGL <code>CG 40 47</code>.</td>
+<td style="text-align:left">Lock vendor guardrails centrally via IaC; negotiate super-caps + trademark/hosted-model schedules; maintain internal clearance + Cyber/Media E&amp;O alignment.</td>
+<td style="text-align:left">Microsoft CCC (<sup class="fn-ref"><a href="#fn-c19-12" id="fnref-c19-12-4" title="Jump to note 12">[12]</a></sup>); Google IP Indemnity (<sup class="fn-ref"><a href="#fn-c19-13" id="fnref-c19-13-4" title="Jump to note 13">[13]</a></sup>); ISO/Verisk (<sup class="fn-ref"><a href="#fn-c19-14" id="fnref-c19-14-3" title="Jump to note 14">[14]</a></sup>)</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="key-takeaways">Key Takeaways <a class="heading-anchor" href="#key-takeaways" aria-label="Link to section">#</a></h2>
+<ol>
+<li><strong>Memorized marks and market-substituting training trigger real infringement today.</strong> Even when training-data copyright suits stall on territory, <em>Getty Images v. Stability AI</em> enforces trademark liability on output watermarks while <em>Thomson Reuters v. Ross Intelligence</em> rejects fair use for competing commercial training.</li>
+<li><strong>Do not build core enterprise valuation on unedited AI copyright.</strong> Under <code>USCO Part 2</code> and <em>Thaler v. Perlmutter</em>, raw prompt outputs cannot be copyrighted in the United States despite differing paths in <em>Li v. Liu</em> and UK <code>§ 9(3)</code>—requiring documented human modification, trade-secret protection, and contractor disclosure rules.</li>
+<li><strong>&quot;Open-weight&quot; is not OSI Open Source.</strong> Check exact licenses on every <code>Llama</code>, <code>Gemma</code>, and <code>Mistral</code> variant inside model registries to respect <code>700M</code> MAU caps, <code>&quot;Built with Llama&quot;</code> notices, <code>AUP</code> flow-downs, and non-commercial prohibitions.</li>
+<li><strong>Prevent <code>AGPL</code> and attribution breaches before M&amp;A diligence.</strong> <em>Doe v. GitHub</em> leaves common-law license contract claims active, making centralized copilot public-code filters, snippet-level CI/CD <code>SCA</code> scanning, and <code>SPDX 3.0</code> provenance mandatory hygiene.</li>
+<li><strong>Vendor IP indemnities dissolve the moment you turn off guardrails.</strong> Keep content/copy filters locked via tenant admin policy (<code>Microsoft CCC</code>, <code>Google Cloud</code>), scrutinize liability caps and trademark exclusions, and verify insurance coverage past ISO <code>CG 40 47</code>/<code>40 48</code>.</li>
+</ol>
+<hr />
+<h2 id="questions-to-ask">Questions to Ask <a class="heading-anchor" href="#questions-to-ask" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Stakeholder</th>
+<th style="text-align:left">Diagnostic Question</th>
+<th style="text-align:left">What a Credible Answer Looks Like</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>General Counsel &amp; IP Lead</strong></td>
+<td style="text-align:left"><em>&quot;Which flagship products or campaigns rely heavily on generative AI, and do we have documented human authorship logs or trade-secret wrappers protecting them?&quot;</em></td>
+<td style="text-align:left">Written AI IP classification per product/campaign, preserved human edit/commit logs supporting registrations, and updated contractor disclosure clauses.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CMO &amp; Brand Operations</strong></td>
+<td style="text-align:left"><em>&quot;Before publishing synthetic hero imagery or copy, how do we verify no residual watermarks, competitor trade dress, or prohibited style prompts slipped through?&quot;</em></td>
+<td style="text-align:left">Pre-publication reverse-image and trademark clearance sign-offs, locked vendor similarity filters, and banned brand/artist prompt guidelines.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>VP Engineering &amp; Platform Lead</strong></td>
+<td style="text-align:left"><em>&quot;Can a developer deploy a non-commercial research weight into production today, or turn off public-code matching inside their AI coding assistant?&quot;</em></td>
+<td style="text-align:left">Private registry allow-listing by cleared license, centralized IDE policy locking public-code blockers on, and snippet-level CI/CD <code>SCA</code> gates against <code>GPL</code>/<code>AGPL</code>.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Cloud Ops &amp; Procurement</strong></td>
+<td style="text-align:left"><em>&quot;Are all vendor content/copyright filters locked centrally so engineer config changes cannot void Microsoft CCC, Google Cloud, or OpenAI IP indemnification?&quot;</em></td>
+<td style="text-align:left">IaC/tenant policy enforcement preventing filter toggles, plus contract schedules confirming Prong 1+2 scope, hosted-model coverage, trademarks, and super-caps.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Corporate Risk / CFO</strong></td>
+<td style="text-align:left"><em>&quot;Has our Risk team audited Tech E&amp;O and Media Liability policies against ISO <code>CG 40 47</code>/<code>40 48</code> exclusions for external AI outputs?&quot;</em></td>
+<td style="text-align:left">Written broker confirmation scheduling generative-AI advertising, copyright, and trademark defense cleanly alongside vendor indemnities.</td>
+</tr>
+</tbody>
+</table></div>
+
+<section class="footnotes" id="notes" aria-label="Notes">
+<h2>References</h2>
+<ol class="footnote-list">
+<li id="fn-c19-01"><span class="fn-body">Nicholas Carlini et al., &quot;Extracting Training Data from Large Language Models,&quot; in <em>Proceedings of the 30th USENIX Security Symposium (USENIX Security 21)</em>, August 2021, <a href="https://www.usenix.org/conference/usenixsecurity21/presentation/carlini-extracting" target="_blank" rel="noopener noreferrer">https://www.usenix.org/conference/usenixsecurity21/presentation/carlini-extracting</a>. <strong>Annotation:</strong> Demonstrates verbatim extraction of memorized text, identifiers, and code from trained LLMs via black-box prompting, proving why model outputs carry inbound memorization risk. <a href="bibliography.html#carlini-2021-extracting">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c19-01" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c19-01-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c19-02"><span class="fn-body"><em>Getty Images (US) Inc &amp; Ors v. Stability AI Ltd</em>, [2025] EWHC 2863 (Ch) (High Court of Justice of England and Wales, November 4, 2025; permission to appeal secondary copyright granted [2025] EWHC 3343 (Ch)). <strong>Annotation:</strong> Landmark UK ruling upholding limited trademark infringement (<code>Trade Marks Act 1994 §§ 10(1), 10(2)</code>) over generated distorted watermarks while dismissing secondary copyright infringement over weights. <a href="bibliography.html#getty-2025-stability">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c19-02" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c19-02-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a> <a href="#fnref-c19-02-3" class="fn-backref" title="Back to citation 3">&#8617;&#xfe0e;<sup>3</sup></a></span></li>
+<li id="fn-c19-03"><span class="fn-body"><em>Thomson Reuters Enterprise Centre GmbH v. Ross Intelligence Inc.</em>, No. 1:20-cv-0613-SB (D. Del. February 11, 2025). <strong>Annotation:</strong> Revised memorandum opinion by Judge Stephanos Bibas granting partial summary judgment for Thomson Reuters on copyright infringement and rejecting Ross's fair-use defense where copyrighted headnotes trained a competing legal AI search tool. <a href="bibliography.html#thomson-2025-ross">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c19-03" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c19-03-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a> <a href="#fnref-c19-03-3" class="fn-backref" title="Back to citation 3">&#8617;&#xfe0e;<sup>3</sup></a></span></li>
+<li id="fn-c19-04"><span class="fn-body">U.S. Copyright Office, <em>Copyright and Artificial Intelligence, Part 2: Copyrightability</em> (Washington, DC: Library of Congress, January 2025), <a href="https://www.copyright.gov/ai/Copyright-and-Artificial-Intelligence-Part-2-Copyrightability-Report.pdf" target="_blank" rel="noopener noreferrer">https://www.copyright.gov/ai/Copyright-and-Artificial-Intelligence-Part-2-Copyrightability-Report.pdf</a>. <strong>Annotation:</strong> Authoritative federal guidance confirming prompts alone do not confer human authorship; copyright extends only to perceptible human modifications or original selection and requires disclaiming AI-generated content. <a href="bibliography.html#usco-2025-copyrightability">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c19-04" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c19-04-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a> <a href="#fnref-c19-04-3" class="fn-backref" title="Back to citation 3">&#8617;&#xfe0e;<sup>3</sup></a></span></li>
+<li id="fn-c19-05"><span class="fn-body"><em>Thaler v. Perlmutter</em>, 130 F.4th 1039 (D.C. Cir. March 18, 2025). <strong>Annotation:</strong> Unanimous D.C. Circuit decision holding that the U.S. Copyright Act of 1976 requires human authorship as an indispensable condition for copyright registration. <a href="bibliography.html#thaler-2025-perlmutter">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c19-05" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c19-05-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c19-06"><span class="fn-body"><em>Li Yunkai v. Liu Yuanchun</em> (<em>Li v. Liu</em>), (2023) Jing 0491 Min Chu No. 11279 (Beijing Internet Court, November 27, 2023). <strong>Annotation:</strong> Foundational Chinese AI copyright judgment recognizing protection in a Stable Diffusion image where iterative prompting and parameter tuning evidenced human intellectual investment. <a href="bibliography.html#li-2023-liu">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c19-06" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c19-06-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c19-07"><span class="fn-body">Parliament of the United Kingdom, <em>Copyright, Designs and Patents Act 1988</em>, c. 48, § 9(3). <strong>Annotation:</strong> UK statutory provision attributing authorship of computer-generated works lacking a human author to the person making necessary creative arrangements. <a href="bibliography.html#uk-1988-cdpa">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c19-07" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c19-07-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c19-08"><span class="fn-body">Open Source Initiative, <em>The Open Source AI Definition — Version 1.0 (OSAID 1.0)</em>, October 28, 2024, <a href="https://opensource.org/os-ai-definition" target="_blank" rel="noopener noreferrer">https://opensource.org/os-ai-definition</a>. <strong>Annotation:</strong> Sets strict open-source criteria requiring sufficient training-data transparency alongside code and weights with zero use or scale limits—showing why most open-weight releases are not true Open Source AI. <a href="bibliography.html#osi-2024-osaid">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c19-08" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c19-08-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c19-09"><span class="fn-body">Meta Platforms, Inc., <em>Llama Community License Agreement (Llama 3 / 3.1 / 3.3 / 4 Series) and Acceptable Use Policy</em>, 2024–2025, <a href="https://www.llama.com/llama3_1/license/" target="_blank" rel="noopener noreferrer">https://www.llama.com/llama3_1/license/</a>. <strong>Annotation:</strong> Illustrates custom open-weight terms imposing a <code>700 million</code> MAU commercial-license trigger, <code>&quot;Built with Llama&quot;</code> attribution requirements, derivative naming clauses, and binding AUP limits. <a href="bibliography.html#meta-2024-llama-license">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c19-09" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c19-09-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a> <a href="#fnref-c19-09-3" class="fn-backref" title="Back to citation 3">&#8617;&#xfe0e;<sup>3</sup></a></span></li>
+<li id="fn-c19-10"><span class="fn-body"><em>Doe 1 v. GitHub, Inc.</em>, No. 4:22-cv-06823-JST, 2024 WL 235484 (N.D. Cal. January 22, 2024) (and June 2024 order dismissing DMCA § 1202(b) claims while retaining open-source license breach-of-contract claims). <strong>Annotation:</strong> Federal class-action rulings dismissing <code>DMCA § 1202</code> claims for lack of strict identicality while keeping open-source license breach claims active for missing attribution and copyleft violations. <a href="bibliography.html#doe-2024-github">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c19-10" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c19-10-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c19-11"><span class="fn-body">Linux Foundation, <em>SPDX Specification Version 3.0 (AI and Dataset Profiles)</em>, 2024, <a href="https://spdx.dev/use/specifications/" target="_blank" rel="noopener noreferrer">https://spdx.dev/use/specifications/</a>. <strong>Annotation:</strong> Industry SBOM and AI-BOM standard for documenting software dependencies, open-source license obligations, and AI dataset/model provenance continuously ahead of M&amp;A or compliance audits. <a href="bibliography.html#spdx-2024-v3">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c19-11" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c19-11-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a> <a href="#fnref-c19-11-3" class="fn-backref" title="Back to citation 3">&#8617;&#xfe0e;<sup>3</sup></a></span></li>
+<li id="fn-c19-12"><span class="fn-body">Microsoft Corporation (Brad Smith and Hossein Nowbar), &quot;Microsoft Announces New Copilot Copyright Commitment for Customers,&quot; Microsoft On the Issues Blog, September 7, 2023, <a href="https://blogs.microsoft.com/on-the-issues/2023/09/07/copilot-copyright-commitment-ai-legal-risks/" target="_blank" rel="noopener noreferrer">https://blogs.microsoft.com/on-the-issues/2023/09/07/copilot-copyright-commitment-ai-legal-risks/</a>. <strong>Annotation:</strong> Establishes Microsoft's conditional third-party copyright defense pledge, strictly requiring commercial customers to keep built-in guardrails and content filters enabled. <a href="bibliography.html#microsoft-2023-ccc">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c19-12" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c19-12-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a> <a href="#fnref-c19-12-3" class="fn-backref" title="Back to citation 3">&#8617;&#xfe0e;<sup>3</sup></a> <a href="#fnref-c19-12-4" class="fn-backref" title="Back to citation 4">&#8617;&#xfe0e;<sup>4</sup></a></span></li>
+<li id="fn-c19-13"><span class="fn-body">Google Cloud, &quot;Shared Fate: Protecting Customers with Generative AI Indemnification,&quot; Google Cloud Blog, October 12, 2023, <a href="https://cloud.google.com/blog/products/ai-machine-learning/protecting-customers-with-generative-ai-indemnification" target="_blank" rel="noopener noreferrer">https://cloud.google.com/blog/products/ai-machine-learning/protecting-customers-with-generative-ai-indemnification</a>. <strong>Annotation:</strong> Introduces Google Cloud's two-pronged generative AI IP indemnity covering both training-data infringement claims and generated-output claims subject to active safety filters and responsible-use terms. <a href="bibliography.html#google-2023-ip-indemnity">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c19-13" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c19-13-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a> <a href="#fnref-c19-13-3" class="fn-backref" title="Back to citation 3">&#8617;&#xfe0e;<sup>3</sup></a> <a href="#fnref-c19-13-4" class="fn-backref" title="Back to citation 4">&#8617;&#xfe0e;<sup>4</sup></a></span></li>
+<li id="fn-c19-14"><span class="fn-body">Insurance Services Office, Inc. (Verisk), Commercial General Liability Endorsements CG 40 47 (<em>Exclusion — Generative Artificial Intelligence</em>) and CG 40 48 (<em>Exclusion — Generative Artificial Intelligence — Coverage B Only</em>), effective January 1, 2026. <strong>Annotation:</strong> Standard casualty endorsements removing <code>&quot;personal and advertising injury&quot;</code> generative-AI IP and defamation coverage from commercial general liability policies. <a href="bibliography.html#verisk-2026-genai-exclusions">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c19-14" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c19-14-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a> <a href="#fnref-c19-14-3" class="fn-backref" title="Back to citation 3">&#8617;&#xfe0e;<sup>3</sup></a></span></li>
+</ol>
+</section>
+        <nav class="pager" aria-label="Chapter navigation"><a class="pager-card pager-prev" href="18-transparency-disclosure-and-content-provenance.html"><span class="pager-dir">&larr; Previous</span><span class="pager-title">Chapter 18: Transparency, Disclosure &amp; Content Provenance</span></a><a class="pager-card pager-next" href="20-the-global-regulatory-landscape.html"><span class="pager-dir">Next &rarr;</span><span class="pager-title">Chapter 20: The Global Regulatory Landscape</span></a></nav>
+      </article>
+      <footer class="doc-footer">
+        Building Guardrails for Enterprise AI &middot; Built 2026-11-22
+      </footer>
+    </main>
+<aside class="page-toc" aria-label="On this page">
+  <div class="page-toc-inner">
+    <div class="page-toc-title">On this page</div>
+    <ul><li class="toc-l3"><a href="#illustrative-composite-scenario-the-unprotectable-campaign-and-the-copyleft-microservice">Illustrative Composite Scenario: The Unprotectable Campaign and the Copyleft Microservice</a></li><li class="toc-l2"><a href="#191-inbound-risk-generated-output-that-infringes-someone-elses-rights">19.1 Inbound Risk: Generated Output That Infringes Someone Else&#x27;s Rights</a></li><li class="toc-l3"><a href="#the-guardrails">The Guardrails</a></li><li class="toc-l2"><a href="#192-outbound-risk-who-owns-and-can-protect-ai-generated-work">19.2 Outbound Risk: Who Owns and Can Protect AI-Generated Work?</a></li><li class="toc-l3"><a href="#the-guardrails-2">The Guardrails</a></li><li class="toc-l2"><a href="#193-open-weight-model-licenses-and-their-usage-restrictions">19.3 Open-Weight Model Licenses and Their Usage Restrictions</a></li><li class="toc-l3"><a href="#the-guardrails-3">The Guardrails</a></li><li class="toc-l2"><a href="#194-open-source-license-contamination-in-ai-generated-code">19.4 Open-Source License Contamination in AI-Generated Code</a></li><li class="toc-l3"><a href="#the-guardrails-4">The Guardrails</a></li><li class="toc-l2"><a href="#195-vendor-ip-indemnification-what-it-covers-and-what-it-doesnt">19.5 Vendor IP Indemnification: What It Covers and What It Doesn&#x27;t</a></li><li class="toc-l3"><a href="#the-guardrails-5">The Guardrails</a></li><li class="toc-l2"><a href="#why-every-role-cares">Why Every Role Cares</a></li><li class="toc-l2"><a href="#chapter-summary">Chapter Summary</a></li><li class="toc-l2"><a href="#key-takeaways">Key Takeaways</a></li><li class="toc-l2"><a href="#questions-to-ask">Questions to Ask</a></li><li class="toc-l2"><a href="#notes">Notes</a></li></ul>
+  </div>
+</aside>
+  </div>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chapter 26: Testing, Evaluation &amp; Red-Teaming — Building Guardrails for Enterprise AI</title>
+  <meta name="description" content="Hardening Enterprise AI Against Hallucinations, Hacks, and Liability" />
+  <script>
+    (function () {
+      var param = null;
+      var saved = null;
+      var winTheme = null;
+      try {
+        param = new URLSearchParams(window.location.search).get("theme");
+      } catch (e) {}
+      try {
+        saved = localStorage.getItem("book-theme");
+      } catch (e) {}
+      try {
+        var wm = (window.name || "").match(/^book-theme:(dark|light)$/);
+        if (wm) winTheme = wm[1];
+      } catch (e) {}
+      var explicit = (param === "dark" || param === "light")
+        ? param
+        : ((saved === "dark" || saved === "light")
+            ? saved
+            : ((winTheme === "dark" || winTheme === "light") ? winTheme : null));
+      if (explicit) {
+        try { localStorage.setItem("book-theme", explicit); } catch (e) {}
+        try { window.name = "book-theme:" + explicit; } catch (e) {}
+        document.documentElement.setAttribute("data-theme-explicit", "1");
+      }
+      var theme = explicit || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+  <script src="assets/search-index.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <span aria-hidden="true">&#9776;</span>
+      </button>
+      <a class="brand" href="index.html">
+        <span class="brand-title">Building Guardrails for Enterprise AI</span>
+      </a>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="search-focus-btn" type="button" title="Search (/ or Cmd+K)">Search <kbd>/</kbd></button>
+      <button class="icon-btn" id="theme-toggle" type="button" title="Toggle color theme" aria-label="Toggle color theme">&#9680;</button>
+    </div>
+  </header>
+
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <div class="layout">
+<aside class="sidebar" id="sidebar" aria-label="Book navigation">
+  <div class="sidebar-search">
+    <label class="sr-only" for="search-input">Search handbook</label>
+    <input id="search-input" class="search-input" type="search" placeholder="Search handbook… (/)" autocomplete="off" />
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-home" href="index.html">Contents &amp; Overview</a>
+    <div class="nav-group">
+      <div class="nav-group-title">Front Matter</div>
+      <ul class="nav-list">
+        <li><a href="00-front-matter.html">Front Matter</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part I: Foundations</div>
+      <ul class="nav-list">
+        <li><a href="01-why-ai-risk-is-different.html">Chapter 1: Why AI Risk Is Different</a></li>
+        <li><a href="02-reference-frameworks-at-a-glance.html">Chapter 2: Reference Frameworks at a Glance</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part II: Governance &amp; Accountability</div>
+      <ul class="nav-list">
+        <li><a href="03-board-and-executive-oversight.html">Chapter 3: Board &amp; Executive Oversight</a></li>
+        <li><a href="04-ai-governance-operating-model.html">Chapter 4: The AI Governance Operating Model</a></li>
+        <li><a href="05-policies-inventory-and-risk-tiering.html">Chapter 5: Policies, Inventory &amp; Risk Tiering</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part III: Data Risk</div>
+      <ul class="nav-list">
+        <li><a href="06-data-leakage-and-shadow-ai.html">Chapter 6: Data Leakage &amp; Shadow AI</a></li>
+        <li><a href="07-internal-over-exposure-and-permission-aware-ai.html">Chapter 7: Internal Over-Exposure &amp; Permission-Aware AI</a></li>
+        <li><a href="08-data-provenance-consent-and-sovereignty.html">Chapter 8: Data Provenance, Consent &amp; Sovereignty</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part IV: Security</div>
+      <ul class="nav-list">
+        <li><a href="09-ai-threat-landscape.html">Chapter 9: The AI Threat Landscape</a></li>
+        <li><a href="10-prompt-injection-and-manipulation.html">Chapter 10: Prompt Injection &amp; Manipulation</a></li>
+        <li><a href="11-securing-ai-agents.html">Chapter 11: Securing AI Agents</a></li>
+        <li><a href="12-model-and-supply-chain-security.html">Chapter 12: Model &amp; Supply Chain Security</a></li>
+        <li><a href="13-infrastructure-and-operational-security.html">Chapter 13: Infrastructure &amp; Operational Security</a></li>
+        <li><a href="14-ai-enabled-external-threats.html">Chapter 14: AI-Enabled External Threats</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part V: Output, Trust &amp; Liability</div>
+      <ul class="nav-list">
+        <li><a href="15-hallucinations-and-reliability.html">Chapter 15: Hallucinations &amp; Reliability</a></li>
+        <li><a href="16-bias-fairness-and-discrimination.html">Chapter 16: Bias, Fairness &amp; Discrimination</a></li>
+        <li><a href="17-human-oversight-and-automation-bias.html">Chapter 17: Human Oversight &amp; Automation Bias</a></li>
+        <li><a href="18-transparency-disclosure-and-content-provenance.html">Chapter 18: Transparency, Disclosure &amp; Content Provenance</a></li>
+        <li><a href="19-intellectual-property-and-licensing.html">Chapter 19: Intellectual Property &amp; Licensing</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VI: Regulation &amp; Compliance</div>
+      <ul class="nav-list">
+        <li><a href="20-the-global-regulatory-landscape.html">Chapter 20: The Global Regulatory Landscape</a></li>
+        <li><a href="21-sector-specific-requirements.html">Chapter 21: Sector-Specific Requirements</a></li>
+        <li><a href="22-auditability-assessments-and-evidence.html">Chapter 22: Auditability, Assessments &amp; Evidence</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VII: Third-Party &amp; Lifecycle Risk</div>
+      <ul class="nav-list">
+        <li><a href="23-vendor-and-third-party-ai-risk.html">Chapter 23: Vendor &amp; Third-Party AI Risk</a></li>
+        <li><a href="24-model-lifecycle-and-change-management.html">Chapter 24: Model Lifecycle &amp; Change Management</a></li>
+        <li><a href="25-operational-resilience-and-business-continuity.html">Chapter 25: Operational Resilience &amp; Business Continuity</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VIII: Operationalizing the Guardrails</div>
+      <ul class="nav-list">
+        <li><a href="26-testing-evaluation-and-red-teaming.html" class="is-active" aria-current="page">Chapter 26: Testing, Evaluation &amp; Red-Teaming</a></li>
+        <li><a href="27-ai-incident-response.html">Chapter 27: AI Incident Response</a></li>
+        <li><a href="28-metrics-kris-and-reporting.html">Chapter 28: Metrics, KRIs &amp; Reporting</a></li>
+        <li><a href="29-building-a-risk-aware-ai-culture.html">Chapter 29: Building a Risk-Aware AI Culture</a></li>
+        <li><a href="30-governance-maturity-model-and-roadmap.html">Chapter 30: Governance Maturity Model &amp; Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Appendices</div>
+      <ul class="nav-list">
+        <li><a href="31-appendices.html">Appendices: Templates, Checklists &amp; Reference Toolkit</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Reference</div>
+      <ul class="nav-list">
+        <li><a href="bibliography.html">Annotated Bibliography</a></li>
+      </ul>
+    </div>
+  </nav>
+</aside>
+    <main class="main" id="main">
+      <article class="content">
+        <div class="doc-meta-bar"><span class="doc-eyebrow">Part VIII: Operationalizing the Guardrails</span><span class="doc-reading-meta">5,320 words · ~22 min read</span></div>
+        <h1>Chapter 26: Testing, Evaluation &amp; Red-Teaming</h1>
+<p><em>Part VIII: Operationalizing the Guardrails</em></p>
+<blockquote>
+<p><strong>In this chapter</strong></p>
+<ul>
+<li><strong>26.1 Pre-Deployment Evals and Golden Datasets</strong> — Replacing informal prompt &quot;vibe checks&quot; and vendor marketing metrics with stratified golden datasets, calibrated abstention scoring, and component-level RAG evaluation.</li>
+<li><strong>26.2 AI Red-Teaming: Scope, Methods, and Who Should Do It</strong> — Scoping adversarial testing across security exploits and domain harms using NIST and MITRE taxonomies, automated toolkits (<code>PyRIT</code> and <code>garak</code>), and independent domain red teams.</li>
+<li><strong>26.3 Safety and Security Benchmarks</strong> — Interpreting standardized public suites (<code>AILuminate v1.0</code> and <code>HarmBench</code>) accurately while avoiding training-data contamination, Goodhart's Law, and the chat-vs-system evaluation gap.</li>
+<li><strong>26.4 Go/No-Go Criteria for Production</strong> — Enforcing risk-tiered pre-flight thresholds, hard-stop conditions, executive risk waivers, and auditable EU AI Act and ISO/IEC 42001 release gates.</li>
+</ul>
+</blockquote>
+<p>In Parts I through VII, we built the architecture of enterprise AI governance: operating models, inventories, data-protection boundaries, security defenses, reliability and fairness controls, sector compliance, and lifecycle resilience. <em>Part VIII: Operationalizing the Guardrails</em> turns that architecture into daily engineering and operational proof. A written policy never blocked an injection payload, and a procurement questionnaire never stopped a biased decision from reaching a customer. Before any AI capability graduates into production—or ships a Tier B/C modification under Chapter 24's change-control gates—teams must prove empirically that controls hold under realistic enterprise edge cases and determined adaptive adversaries. Testing, evaluation, and red-teaming convert governance from hopeful intent into reproducible release evidence.</p>
+<hr />
+<h3 id="illustrative-composite-scenario-96-on-the-public-leaderboard-28-on-monday-morning">Illustrative Composite Scenario: 96% on the Public Leaderboard, 28% on Monday Morning <a class="heading-anchor" href="#illustrative-composite-scenario-96-on-the-public-leaderboard-28-on-monday-morning" aria-label="Link to section">#</a></h3>
+<p><em>(This composite scenario is illustrative; it is not drawn from a specific organization or incident.)</em></p>
+<p>A healthcare benefits administrator built a member-portal copilot summarizing plan deductibles, out-of-network exceptions, and prior-authorization criteria across 14,000 clinical policy bulletins. During vendor selection and internal staging, the engineering team highlighted the underlying model's top-tier ranking on public medical and reasoning leaderboards, backed by an informal 25-prompt &quot;vibe check&quot; conducted by product managers using clean policy snippets. Leadership cleared production launch on Friday afternoon. By Monday midday, operational support queues flooded. Members uploading scanned provider appeal PDFs containing subtle multi-clause exclusions triggered silent misinterpretations (<code>28%</code> accuracy on three-way co-insurance coordination rules); a handful of hostile prompts embedded inside uploaded claims PDFs hijacked tool calls to expose internal claims-adjudication routing hints; and multi-turn conversational nudges coaxed the assistant into fabricating pre-approval guarantees the plan explicitly excluded. Every infrastructure monitor stayed green, yet an un-tested gap between generic public benchmarks and adversarial production workflows turned launch weekend into an immediate clinical and regulatory rollback.</p>
+<hr />
+<h2 id="261-pre-deployment-evals-and-golden-datasets">26.1 Pre-Deployment Evals and Golden Datasets <a class="heading-anchor" href="#261-pre-deployment-evals-and-golden-datasets" aria-label="Link to section">#</a></h2>
+<p>Most enterprise AI failures begin inside deceptively reassuring pilot demos. Developers craft twenty or thirty clean questions representing normal user intent, verify fluent prose responses by eye, and mistake fluency for readiness. Even when buyers purchase mature vertical products rather than assembling custom pipelines, vendor claims remain unreliable without independent workload testing. In a preregistered Stanford RegLab benchmark evaluating proprietary commercial legal research tools billed with strong accuracy and grounding guarantees, Magesh and colleagues measured hallucination rates ranging from <code>17%</code> to <code>33%</code> across leading products when tested on verifiable legal queries.<sup class="fn-ref"><a href="#fn-c26-01" id="fnref-c26-01" title="Jump to note 1">[1]</a></sup> Marketing claims and public leaderboard rankings simply do not predict how an assembled RAG pipeline, tool router, and prompt template will behave on your company's messiest documents and edge cases.</p>
+<p>Effective pre-deployment evaluation therefore replaces ad-hoc manual inspection with a versioned, <strong>domain-specific golden dataset</strong> split cleanly like disciplined machine-learning data:</p>
+<ul>
+<li><strong>Development Evaluation Set (<code>dev-eval</code>):</strong> Iterated rapidly by engineers while refining prompts, chunking strategies, and retrieval weights during build sprints.</li>
+<li><strong>Held-Out Blind Gate Set (<code>gate-eval</code>):</strong> Strictly quarantined from prompt authors, storing frozen high-stakes regression cases so teams cannot subconsciously &quot;teach to the test&quot; prior to launch sign-off.</li>
+</ul>
+<p>A defensible golden dataset covers five distinct strata rather than happy-path averages alone:</p>
+<ol>
+<li><strong>Core Happy Paths (<code>~30%</code>):</strong> Representative daily customer, employee, or operational queries spanning core workflows.</li>
+<li><strong>Long-Tail Domain Edge Cases (<code>~25%</code>):</strong> Multi-hop policy exceptions, conflicting effective dates, scanned tables, acronyms, and regional regulatory nuances where retrieval frequently stumbles.</li>
+<li><strong>Out-of-Scope Abstention Traps (<code>~20%</code>):</strong> Questions deliberately lacking answers in the enterprise knowledge base, ambiguous premises, or requests outside system mandate. As Kalai and colleagues demonstrated in their analysis of why language models hallucinate, standard accuracy benchmarks that give zero credit for saying <code>&quot;I don't know&quot;</code> systematically train models and builders to reward confident guessing over honest uncertainty.<sup class="fn-ref"><a href="#fn-c26-02" id="fnref-c26-02" title="Jump to note 2">[2]</a></sup> Golden rubrics must therefore score <strong>calibrated abstention</strong>—penalizing fabricated confident answers substantially harder than safe uncertainty or human escalation.</li>
+<li><strong>Demographic and Linguistic Slices (<code>~15%</code>):</strong> Dialect variations, non-native syntax, accessibility edge inputs, and protected-group equity probes ensuring quality remains consistent across populations (Chapter 16).</li>
+<li><strong>Production Regression Bank (<code>~10%</code> growing continuously):</strong> Every bug, customer complaint, incident postmortem, or red-team bypass captured after launch enters the blind gate set permanently so fixed failures stay fixed across future model upgrades.</li>
+</ol>
+<p>Crucially, enterprises must score <strong>individual pipeline components alongside end-to-end outputs</strong>. Using reference-free evaluation frameworks such as <strong>RAGAS</strong>, engineering pipelines measure <em>context precision</em> and <em>context recall</em> separately from <em>faithfulness</em> and <em>answer relevance</em>—pinpointing immediately whether a wrong answer resulted from broken vector retrieval or from the generator ignoring an accurately retrieved paragraph.<sup class="fn-ref"><a href="#fn-c26-03" id="fnref-c26-03" title="Jump to note 3">[3]</a></sup> Deterministic assertions check JSON schemas, tool parameter bounds, citation existence, and PII leakage automatically, while calibrated <strong>LLM-as-a-Judge</strong> rubrics grade nuanced accuracy across thousands of samples, implementing the bias controls established by Zheng and colleagues—swapped <code>A/B</code> ordering, length-normalized scoring, cross-family judge selection, and regular calibration against blind human domain annotations.<sup class="fn-ref"><a href="#fn-c26-04" id="fnref-c26-04" title="Jump to note 4">[4]</a></sup></p>
+<h3 id="the-guardrails">The Guardrails <a class="heading-anchor" href="#the-guardrails" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Quarantine a blind held-out gate dataset away from prompt developers:</strong> Require final pre-release checks (Chapter 24) to run against unseen golden examples alongside production-regression failures so prompt overfitting cannot mask brittle logic.</li>
+<li><strong>Penalize confident hallucinations more strictly than abstentions:</strong> Design golden scoring weights that reward calibrated uncertainty and safe human escalation whenever evidence chunks conflict or fall below retrieval thresholds.</li>
+<li><strong>Evaluate retrieval, generation, guardrails, and tool syntax independently:</strong> Separate vector recall metrics, faithfulness scores, schema validators, and sidecar latency/accuracy checks inside CI/CD so root causes surface automatically.</li>
+</ul>
+<hr />
+<h2 id="262-ai-red-teaming-scope-methods-and-who-should-do-it">26.2 AI Red-Teaming: Scope, Methods, and Who Should Do It <a class="heading-anchor" href="#262-ai-red-teaming-scope-methods-and-who-should-do-it" aria-label="Link to section">#</a></h2>
+<p>Evaluation datasets confirm whether an AI system behaves accurately under benign or messy everyday inputs; <strong>AI red-teaming</strong> tests how it behaves under deliberate adversarial pressure and socio-technical misuse. Unlike conventional network penetration testing—which hunts deterministic buffer overflows, SQL injections, or IAM misconfigurations—AI red-teaming targets both <strong>security exploits</strong> (direct and indirect prompt injection, system-prompt leakage, tool hijacking, training/RAG poisoning, sensitive data extraction) and <strong>functional or safety harms</strong> (generating fraudulent medical/legal assurances, policy-evasive discrimination, brand-damaging sycophancy, or unauthorized contractual promises).</p>
+<p>Scoping a credible enterprise red-team exercise begins with shared threat taxonomies rather than improvisation:</p>
+<ul>
+<li><strong>NIST AI 100-2 E2025 (<em>Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations</em>, March 2025)</strong> maps evasion, poisoning, privacy-extraction, and abuse tactics across predictive and generative lifecycles.<sup class="fn-ref"><a href="#fn-c26-05" id="fnref-c26-05" title="Jump to note 5">[5]</a></sup></li>
+<li><strong>MITRE ATLAS</strong> translates those threat classes into concrete attacker techniques across prompts, retrieval pipelines, open-weight supply chains, and agentic tool invocations—allowing red teams to tie findings directly to SOC detections and architectural threat models (Chapters 9 and 10).<sup class="fn-ref"><a href="#fn-c26-06" id="fnref-c26-06" title="Jump to note 6">[6]</a></sup></li>
+</ul>
+<p>Here static test banks deliver dangerous false assurance. Testing a deployed model exclusively against last quarter's 200 public &quot;DAN&quot; jailbreak strings proves almost nothing against live adversaries. In <em>&quot;The Attacker Moves Second,&quot;</em> Nasr and colleagues evaluated twelve published defenses against jailbreaks and prompt injections using adaptive optimization (automated gradient, RL, and search attacks) alongside skilled human attackers—bypassing <strong>all twelve defenses</strong>, frequently exceeding <code>90%</code> attack success rates.<sup class="fn-ref"><a href="#fn-c26-07" id="fnref-c26-07" title="Jump to note 7">[7]</a></sup> Effective red-teaming therefore layers continuous automated scanning beneath adaptive human adversarial probing across three distinct assurance tiers:</p>
+<pre><code>                  /\
+                 /  \    Tier 3: Independent External &amp; Domain Red-Teaming
+                /----\   (Pre-launch Tier 1 / Major changes; novel multi-turn &amp; socio-technical exploits)
+               /------\
+              /--------\ Tier 2: Adaptive Automated Red-Teaming (e.g., PyRIT / Human-Guided Fuzzing)
+             /----------\ (Sprint-level multi-turn attackers, encoding converters, RAG/tool boundary probes)
+            /------------\
+           /--------------\ Tier 1: Continuous CI Security Probing &amp; Golden Evals (e.g., garak, RAGAS, Schema)
+          /----------------\ (Every commit &amp; nightly build; baseline jailbreaks, injection regressions, PII checks)
+</code></pre>
+<p>At Tier 1 and Tier 2, open-source frameworks make adversarial probing repeatable inside engineering pipelines:</p>
+<ul>
+<li><strong>garak</strong> (Derczynski et al., 2024) operates as an automated LLM vulnerability scanner—structuring modular <strong>Generators</strong> (target endpoints), <strong>Probes</strong> (known prompt-injection, encoding, toxicity, and leakage vectors), <strong>Buffs</strong> (prompt mutations such as Base64 or character perturbations), and <strong>Detectors</strong> into reproducible nightly security sweeps.<sup class="fn-ref"><a href="#fn-c26-09" id="fnref-c26-09" title="Jump to note 8">[8]</a></sup></li>
+<li><strong>Microsoft PyRIT</strong> (Munoz et al., 2024) extends automated testing to <strong>multi-turn, adaptive, and multimodal scenarios</strong> via <strong>Targets</strong>, <strong>Orchestrators</strong>, <strong>Converters</strong>, automated <strong>Scorers</strong>, and stateful <strong>Memory</strong>, letting defender LLMs iteratively probe, obfuscate, escalate, and score target agents just as live attackers adapt across conversations.<sup class="fn-ref"><a href="#fn-c26-08" id="fnref-c26-08" title="Jump to note 9">[9]</a></sup></li>
+</ul>
+<p>Equally vital is deciding <strong>who conducts Tier 3 red-teaming</strong> and what success criteria govern engagement rules. Pure security penetration testers excel at uncovering indirect prompt-injection payloads or MCP server pivots, yet often miss domain-specific compliance harms—such as subtle age-proxy steering in hiring assistants or dangerous drug-interaction omissions in triage copilots. High-stakes systems require <strong>multidisciplinary red teams</strong> pairing AppSec/AI red-teamers with domain practitioners (senior underwriters, physicians, employment attorneys, fraud analysts), supplemented for Tier 1 workloads by <strong>independent external assessors</strong> uninvolved in building the system (Chapter 22). Following the UK National Cyber Security Centre's realistic architectural guidance on prompt injection as a &quot;confusable deputy&quot; problem, red-team success should <em>never</em> require proving a mythical <code>0%</code> classifier bypass rate; instead, engagements measure <strong>blast-radius containment</strong>—proving that even when an attacker tricks the model textually, deterministic permission checks (Chapter 7), agent isolation (<code>ASI02</code>/<code>ASI03</code> controls, Chapter 11), and human-approval gates stop unauthorized actions or cross-tenant exfiltration cold.<sup class="fn-ref"><a href="#fn-c26-10" id="fnref-c26-10" title="Jump to note 10">[10]</a></sup></p>
+<h3 id="the-guardrails-2">The Guardrails <a class="heading-anchor" href="#the-guardrails-2" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Map every red-team scope explicitly to MITRE ATLAS and NIST AI 100-2 E2025:</strong> Cover indirect prompt injection inside retrieved files, cross-tenant retrieval leakage, tool-parameter manipulation, multi-turn policy erosion, and modality-specific risks rather than single-turn chat jailbreaks alone.</li>
+<li><strong>Pair automated fuzzers (<code>garak</code>, <code>PyRIT</code>) in CI with domain-expert and independent human attackers pre-launch:</strong> Require uninvolved third-party or independent internal red teams before signing off Tier 1 and externally exposed high-risk deployments.</li>
+<li><strong>Write strict Rules of Engagement and measure architectural containment alongside model refusal rates:</strong> Test inside isolated staging mirrors populated with synthetic data (never live customer PII without explicit authorization), and verify deterministic authorization barriers block high-impact actions even after a model compromise.</li>
+</ul>
+<hr />
+<h2 id="263-safety-and-security-benchmarks">26.3 Safety and Security Benchmarks <a class="heading-anchor" href="#263-safety-and-security-benchmarks" aria-label="Link to section">#</a></h2>
+<p>When evaluating foundation models or vendor AI products, leaders naturally reach for standardized public benchmarks promising simple model-versus-model comparisons. Two open-ecosystem benchmarks have set rigorous norms for model-level safety evaluation:</p>
+<ul>
+<li><strong>MLCommons AILuminate v1.0</strong> (December 2024 / arXiv March 2025) evaluates general-purpose AI chat systems across <strong>twelve distinct hazard categories</strong> spanning physical harms (CSAM, CBRN weapons, violent/nonviolent crime, self-harm), non-physical risks (hate speech, sexual content, IP, privacy, defamation), and <strong>specialized advice</strong> (medical, legal, financial, and elections) using a transparent five-tier grade from <em>Poor</em> to <em>Excellent</em>.<sup class="fn-ref"><a href="#fn-c26-11" id="fnref-c26-11" title="Jump to note 11">[11]</a></sup></li>
+<li><strong>HarmBench</strong> (Mazeika et al., ICML 2024) standardizes adversarial robustness testing across <strong>510 documented harmful behaviors</strong>, establishing unified Attack Success Rate (<code>ASR</code>) classifiers and validation/test splits verified empirically across <strong>18 automated red-teaming methods</strong> and <strong>33 target models and defenses</strong>.<sup class="fn-ref"><a href="#fn-c26-12" id="fnref-c26-12" title="Jump to note 12">[12]</a></sup></li>
+</ul>
+<p>Used correctly, <code>AILuminate</code> and <code>HarmBench</code> deliver real governance value: they prevent vendor selection by marketing brochure, quantify baseline refusal differences across model families, and reveal whether an upstream defense genuinely resists diverse optimization attacks or merely blocks one narrow prompt phrasing. Yet governing enterprise launch decisions off public safety benchmarks alone introduces three classic evaluation traps:</p>
+<ol>
+<li><strong>Benchmark Contamination:</strong> Public prompt datasets inevitably leak into web scrapes, synthetic training runs, and vendor post-training alignment mixes. A model scoring cleanly on public prompts may generalize poorly to novel enterprise phrasings or domain jargon.</li>
+<li><strong>Saturation and Goodhart's Law:</strong> Once <em>&quot;when a measure becomes a target, it ceases to be a good measure,&quot;</em> teams optimize system prompts or safety classifiers specifically for public benchmark rubrics—producing overly brittle refusal patterns that trigger false-positive blocks on legitimate customer queries (&quot;exaggerated safety&quot;) while leaving unmeasured operational failures untouched.</li>
+<li><strong>The Chat-vs.-System Evaluation Gap:</strong> Nearly every standard benchmark evaluates an isolated foundation model responding to single-turn chat completions. Production enterprise AI is never an isolated LLM; it is an orchestrated socio-technical pipeline combining vector databases, permission filters, external MCP tools, session memory, and multi-agent handoffs. In the OWASP Top 10 for Agentic Applications 2026, agent-specific exploits—tool misuse, memory poisoning, privilege confusion, and cascading delegation failures—occur across boundaries that model-only safety leaderboards never inspect.<sup class="fn-ref"><a href="#fn-c26-13" id="fnref-c26-13" title="Jump to note 13">[13]</a></sup></li>
+</ol>
+<p>The discipline for risk committees is straightforward: treat public benchmarks strictly as <strong>Stage-1 upstream screening</strong> (comparing candidate foundation models during procurement, Chapter 23) and require <strong>system-level evaluation in staging</strong> using enterprise golden datasets, RAG permission tests, and live agent-sandbox harnesses prior to Go/No-Go review.</p>
+<h3 id="the-guardrails-3">The Guardrails <a class="heading-anchor" href="#the-guardrails-3" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Separate model-level benchmark screening from system-level release testing:</strong> Use <code>AILuminate v1.0</code>, <code>HarmBench</code>, and vendor system cards solely to filter foundation candidates—never to waive internal RAG, guardrail, or agent integration evaluations.</li>
+<li><strong>Measure false-refusal (utility) rates alongside attack-refusal (safety) rates:</strong> Track over-blocking on benign domain terminology (e.g., cybersecurity analysts querying malware signatures or healthcare staff querying oncology dosages) so safety tuning does not break operational usability.</li>
+<li><strong>Maintain private, rotating internal adversarial test subsets:</strong> Keep a rotating set of proprietary red-team prompts offline outside vendor feedback loops and shared logs to detect benchmark contamination or overfitting.</li>
+</ul>
+<hr />
+<h2 id="264-gono-go-criteria-for-production">26.4 Go/No-Go Criteria for Production <a class="heading-anchor" href="#264-gono-go-criteria-for-production" aria-label="Link to section">#</a></h2>
+<p>Testing generates dashboards; governance demands binding release gates. Without predefined numeric thresholds and clear stop authority before testing begins, product teams facing launch deadlines routinely rationalize mediocre evaluation results (<code>&quot;78% faithfulness is close enough for launch—we'll tune it next sprint&quot;</code>). Pre-commitment transforms ambiguous test output into objective accountability.</p>
+<p>Binding regulation now codifies this pre-deployment gate discipline. Under the <strong>EU Artificial Intelligence Act</strong>, <strong>Article 9(6)–(8)</strong> mandates that risk-management testing for high-risk AI systems occur at appropriate lifecycle points—and unconditionally prior to market placement—against <strong>prior defined metrics and probabilistic thresholds</strong> suited to intended purpose; <strong>Article 15</strong> requires documented levels of accuracy, robustness, and cybersecurity; <strong>Article 55(1)(a)</strong> compels providers of general-purpose AI models with systemic risk to execute standardized adversarial red-teaming; and <strong>Annex IV</strong> demands retaining full test methodologies, datasets, and quantitative validation logs.<sup class="fn-ref"><a href="#fn-c26-14" id="fnref-c26-14" title="Jump to note 14">[14]</a></sup> Within an <strong>ISO/IEC 42001</strong> management system, those thresholds anchor formal operational release controls—summarized practically in <strong>Appendix F (Pre-Flight Production Checklist)</strong>.<sup class="fn-ref"><a href="#fn-c26-15" id="fnref-c26-15" title="Jump to note 15">[15]</a></sup></p>
+<p>Table 26.1 illustrates an enterprise <strong>Production Go/No-Go Gate Matrix</strong> calibrating quantitative evaluation thresholds, red-team independence, and release-sign-off authority directly to the Chapter 5 risk tiers.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Evaluation Dimension</th>
+<th style="text-align:left">Tier 1: Critical / High-Risk (Customer Eligibility, Clinical, Legal, Agentic Writes)</th>
+<th style="text-align:left">Tier 2: Moderate (Regulated Advice Drafts, Customer RAG Support)</th>
+<th style="text-align:left">Tier 3: Low-Risk (Internal Summarization, Non-Regulated Productivity)</th>
+<th style="text-align:left">Hard-Block (<code>NO-GO</code>) Trigger</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Golden Blind-Gate Accuracy &amp; Faithfulness</strong></td>
+<td style="text-align:left">Strict <code>&gt;=95%</code> critical-fact / schema fidelity; calibrated abstention within SLA</td>
+<td style="text-align:left"><code>&gt;=90%</code> grounded faithfulness (<code>RAGAS</code>); zero unverified factual citations in template fields</td>
+<td style="text-align:left"><code>&gt;=85%</code> task utility on representative dev sample</td>
+<td style="text-align:left">Critical domain error rate above pre-set ceiling or broken structured tool output</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Adversarial Red-Team &amp; Injection Containment</strong></td>
+<td style="text-align:left">Automated CI (<code>garak</code>/<code>PyRIT</code>) + <strong>Independent</strong> human &amp; domain red team; <code>0</code> unresolved Critical/High sandbox breaches</td>
+<td style="text-align:left">Automated CI suite + internal AppSec / peer red-team sign-off; <code>0</code> Critical breaches</td>
+<td style="text-align:left">Automated baseline CI probe (<code>garak</code> / safety screen)</td>
+<td style="text-align:left">Uncontained cross-tenant retrieval leakage, RCE, unauthorized mutating tool call, or PII dump</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Fairness &amp; Slice Disaggregation (Ch. 16)</strong></td>
+<td style="text-align:left">Mandatory subgroup error-parity &amp; bias audit within defined <code>AIR</code> / error bounds across protected slices</td>
+<td style="text-align:left">Demographic/linguistic slice check across key customer cohorts</td>
+<td style="text-align:left">Spot-check accessibility and inclusive output baseline</td>
+<td style="text-align:left">Disparate adverse-impact breach or protected-attribute leakage</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Operational Resilience &amp; Fallback (Ch. 25)</strong></td>
+<td style="text-align:left">Proven deterministic/human fallback floor + fail-closed guardrail timeout tests + DR re-index check</td>
+<td style="text-align:left">Verified BM25/FAQ degradation mode + fail-closed PII sidecar</td>
+<td style="text-align:left">Fail-silent banner confirmed with zero host-app crash</td>
+<td style="text-align:left">Safety sidecar failing open on timeout or untested mutating agent without idempotency</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Required Release Sign-Off Authority</strong></td>
+<td style="text-align:left"><strong>Dual Governance Sign-Off:</strong> Model Risk / AI Governance Committee + Executive Business Risk Owner (after CISO/Legal review)</td>
+<td style="text-align:left">AI Engineering Lead + Product Risk Owner (+ Domain Reviewer)</td>
+<td style="text-align:left">Engineering Owner + automated CI policy gate</td>
+<td style="text-align:left">Any missing Appendix F sign-off or open expired waiver</td>
+</tr>
+</tbody>
+</table></div>
+<p><em>Table 26.1: Production Go/No-Go Gate Thresholds &amp; Sign-Off Authority calibrated across Tier 1–3 risk classifications.</em></p>
+<p>Notice how clear pre-flight automation keeps teams fast while preserving rigor. Low-risk Tier 3 tools pass straight through automated CI gates inside minutes; Tier 1 systems route seamlessly through staged assurance without ad-hoc email chases:</p>
+<figure class="mermaid-wrap"><pre class="mermaid">flowchart LR
+    SUB[&quot;Candidate Release Bundle (Prompts, Snapshot, RAG, Guards)&quot;] --&gt; T1[&quot;Automated Gate: Blind Golden Evals + RAGAS + Garak/PyRIT&quot;]
+    T1 --&gt;|&quot;Fail Metrics / Fail-Open / Schema Break&quot;| NOGO[&quot;NO-GO: Hard Block Release -&gt; Return to Engineering&quot;]
+    T1 --&gt;|&quot;Pass Quantitative Thresholds&quot;| RT{&quot;Tier 1 / High-Risk or Tier C Change?&quot;}
+    RT --&gt;|&quot;No: Tier 2/3 Routine&quot;| COND{&quot;Minor Residual Findings?&quot;}
+    RT --&gt;|&quot;Yes: Independent Domain &amp; Security Red-Team&quot;| EVAL{&quot;0 Critical / High Uncontained Breaches?&quot;}
+    EVAL --&gt;|&quot;No: Uncontained Exploit / Policy Failure&quot;| NOGO
+    EVAL --&gt;|&quot;Yes&quot;| COND
+    COND --&gt;|&quot;Zero Open Defects&quot;| GO[&quot;GO: Production Canary Rollout &amp; Live Monitoring&quot;]
+    COND --&gt;|&quot;Bounded Low/Medium Residual Gap Only&quot;| WAIVE[&quot;CONDITIONAL GO: Narrow Cohort + Time-Boxed Exec Risk Waiver&quot;]</pre></figure>
+<p>Crucially, Go/No-Go governance recognizes <strong>three explicit outcomes</strong> rather than forcing binary hypocrisy:</p>
+<ol>
+<li><strong>GO:</strong> All Tier benchmarks, resilience checks, and red-team criteria pass—authorizing controlled progressive rollout (<code>5% -&gt; 25% -&gt; 100%</code>) tied directly to live monitoring (Chapter 24).</li>
+<li><strong>CONDITIONAL GO (Limited Canary with Executive Waiver):</strong> Reserved exclusively for bounded Low or Medium residual limitations (never Critical security exploits, fail-open guardrails, or uncontained high-risk bias). Conditions must restrict blast radius—narrowing cohort scope, enforcing human-in-the-loop review, accelerating telemetry alerts—and carry a <strong>written, time-boxed remediation expiry (<code>30–60 days</code>) signed by an accountable Executive Risk Owner</strong>, never self-approved by engineering leads.</li>
+<li><strong>NO-GO (Hard Release Block):</strong> Automatically prevents deployment whenever Hard-Block triggers fire until fixes pass full regression testing on the quarantined gate set. And whenever live production inevitably surfaces novel real-world failures missed by pre-flight tests, those incidents must feed straight into the response and feedback workflows examined next in <strong>Chapter 27 (<em>AI Incident Response</em>)</strong>.</li>
+</ol>
+<h3 id="the-guardrails-4">The Guardrails <a class="heading-anchor" href="#the-guardrails-4" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Lock numeric Go/No-Go thresholds before building or testing:</strong> Publish Tier-calibrated accuracy, abstention, faithfulness, bias-parity, and red-team containment limits in writing at intake (Appendix C) so launch pressure cannot move goalposts mid-sprint.</li>
+<li><strong>Require independent release-blocking authority:</strong> Separate the builder team trying to hit a shipping date from the security, domain, and risk approvers empowered to issue a <code>NO-GO</code> under Appendix F.</li>
+<li><strong>Time-box and cap every <code>CONDITIONAL GO</code> exception:</strong> Prohibit silent verbal launch exemptions; auto-revoke expiring waivers in deployment pipelines unless remediation passes fresh blind-set testing or receives explicit risk-committee renewal.</li>
+<li><strong>Feed every production escape back into the blind gate set:</strong> Close the operational loop with Chapter 27 post-incident reviews so no customer-impacting failure ever occurs twice under a future prompt or snapshot change.</li>
+</ul>
+<hr />
+<h2 id="why-every-role-cares">Why Every Role Cares <a class="heading-anchor" href="#why-every-role-cares" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">What Changes for Your Team</th>
+<th style="text-align:left">Primary Pre-Flight Risk if Ignored</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>CIO / VP Engineering</strong></td>
+<td style="text-align:left">Replace informal &quot;vibe checks&quot; with automated CI/CD evaluation pipelines (<code>RAGAS</code>, <code>garak</code>, <code>PyRIT</code>) tied to immutable release bundles.</td>
+<td style="text-align:left">Unpredictable launch-day rollbacks, broken production parsers, and costly rework after blind spots hit live users.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CISO / AI Red Team</strong></td>
+<td style="text-align:left">Scope multi-turn, indirect-injection, RAG, and agent tool-boundary testing against <code>MITRE ATLAS</code> and <code>NIST AI 100-2 E2025</code>, measuring containment rather than <code>0%</code> classifier perfection.</td>
+<td style="text-align:left">False confidence from static jailbreak lists failing immediately when real attackers use adaptive prompts or poisoned uploaded files.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Chief Risk Officer / Model Risk</strong></td>
+<td style="text-align:left">Enforce pre-committed <code>EU AI Act Art. 9</code> numeric thresholds, blind gate quarantine, and time-boxed <code>CONDITIONAL GO</code> risk waivers across Table 26.1.</td>
+<td style="text-align:left">Subjective goal-post moving under deadline pressure, invisible overfitting on dev prompts, and unapproved high-risk launches.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>General Counsel / Regulatory Affairs</strong></td>
+<td style="text-align:left">Maintain auditable pre-deployment validation logs (<code>Annex IV</code>), bias disaggregation proof, and independent red-team reports under <code>ISO/IEC 42001</code>.</td>
+<td style="text-align:left">Inability to prove pre-market due care after customer harm, regulatory audits, or deceptive <code>&quot;hallucination-free&quot;</code> marketing challenges.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Domain / Business Owners</strong></td>
+<td style="text-align:left">Contribute curated real-world edge cases, abstention rules, and expert domain red-teamers alongside UX tolerance budgets.</td>
+<td style="text-align:left">Systems scoring 96% on generic benchmarks failing badly on specialized regulatory exclusions, medical safety, or contract terms.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>QA / MLOps Engineering</strong></td>
+<td style="text-align:left">Manage <code>dev-eval</code> vs. quarantined <code>gate-eval</code> splits, calibrate automated LLM judges monthly against human gold labels, and guard utility vs. over-refusal.</td>
+<td style="text-align:left">Judge drift, training-test leakage, and brittle safety tuning that blocks legitimate operational queries.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="chapter-summary">Chapter Summary <a class="heading-anchor" href="#chapter-summary" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Assurance Stage</th>
+<th style="text-align:left">Core Governance Question</th>
+<th style="text-align:left">Key Technical &amp; Process Controls</th>
+<th style="text-align:left">Primary Frameworks / Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Golden Datasets &amp; Pre-Deployment Evals (26.1)</strong></td>
+<td style="text-align:left">Does the integrated system meet domain accuracy, grounding, and abstention standards before release?</td>
+<td style="text-align:left">Stratified <code>dev</code> vs. blind <code>gate</code> splits; calibrated uncertainty scoring; component-level <code>RAGAS</code>; bias-mitigated LLM judges</td>
+<td style="text-align:left">Stanford RegLab Legal RAG (<code>Magesh 2025</code>); Kalai et al. (2025); <code>RAGAS</code> (<code>Es 2024</code>); <code>Zheng et al.</code> (2023)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Red-Teaming Scope &amp; Execution (26.2)</strong></td>
+<td style="text-align:left">Where can adaptive human or automated adversaries force harmful outputs, leaks, or tool misuse?</td>
+<td style="text-align:left">3-tier pyramid (<code>garak</code> CI -&gt; <code>PyRIT</code> adaptive multi-turn -&gt; external/domain experts); strict staging RoEs; containment testing</td>
+<td style="text-align:left"><code>NIST AI 100-2 E2025</code>; <code>MITRE ATLAS</code>; Nasr et al. (2025); <code>PyRIT</code> (<code>Munoz 2024</code>); <code>garak</code> (<code>Derczynski 2024</code>); UK <code>NCSC</code> (2025)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Safety &amp; Security Benchmarks (26.3)</strong></td>
+<td style="text-align:left">How do public safety scores translate—and fail to translate—into enterprise readiness?</td>
+<td style="text-align:left">Stage-1 vendor pre-screening via <code>AILuminate v1.0</code> &amp; <code>HarmBench</code>; private rotating test sets; over-refusal/utility checks</td>
+<td style="text-align:left">MLCommons <code>AILuminate v1.0</code>; <code>HarmBench</code> (<code>Mazeika 2024</code>); <code>OWASP Agentic Top 10</code> (<code>2026</code>)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Go/No-Go Release Governance (26.4)</strong></td>
+<td style="text-align:left">Who signs off on production readiness, against which hard limits, and with what exception controls?</td>
+<td style="text-align:left">Tiered Go/No-Go Matrix (Table 26.1); Appendix F checklists; <code>GO</code>/<code>CONDITIONAL GO</code>/<code>NO-GO</code> paths; <code>30–60 day</code> waivers</td>
+<td style="text-align:left">EU AI Act <code>Arts. 9(6)–(8), 15, 55(1)(a), Annex IV</code>; <code>ISO/IEC 42001</code>; Appendix F</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="key-takeaways">Key Takeaways <a class="heading-anchor" href="#key-takeaways" aria-label="Link to section">#</a></h2>
+<ul>
+<li><strong>&quot;Vibe checks&quot; and vendor marketing guarantees conceal severe production error rates:</strong> Stratified domain golden sets—split into developer sets and quarantined blind gates—must score component retrieval, schema integrity, and calibrated abstention separately.</li>
+<li><strong>Static jailbreak checklists cannot survive adaptive attackers:</strong> Continuous CI probing (<code>garak</code>), multi-turn adaptive orchestration (<code>PyRIT</code>), and independent domain/security red-teaming must verify architectural containment across RAG and tool boundaries rather than chasing <code>0%</code> filter bypasses.</li>
+<li><strong>Public safety benchmarks screen models, not enterprise applications:</strong> <code>AILuminate v1.0</code> and <code>HarmBench</code> aid upstream vendor selection, but cannot replace sandboxed system evaluation covering private permissions, tool execution, and over-refusal tradeoffs.</li>
+<li><strong>Lock quantitative Go/No-Go gates before launch pressure arrives:</strong> Pre-committed Table 26.1 thresholds, independent veto power, and short time-boxed executive risk waivers keep engineering velocity high without compromising Tier 1 accountability.</li>
+</ul>
+<hr />
+<h2 id="questions-to-ask">Questions to Ask <a class="heading-anchor" href="#questions-to-ask" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Target Team</th>
+<th style="text-align:left">Concrete Diagnostic Question</th>
+<th style="text-align:left">What a Strong Answer Looks Like</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>AI Engineering &amp; QA</strong></td>
+<td style="text-align:left"><em>&quot;Can prompt developers view or tune directly against our final pre-release evaluation dataset—or is a blind gate set quarantined in CI?&quot;</em></td>
+<td style="text-align:left">Our <code>dev-eval</code> set supports daily iteration, while an immutable blind <code>gate-eval</code> set (including past incidents and edge abstentions) runs strictly via CI/CD outside developer tuning access.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AppSec / AI Red Team</strong></td>
+<td style="text-align:left"><em>&quot;Beyond static jailbreak lists, how are we running adaptive multi-turn and indirect-injection tests against actual RAG documents and agent tools?&quot;</em></td>
+<td style="text-align:left">Nightly <code>garak</code> probes scan every build, adaptive <code>PyRIT</code> orchestrators test multi-turn tool/RAG boundaries per <code>MITRE ATLAS</code>, and independent domain + external red teams test Tier 1 releases before launch.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Product &amp; Procurement</strong></td>
+<td style="text-align:left"><em>&quot;When a vendor quotes public benchmark leadership or 'hallucination-free' RAG accuracy, what do our own staging golden sets show?&quot;</em></td>
+<td style="text-align:left">We use <code>AILuminate</code> and <code>HarmBench</code> solely for initial shortlisting; every vendor product must pass our internal blind dataset, permission-leak checks, and utility/over-refusal tests in staging before purchase.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Model Risk / Release Governance</strong></td>
+<td style="text-align:left"><em>&quot;Show me a concrete metric failure that automatically blocks deployment (<code>NO-GO</code>), and show every open <code>CONDITIONAL GO</code> waiver and its expiry date.&quot;</em></td>
+<td style="text-align:left">Our Table 26.1 CI gates block release automatically on schema breaks, fail-open sidecars, or critical breaches; any time-boxed <code>30–60 day</code> conditional waiver sits in our GRC register signed by an Executive Risk Owner.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Domain Subject-Matter Experts</strong></td>
+<td style="text-align:left"><em>&quot;Were clinicians, underwriters, lawyers, or compliance specialists directly involved in writing abstention traps and red-teaming our latest Tier 1 launch?&quot;</em></td>
+<td style="text-align:left">Yes—domain specialists authored <code>45%+</code> of our edge-case and abstention test cases and participated directly in pre-launch Tier 3 red-teaming alongside AppSec testers.</td>
+</tr>
+</tbody>
+</table></div>
+
+<section class="footnotes" id="notes" aria-label="Notes">
+<h2>References</h2>
+<ol class="footnote-list">
+<li id="fn-c26-01"><span class="fn-body">Varun Magesh, Faiz Surani, Matthew Dahl, Mirac Suzgun, Christopher D. Manning, and Daniel E. Ho, &quot;Hallucination-Free? Assessing the Reliability of Leading AI Legal Research Tools,&quot; <em>Journal of Empirical Legal Studies</em> (2025): 1–27, arXiv:2405.20362, doi:10.1111/jels.12413. <strong>Annotation:</strong> Preregistered Stanford RegLab evaluation demonstrating 17% to 33% hallucination rates across leading commercial legal RAG systems despite vendor marketing claims, underscoring why buyers must run independent golden evaluations. <a href="bibliography.html#magesh-2025-legal-rag">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c26-01" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c26-02"><span class="fn-body">Adam Tauman Kalai, Ofir Nachum, Santosh S. Vempala, and Edwin Zhang, &quot;Why Language Models Hallucinate&quot; (arXiv:2509.04664, September 2025), doi:10.48550/arXiv.2509.04664. <strong>Annotation:</strong> Establishes that evaluations giving zero credit for uncertainty incentivize models and builders toward confident guessing, supporting golden rubrics that reward calibrated abstention. <a href="bibliography.html#kalai-2025-hallucinate">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c26-02" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c26-03"><span class="fn-body">Shahul Es, Jithin James, Luis Espinosa Anke, and Steven Schockaert, &quot;RAGAS: Automated Evaluation of Retrieval Augmented Generation,&quot; <em>Proceedings of the 18th Conference of the European Chapter of the Association for Computational Linguistics (EACL 2024): System Demonstrations</em> (March 2024), arXiv:2309.15217, doi:10.48550/arXiv.2309.15217. <strong>Annotation:</strong> Provides reference-free component metrics (context precision, context recall, faithfulness, answer relevance) enabling CI/CD gates to isolate retrieval failures from generator hallucinations. <a href="bibliography.html#es-2024-ragas">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c26-03" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c26-04"><span class="fn-body">Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhanghao Wu, Yonghao Zhuang, Zi Lin, Zhuohan Li, Dacheng Li, Eric P. Xing, Hao Zhang, Joseph E. Gonzalez, and Ion Stoica, &quot;Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena,&quot; <em>Advances in Neural Information Processing Systems 36 (NeurIPS 2023)</em> (2023), arXiv:2306.05685, doi:10.48550/arXiv.2306.05685. <strong>Annotation:</strong> Demonstrates high agreement between calibrated frontier judges and human annotators while identifying position, verbosity, and self-enhancement biases requiring bias-control calibration. <a href="bibliography.html#zheng-2023-llm-judge">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c26-04" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c26-05"><span class="fn-body">National Institute of Standards and Technology, <em>Adversarial Machine Learning: A Taxonomy and Terminology of Attacks and Mitigations</em>, NIST AI 100-2 E2025 (Gaithersburg, MD: NIST, March 2025), doi:10.6028/NIST.AI.100-2e2025. <strong>Annotation:</strong> Authoritative federal taxonomy categorizing evasion, poisoning, privacy extraction, and abuse attacks across predictive and generative AI systems to structure red-team scope and mitigations. <a href="bibliography.html#nist-2025-ai-100-2">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c26-05" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c26-06"><span class="fn-body">MITRE Corporation, <em>ATLAS: Adversarial Threat Landscape for Artificial-Intelligence Systems</em> (continuously updated threat knowledge base, accessed November 17, 2026). <strong>Annotation:</strong> Provides standardized adversarial tactics and techniques across prompt injection, RAG poisoning, supply-chain compromise, and agent tool misuse for scoping reproducible enterprise red teams. <a href="bibliography.html#mitre-atlas">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c26-06" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c26-07"><span class="fn-body">Milad Nasr, Nicholas Carlini, Chawin Sitawarin, Sander V. Schulhoff, Jamie Hayes, Michael Ilie, Juliette Pluto, Shuang Song, Harsh Chaudhari, Ilia Shumailov, Abhradeep Thakurta, Kai Yuanqing Xiao, Andreas Terzis, and Florian Tramèr, &quot;The Attacker Moves Second: Stronger Adaptive Attacks Bypass Defenses Against LLM Jailbreaks and Prompt Injections&quot; (arXiv:2510.09023, October 2025), doi:10.48550/arXiv.2510.09023. <strong>Annotation:</strong> Proves that adaptive optimization and skilled human red-teaming defeated all twelve tested jailbreak and injection defenses—often above 90% ASR—demonstrating why static prompt checklists fail. <a href="bibliography.html#nasr-2025-attacker-second">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c26-07" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c26-09"><span class="fn-body">Leon Derczynski, Erick Galinkin, Jeffrey Martin, Subho Majumdar, and Nanna Inie, &quot;garak: A Framework for Security Probing Large Language Models&quot; (June 2024), arXiv:2406.11036, doi:10.48550/arXiv.2406.11036. <strong>Annotation:</strong> Modular LLM vulnerability scanner combining Generators, Probes, Buffs, and Detectors to automate recurring security regression scans across CI/CD pipelines. <a href="bibliography.html#derczynski-2024-garak">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c26-09" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c26-08"><span class="fn-body">Gary D. Lopez Munoz, Amanda J. Minnich, Roman Lutz, Richard Lundeen, Raja Sekhar Rao Dheekonda, Nina Chikanov, Bolor-Erdene Jagdagdorj, Martin Pouliot, Shiven Chawla, Whitney Maxwell, Blake Bullwinkel, Katherine Pratt, Joris de Gruyter, Charlotte Siska, Pete Bryan, Tori Westerhoff, Chang Kawaguchi, Christian Seifert, Ram Shankar Siva Kumar, and Yonatan Zunger, &quot;PyRIT: A Framework for Security Risk Identification and Red Teaming in Generative AI Systems&quot; (Microsoft AI Red Team, October 2024), arXiv:2410.02828, doi:10.48550/arXiv.2410.02828. <strong>Annotation:</strong> Open-source automation framework organizing Targets, Orchestrators, Converters, Scorers, and Memory to scale multi-turn adaptive and multimodal enterprise AI red-teaming. <a href="bibliography.html#munoz-2024-pyrit">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c26-08" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c26-10"><span class="fn-body">Dave Chismon, &quot;Prompt Injection Is Not SQL Injection (It May Be Worse)&quot; (UK National Cyber Security Centre, December 2025). <strong>Annotation:</strong> Explains why LLMs act as inherently confusable deputies rather than deterministically parameterizable parsers, steering red-team validation toward architectural blast-radius containment rather than chasing zero classifier bypasses. <a href="bibliography.html#ncsc-2025-prompt-injection">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c26-10" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c26-11"><span class="fn-body">MLCommons, <em>AILuminate: Introducing v1.0 of the AI Risk and Reliability Benchmark from MLCommons</em> (MLCommons AI Risk &amp; Reliability Working Group, December 2024; arXiv:2503.05731, March 2025). <strong>Annotation:</strong> Industry-standard chat safety benchmark spanning twelve physical, non-physical, and specialized-advice hazard categories rated on a five-tier <em>Poor</em>-to-<em>Excellent</em> scale for Stage-1 model screening. <a href="bibliography.html#mlcommons-2025-ailuminate">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c26-11" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c26-12"><span class="fn-body">Mantas Mazeika, Long Phan, Xuwang Yin, Andy Zou, Zifan Wang, Norman Mu, Elham Sakhaee, Nathaniel Li, Steven Basart, Bo Li, David Forsyth, and Dan Hendrycks, &quot;HarmBench: A Standardized Evaluation Framework for Automated Red Teaming and Robust Refusal,&quot; <em>Proceedings of the 41st International Conference on Machine Learning (ICML 2024)</em> (2024), arXiv:2402.04249, doi:10.48550/arXiv.2402.04249. <strong>Annotation:</strong> Standardizes automated red-teaming evaluation across 510 harmful behaviors, 18 attack methods, and 33 target models/defenses using fixed Attack Success Rate (<code>ASR</code>) classifiers and validation/test splits. <a href="bibliography.html#mazeika-2024-harmbench">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c26-12" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c26-13"><span class="fn-body">OWASP Foundation, <em>OWASP Top 10 for Agentic Applications for 2026</em> (OWASP GenAI Security Project, December 2025). <strong>Annotation:</strong> Maps agent-specific operational exploits across tool misuse, memory poisoning, and multi-agent privilege confusion absent from isolated single-turn chat benchmarks. <a href="bibliography.html#owasp-2025-agentic-top10">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c26-13" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c26-14"><span class="fn-body">European Parliament and Council of the European Union, <em>Regulation (EU) 2024/1689 (Artificial Intelligence Act)</em>, Official Journal of the EU L, 2024/1689, July 12, 2024 — specifically Articles 9(6)–(8) (pre-market testing against prior defined metrics and probabilistic thresholds), Article 15 (accuracy, robustness, cybersecurity), Article 55(1)(a) (adversarial testing for systemic-risk GPAI models), and Annex IV (testing documentation). <strong>Annotation:</strong> Codifies pre-market validation against predetermined thresholds and documented adversarial testing as binding EU conformity prerequisites. <a href="bibliography.html#eu-2024-ai-act">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c26-14" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c26-15"><span class="fn-body">International Organization for Standardization and International Electrotechnical Commission, <em>ISO/IEC 42001:2023, Information Technology — Artificial Intelligence — Management System</em> (Geneva: ISO, December 2023). <strong>Annotation:</strong> Embeds pre-deployment evaluation criteria, independent testing verification, and executive risk-acceptance approvals into a certifiable AI management system lifecycle. <a href="bibliography.html#iso-2023-42001">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c26-15" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+</ol>
+</section>
+        <nav class="pager" aria-label="Chapter navigation"><a class="pager-card pager-prev" href="25-operational-resilience-and-business-continuity.html"><span class="pager-dir">&larr; Previous</span><span class="pager-title">Chapter 25: Operational Resilience &amp; Business Continuity</span></a><a class="pager-card pager-next" href="27-ai-incident-response.html"><span class="pager-dir">Next &rarr;</span><span class="pager-title">Chapter 27: AI Incident Response</span></a></nav>
+      </article>
+      <footer class="doc-footer">
+        Building Guardrails for Enterprise AI &middot; Built 2026-11-22
+      </footer>
+    </main>
+<aside class="page-toc" aria-label="On this page">
+  <div class="page-toc-inner">
+    <div class="page-toc-title">On this page</div>
+    <ul><li class="toc-l3"><a href="#illustrative-composite-scenario-96-on-the-public-leaderboard-28-on-monday-morning">Illustrative Composite Scenario: 96% on the Public Leaderboard, 28% on Monday Morning</a></li><li class="toc-l2"><a href="#261-pre-deployment-evals-and-golden-datasets">26.1 Pre-Deployment Evals and Golden Datasets</a></li><li class="toc-l3"><a href="#the-guardrails">The Guardrails</a></li><li class="toc-l2"><a href="#262-ai-red-teaming-scope-methods-and-who-should-do-it">26.2 AI Red-Teaming: Scope, Methods, and Who Should Do It</a></li><li class="toc-l3"><a href="#the-guardrails-2">The Guardrails</a></li><li class="toc-l2"><a href="#263-safety-and-security-benchmarks">26.3 Safety and Security Benchmarks</a></li><li class="toc-l3"><a href="#the-guardrails-3">The Guardrails</a></li><li class="toc-l2"><a href="#264-gono-go-criteria-for-production">26.4 Go/No-Go Criteria for Production</a></li><li class="toc-l3"><a href="#the-guardrails-4">The Guardrails</a></li><li class="toc-l2"><a href="#why-every-role-cares">Why Every Role Cares</a></li><li class="toc-l2"><a href="#chapter-summary">Chapter Summary</a></li><li class="toc-l2"><a href="#key-takeaways">Key Takeaways</a></li><li class="toc-l2"><a href="#questions-to-ask">Questions to Ask</a></li><li class="toc-l2"><a href="#notes">Notes</a></li></ul>
+  </div>
+</aside>
+  </div>
+</body>
+</html>

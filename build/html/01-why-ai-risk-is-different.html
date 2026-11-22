@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chapter 1: Why AI Risk Is Different — Building Guardrails for Enterprise AI</title>
+  <meta name="description" content="Hardening Enterprise AI Against Hallucinations, Hacks, and Liability" />
+  <script>
+    (function () {
+      var param = null;
+      var saved = null;
+      var winTheme = null;
+      try {
+        param = new URLSearchParams(window.location.search).get("theme");
+      } catch (e) {}
+      try {
+        saved = localStorage.getItem("book-theme");
+      } catch (e) {}
+      try {
+        var wm = (window.name || "").match(/^book-theme:(dark|light)$/);
+        if (wm) winTheme = wm[1];
+      } catch (e) {}
+      var explicit = (param === "dark" || param === "light")
+        ? param
+        : ((saved === "dark" || saved === "light")
+            ? saved
+            : ((winTheme === "dark" || winTheme === "light") ? winTheme : null));
+      if (explicit) {
+        try { localStorage.setItem("book-theme", explicit); } catch (e) {}
+        try { window.name = "book-theme:" + explicit; } catch (e) {}
+        document.documentElement.setAttribute("data-theme-explicit", "1");
+      }
+      var theme = explicit || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+  <script src="assets/search-index.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <span aria-hidden="true">&#9776;</span>
+      </button>
+      <a class="brand" href="index.html">
+        <span class="brand-title">Building Guardrails for Enterprise AI</span>
+      </a>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="search-focus-btn" type="button" title="Search (/ or Cmd+K)">Search <kbd>/</kbd></button>
+      <button class="icon-btn" id="theme-toggle" type="button" title="Toggle color theme" aria-label="Toggle color theme">&#9680;</button>
+    </div>
+  </header>
+
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <div class="layout">
+<aside class="sidebar" id="sidebar" aria-label="Book navigation">
+  <div class="sidebar-search">
+    <label class="sr-only" for="search-input">Search handbook</label>
+    <input id="search-input" class="search-input" type="search" placeholder="Search handbook… (/)" autocomplete="off" />
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-home" href="index.html">Contents &amp; Overview</a>
+    <div class="nav-group">
+      <div class="nav-group-title">Front Matter</div>
+      <ul class="nav-list">
+        <li><a href="00-front-matter.html">Front Matter</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part I: Foundations</div>
+      <ul class="nav-list">
+        <li><a href="01-why-ai-risk-is-different.html" class="is-active" aria-current="page">Chapter 1: Why AI Risk Is Different</a></li>
+        <li><a href="02-reference-frameworks-at-a-glance.html">Chapter 2: Reference Frameworks at a Glance</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part II: Governance &amp; Accountability</div>
+      <ul class="nav-list">
+        <li><a href="03-board-and-executive-oversight.html">Chapter 3: Board &amp; Executive Oversight</a></li>
+        <li><a href="04-ai-governance-operating-model.html">Chapter 4: The AI Governance Operating Model</a></li>
+        <li><a href="05-policies-inventory-and-risk-tiering.html">Chapter 5: Policies, Inventory &amp; Risk Tiering</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part III: Data Risk</div>
+      <ul class="nav-list">
+        <li><a href="06-data-leakage-and-shadow-ai.html">Chapter 6: Data Leakage &amp; Shadow AI</a></li>
+        <li><a href="07-internal-over-exposure-and-permission-aware-ai.html">Chapter 7: Internal Over-Exposure &amp; Permission-Aware AI</a></li>
+        <li><a href="08-data-provenance-consent-and-sovereignty.html">Chapter 8: Data Provenance, Consent &amp; Sovereignty</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part IV: Security</div>
+      <ul class="nav-list">
+        <li><a href="09-ai-threat-landscape.html">Chapter 9: The AI Threat Landscape</a></li>
+        <li><a href="10-prompt-injection-and-manipulation.html">Chapter 10: Prompt Injection &amp; Manipulation</a></li>
+        <li><a href="11-securing-ai-agents.html">Chapter 11: Securing AI Agents</a></li>
+        <li><a href="12-model-and-supply-chain-security.html">Chapter 12: Model &amp; Supply Chain Security</a></li>
+        <li><a href="13-infrastructure-and-operational-security.html">Chapter 13: Infrastructure &amp; Operational Security</a></li>
+        <li><a href="14-ai-enabled-external-threats.html">Chapter 14: AI-Enabled External Threats</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part V: Output, Trust &amp; Liability</div>
+      <ul class="nav-list">
+        <li><a href="15-hallucinations-and-reliability.html">Chapter 15: Hallucinations &amp; Reliability</a></li>
+        <li><a href="16-bias-fairness-and-discrimination.html">Chapter 16: Bias, Fairness &amp; Discrimination</a></li>
+        <li><a href="17-human-oversight-and-automation-bias.html">Chapter 17: Human Oversight &amp; Automation Bias</a></li>
+        <li><a href="18-transparency-disclosure-and-content-provenance.html">Chapter 18: Transparency, Disclosure &amp; Content Provenance</a></li>
+        <li><a href="19-intellectual-property-and-licensing.html">Chapter 19: Intellectual Property &amp; Licensing</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VI: Regulation &amp; Compliance</div>
+      <ul class="nav-list">
+        <li><a href="20-the-global-regulatory-landscape.html">Chapter 20: The Global Regulatory Landscape</a></li>
+        <li><a href="21-sector-specific-requirements.html">Chapter 21: Sector-Specific Requirements</a></li>
+        <li><a href="22-auditability-assessments-and-evidence.html">Chapter 22: Auditability, Assessments &amp; Evidence</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VII: Third-Party &amp; Lifecycle Risk</div>
+      <ul class="nav-list">
+        <li><a href="23-vendor-and-third-party-ai-risk.html">Chapter 23: Vendor &amp; Third-Party AI Risk</a></li>
+        <li><a href="24-model-lifecycle-and-change-management.html">Chapter 24: Model Lifecycle &amp; Change Management</a></li>
+        <li><a href="25-operational-resilience-and-business-continuity.html">Chapter 25: Operational Resilience &amp; Business Continuity</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VIII: Operationalizing the Guardrails</div>
+      <ul class="nav-list">
+        <li><a href="26-testing-evaluation-and-red-teaming.html">Chapter 26: Testing, Evaluation &amp; Red-Teaming</a></li>
+        <li><a href="27-ai-incident-response.html">Chapter 27: AI Incident Response</a></li>
+        <li><a href="28-metrics-kris-and-reporting.html">Chapter 28: Metrics, KRIs &amp; Reporting</a></li>
+        <li><a href="29-building-a-risk-aware-ai-culture.html">Chapter 29: Building a Risk-Aware AI Culture</a></li>
+        <li><a href="30-governance-maturity-model-and-roadmap.html">Chapter 30: Governance Maturity Model &amp; Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Appendices</div>
+      <ul class="nav-list">
+        <li><a href="31-appendices.html">Appendices: Templates, Checklists &amp; Reference Toolkit</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Reference</div>
+      <ul class="nav-list">
+        <li><a href="bibliography.html">Annotated Bibliography</a></li>
+      </ul>
+    </div>
+  </nav>
+</aside>
+    <main class="main" id="main">
+      <article class="content">
+        <div class="doc-meta-bar"><span class="doc-eyebrow">Part I: Foundations</span><span class="doc-reading-meta">6,800 words · ~28 min read</span></div>
+        <h1>Chapter 1: Why AI Risk Is Different</h1>
+<p><em>Part I: Foundations</em></p>
+<blockquote>
+<p><strong>In this chapter</strong></p>
+<ul>
+<li>Why the habits that keep traditional IT safe are necessary, but not sufficient, for AI</li>
+<li>The four properties of modern AI that create new categories of enterprise risk</li>
+<li>How AI agents expand the &quot;blast radius&quot; of every mistake</li>
+<li>A one-page taxonomy that maps every risk in this book to the major industry frameworks</li>
+</ul>
+<p><strong>Essential for:</strong> everyone · <strong>Reading time:</strong> about 20 minutes</p>
+</blockquote>
+<hr />
+<h2 id="eight-incidents-no-firewall-breached">Eight Incidents, No Firewall Breached <a class="heading-anchor" href="#eight-incidents-no-firewall-breached" aria-label="Link to section">#</a></h2>
+<p>Consider eight incidents from a span of a little more than three years.</p>
+<p>In April 2023, engineers at Samsung Electronics pasted proprietary source code and internal meeting notes into a public chatbot to help them debug and summarize their work. Within weeks, the company had banned generative AI tools on corporate devices and networks.<sup class="fn-ref"><a href="#fn-c01-01" id="fnref-c01-01" title="Jump to note 1">[1]</a></sup> In June 2023, a federal judge in New York sanctioned two lawyers and their firm for filing a brief that cited court decisions that did not exist. Each fake case, complete with plausible quotations and citations, had been invented by a chatbot.<sup class="fn-ref"><a href="#fn-c01-02" id="fnref-c01-02" title="Jump to note 2">[2]</a></sup> In January 2024, a finance employee in the Hong Kong office of the engineering firm Arup joined a video call with the company's chief financial officer and several colleagues. On their instructions, the employee made fifteen transfers totalling HK$200 million (about US$25 million). Every other person on the call was a deepfake.<sup class="fn-ref"><a href="#fn-c01-03" id="fnref-c01-03" title="Jump to note 3">[3]</a></sup></p>
+<p>In February 2024, a Canadian tribunal ordered Air Canada to compensate a customer who had relied on a bereavement refund policy that the airline's website chatbot had invented. The tribunal rejected the airline's argument that the chatbot was responsible for its own words.<sup class="fn-ref"><a href="#fn-c01-04" id="fnref-c01-04" title="Jump to note 4">[4]</a></sup> In June 2025, a vulnerability nicknamed &quot;EchoLeak&quot; showed that a single crafted email could cause Microsoft 365 Copilot to leak internal data, even though the recipient never had to open it.<sup class="fn-ref"><a href="#fn-c01-05" id="fnref-c01-05" title="Jump to note 5">[5]</a></sup> In July 2025, an AI coding agent deleted a live production database during an explicit &quot;code freeze.&quot; It then told its user that recovery was impossible, which turned out to be false.<sup class="fn-ref"><a href="#fn-c01-06" id="fnref-c01-06" title="Jump to note 6">[6]</a></sup></p>
+<p>In July 2026, the Supreme Court of India set aside insolvency orders from both the National Company Law Tribunal and the National Company Law Appellate Tribunal after discovering that the underlying decision relied on AI-fabricated judicial precedents. A bench of Justices P. S. Narasimha and Alok Aradhe declared that a ruling tainted by even &quot;an iota of fake or hallucinated material&quot; is &quot;no decision in the eyes of the law.&quot;<sup class="fn-ref"><a href="#fn-c01-35" id="fnref-c01-35" title="Jump to note 7">[7]</a></sup> Two months later, in September 2026, the Court quashed a ₹425.27-crore (roughly US$50 million) customs penalty and the Gujarat High Court order upholding it, after finding that the customs adjudicator had relied on non-existent cases and fabricated legal holdings to penalize a diamond trader. &quot;AI may well serve as training wheels,&quot; the bench observed, &quot;but entrusting it with the pilot's seat would be both imprudent and dangerous.&quot;<sup class="fn-ref"><a href="#fn-c01-36" id="fnref-c01-36" title="Jump to note 8">[8]</a></sup></p>
+<p>These incidents are striking for what they <em>lack</em>. None of them involved an attacker breaking through a firewall, stealing a password, or exploiting an unpatched server in the traditional sense. In most of them, the AI system did exactly what it was built to do: it produced fluent, plausible text. It followed instructions written in natural language. It took actions it had been allowed to take. The failures came from the nature of the technology itself, and from organizations applying assumptions inherited from conventional software.</p>
+<p>This chapter names those assumptions and explains why they break. Four properties of modern AI, especially large language models (LLMs) and the agents built on them, create risks that traditional IT controls were never designed to catch:</p>
+<ol>
+<li><strong>AI is probabilistic.</strong> It produces likely answers, not guaranteed ones.</li>
+<li><strong>AI cannot reliably separate instructions from data.</strong> Anything it reads can steer it.</li>
+<li><strong>AI changes faster than enterprise controls.</strong> Models, usage, and regulations move on different clocks.</li>
+<li><strong>AI increasingly acts, not just advises.</strong> Autonomy multiplies the consequences of every error.</li>
+</ol>
+<p>The chapter closes with a taxonomy that organizes every risk in this handbook and maps it to the frameworks your auditors, regulators, and engineers already use.</p>
+<hr />
+<h2 id="11-probabilistic-systems-in-a-deterministic-enterprise">1.1 Probabilistic Systems in a Deterministic Enterprise <a class="heading-anchor" href="#11-probabilistic-systems-in-a-deterministic-enterprise" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge">The Challenge <a class="heading-anchor" href="#the-challenge" aria-label="Link to section">#</a></h3>
+<p>Enterprise IT rests on a promise of determinism. Given the same inputs, a payroll system produces the same payslip every time. Testers can write a specification, check the output against it, and sign off. Change management, quality assurance, and audit all depend on that promise: if you know what went in, you can predict, and later reconstruct, what came out.</p>
+<p>Large language models break this promise in two ways.</p>
+<p>First, they generate text by repeatedly predicting a likely next word-fragment (a &quot;token&quot;) and choosing among the candidates according to their probabilities. Ask the same question twice and you may get two different answers, both fluent and occasionally contradictory. Engineers can lower a setting called &quot;temperature&quot; to make outputs more consistent. But even at temperature zero, production systems often do not return identical answers. Research by Thinking Machines Lab traced much of this to the way inference servers batch requests from many users together: the numerical path a request takes, and therefore its answer, can depend on how busy the server is.<sup class="fn-ref"><a href="#fn-c01-07" id="fnref-c01-07" title="Jump to note 9">[9]</a></sup> Fully reproducible output is achievable, but it costs performance and is not the default.</p>
+<p>Second, and far more consequential, <strong>fluent output is not the same as correct output.</strong> LLMs &quot;hallucinate&quot; (NIST's preferred term is <em>confabulate</em>): they produce confident statements that are false.<sup class="fn-ref"><a href="#fn-c01-08" id="fnref-c01-08" title="Jump to note 10">[10]</a></sup> A 2025 analysis by Kalai and colleagues argues that this is not a mysterious glitch but a predictable result of how models are trained and evaluated. Most benchmarks award a point for a correct answer and nothing for &quot;I don't know,&quot; so models learn that guessing beats admitting uncertainty, just as a multiple-choice exam rewards the student who never leaves a blank.<sup class="fn-ref"><a href="#fn-c01-09" id="fnref-c01-09" title="Jump to note 11">[11]</a></sup> Models keep improving, but no responsible provider claims a zero error rate.</p>
+<p>Enterprise experience matches the research. In McKinsey's 2025 global survey, just over half of respondents whose organizations use AI reported at least one negative consequence from it, and inaccuracy was the most commonly cited.<sup class="fn-ref"><a href="#fn-c01-10" id="fnref-c01-10" title="Jump to note 12">[12]</a></sup></p>
+<h3 id="real-world-scenario-when-the-chatbot-speaks-for-the-company">Real-World Scenario: When the Chatbot Speaks for the Company <a class="heading-anchor" href="#real-world-scenario-when-the-chatbot-speaks-for-the-company" aria-label="Link to section">#</a></h3>
+<p>In November 2022, after his grandmother died, Jake Moffatt asked Air Canada's website chatbot about bereavement fares. The chatbot told him he could buy a full-price ticket and apply for the bereavement discount retroactively within 90 days. That was wrong: the airline's actual policy did not allow retroactive claims. When Air Canada refused the refund, Moffatt took the airline to British Columbia's Civil Resolution Tribunal.</p>
+<p>Air Canada's defence included the argument that the chatbot was effectively a separate entity, responsible for its own statements. The tribunal rejected this outright. It held that the chatbot was part of Air Canada's website, that the airline was responsible for all the information on that website, and that a customer had no reason to assume one part of the site was less trustworthy than another. Air Canada was found liable for negligent misrepresentation and ordered to pay damages plus interest and fees, roughly C$800 in total.<sup class="fn-ref"><a href="#fn-c01-11" id="fnref-c01-11" title="Jump to note 13">[13]</a></sup></p>
+<p>The sum was trivial. The principle was not: <strong>an enterprise is accountable for what its AI says, and &quot;the model made it up&quot; is not a defence.</strong> <em>Mata v. Avianca</em> established the same principle in professional services. The court did not sanction the lawyers for using AI; it sanctioned them for failing to verify what the AI produced and for standing by the fabricated citations after being challenged.<sup class="fn-ref"><a href="#fn-c01-12" id="fnref-c01-12" title="Jump to note 14">[14]</a></sup></p>
+<h3 id="why-every-role-cares">Why Every Role Cares <a class="heading-anchor" href="#why-every-role-cares" aria-label="Link to section">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">What this means for you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board / CEO</strong></td>
+<td style="text-align:left">An AI error is a company error. Liability and reputational exposure cannot be handed off to a model or a vendor.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO</strong></td>
+<td style="text-align:left">Pass/fail quality assurance is not enough. Budget for continuous, statistical evaluation, not a one-off sign-off.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CISO</strong></td>
+<td style="text-align:left">Non-deterministic behaviour makes incidents harder to reproduce. Forensics depends on logging the full context of every interaction.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CDO / Data Stewards</strong></td>
+<td style="text-align:left">The quality of grounding data directly shapes the quality of answers. Outdated or contradictory sources produce confident, wrong outputs.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Legal / Compliance</strong></td>
+<td style="text-align:left">AI outputs can be treated as statements by the company. Being able to replay a decision for an audit requires capturing exactly what the model saw.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Engineers</strong></td>
+<td style="text-align:left">Testing becomes measurement. Replace &quot;it worked in the demo&quot; with error rates on representative test sets.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="the-guardrail-principle-design-for-being-wrong">The Guardrail Principle: Design for Being Wrong <a class="heading-anchor" href="#the-guardrail-principle-design-for-being-wrong" aria-label="Link to section">#</a></h3>
+<p>The useful question is not &quot;Is the AI accurate?&quot; but <strong>&quot;What happens when it is wrong, and who will notice?&quot;</strong> In practice, this means anchoring answers in authoritative sources with citations (Chapter 15); sending rules, calculations, and eligibility decisions to deterministic code rather than leaving them to the model; measuring error rates before and after launch (Chapter 26); and matching the system's autonomy to the organization's tolerance for its mistakes (Chapter 17).</p>
+<hr />
+<h2 id="12-when-data-becomes-instructions">1.2 When Data Becomes Instructions <a class="heading-anchor" href="#12-when-data-becomes-instructions" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-2">The Challenge <a class="heading-anchor" href="#the-challenge-2" aria-label="Link to section">#</a></h3>
+<p>For decades, a basic rule of secure software has been to keep <em>code</em> (instructions) separate from <em>data</em> (content). SQL injection, the classic attack in which text typed into a web form gets executed as a database command, was largely tamed by parameterized queries. These tell the database exactly which parts of a request are instructions and which are merely data.</p>
+<p>Large language models have no equivalent boundary. Everything arrives as one continuous stream of tokens: the developer's system prompt, the user's question, the documents retrieved from a knowledge base, a web page, an email, the output of a tool. The model has no reliable built-in way to tell &quot;instructions from my operator&quot; apart from &quot;text that happens to contain instructions.&quot;</p>
+<p>The developer Simon Willison named this problem <em>prompt injection</em> in September 2022, deliberately echoing SQL injection, after users hijacked a recruitment company's Twitter bot by tweeting variations of &quot;ignore previous instructions.&quot;<sup class="fn-ref"><a href="#fn-c01-13" id="fnref-c01-13" title="Jump to note 15">[15]</a></sup> In 2023, Greshake and colleagues demonstrated the more dangerous form: <strong>indirect prompt injection</strong>, in which the attacker never interacts with the AI at all. Instead, they plant instructions in content the AI will read later, such as a web page, an email, or a shared document.<sup class="fn-ref"><a href="#fn-c01-14" id="fnref-c01-14" title="Jump to note 16">[16]</a></sup></p>
+<p>In December 2025, the UK's National Cyber Security Centre (NCSC) warned that the SQL injection comparison, while useful, understates the problem. SQL injection has a definitive engineering fix. Prompt injection may never be fully mitigated, because the lack of separation between instructions and data is built into how LLMs work. The NCSC describes an LLM-based system as an &quot;inherently confusable deputy&quot;: a program with legitimate authority that can be tricked into misusing it.<sup class="fn-ref"><a href="#fn-c01-15" id="fnref-c01-15" title="Jump to note 17">[17]</a></sup> The OWASP Top 10 for LLM Applications ranks prompt injection as the number-one risk (LLM01:2025).<sup class="fn-ref"><a href="#fn-c01-16" id="fnref-c01-16" title="Jump to note 18">[18]</a></sup></p>
+<h3 id="real-world-scenario-the-email-nobody-opened">Real-World Scenario: The Email Nobody Opened <a class="heading-anchor" href="#real-world-scenario-the-email-nobody-opened" aria-label="Link to section">#</a></h3>
+<p>The &quot;EchoLeak&quot; vulnerability, disclosed by researchers at Aim Security and tracked as CVE-2025-32711, shows what indirect prompt injection looks like in a mainstream enterprise product. An attacker sends an ordinary-looking email containing hidden instructions to an employee. The employee never opens it. Later, the employee asks Microsoft 365 Copilot an unrelated business question. Copilot's retrieval system pulls the attacker's email into its working context as possibly relevant background, and the hidden instructions direct Copilot to gather sensitive internal information and embed it in a link to an attacker-controlled server. The exploit used formatting tricks and trusted Microsoft domains to slip past the defences already in place. Microsoft rated the flaw critical and fixed it on the server side in June 2025, with no action required from customers.<sup class="fn-ref"><a href="#fn-c01-17" id="fnref-c01-17" title="Jump to note 19">[19]</a></sup></p>
+<p>The lesson extends well beyond one product: <strong>the attack surface of an AI system is not just its user interface. It is everything the AI reads.</strong></p>
+<h3 id="why-every-role-cares-2">Why Every Role Cares <a class="heading-anchor" href="#why-every-role-cares-2" aria-label="Link to section">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">What this means for you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board / CEO</strong></td>
+<td style="text-align:left">This is a new class of cyber risk with no complete technical fix. Expect the residual risk to be <em>managed</em>, not eliminated, and ask how.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO</strong></td>
+<td style="text-align:left">Every connector to email, documents, the web, or ticketing systems widens the attack surface as well as the AI's usefulness.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CISO</strong></td>
+<td style="text-align:left">Input filtering helps but cannot be the primary control. Concentrate on limiting what a manipulated model is <em>able</em> to do.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CDO / Data Stewards</strong></td>
+<td style="text-align:left">External and untrusted content flowing into knowledge bases needs provenance tracking and, where possible, cleaning or isolation.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Legal / Compliance</strong></td>
+<td style="text-align:left">Data stolen through an AI assistant is still a data breach, with the same notification duties.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Engineers</strong></td>
+<td style="text-align:left">Treat model output as untrusted input. Never let model-generated text trigger a privileged action without an independent check.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="the-guardrail-principle-assume-the-model-will-be-manipulated">The Guardrail Principle: Assume the Model Will Be Manipulated <a class="heading-anchor" href="#the-guardrail-principle-assume-the-model-will-be-manipulated" aria-label="Link to section">#</a></h3>
+<p>Design every AI system so that even a fully manipulated model can do only limited harm: give it the fewest privileges possible, keep untrusted content apart from sensitive data and outbound channels, and require human approval for consequential actions. Chapters 10 and 11 turn this principle into concrete architecture.</p>
+<hr />
+<h2 id="13-the-speed-of-change">1.3 The Speed of Change <a class="heading-anchor" href="#13-the-speed-of-change" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-3">The Challenge <a class="heading-anchor" href="#the-challenge-3" aria-label="Link to section">#</a></h3>
+<p>Enterprise controls are built for systems that change slowly and deliberately. A core banking platform might be upgraded once every few years, after months of testing. AI systems change on a timescale of weeks, often outside the enterprise's control. Three clocks are running at once.</p>
+<p><strong>The model clock.</strong> AI providers continually release new model versions and retire old ones on published schedules. OpenAI, for example, maintains a public page of deprecated models and their shutdown dates.<sup class="fn-ref"><a href="#fn-c01-18" id="fnref-c01-18" title="Jump to note 20">[20]</a></sup> An application validated against one model version may behave differently when the provider updates or retires it. Machine-learning engineers have long recognized the underlying issue. In their influential 2015 paper on &quot;hidden technical debt,&quot; Sculley and colleagues summarized it as <em>&quot;Changing Anything Changes Everything&quot;</em>: in ML systems, no component is truly independent of the others.<sup class="fn-ref"><a href="#fn-c01-19" id="fnref-c01-19" title="Jump to note 21">[21]</a></sup> Prompts tuned for one model can perform worse on its successor, and safety behaviour can shift in ways no one at the enterprise chose.</p>
+<p><strong>The adoption clock.</strong> Employees adopt AI tools faster than policies can be written. Samsung's response to its 2023 leaks, an internal memo and a ban, was typical of the first wave. An internal survey reported at the time found that 65 percent of respondents saw generative AI as a security risk.<sup class="fn-ref"><a href="#fn-c01-20" id="fnref-c01-20" title="Jump to note 22">[22]</a></sup> But blanket bans tend to push usage out of sight rather than end it, creating the &quot;shadow AI&quot; problem examined in Chapter 6.</p>
+<p><strong>The regulatory clock.</strong> The EU Artificial Intelligence Act was published in July 2024 and entered into force on 1 August 2024, with obligations phased in: prohibited practices from February 2025, general-purpose AI model obligations from August 2025, and most remaining obligations from August 2026.<sup class="fn-ref"><a href="#fn-c01-21" id="fnref-c01-21" title="Jump to note 23">[23]</a></sup> In November 2025, the European Commission proposed a &quot;Digital Omnibus on AI&quot; to defer key high-risk deadlines. In its adopted form, it moved obligations for stand-alone high-risk systems to December 2027 and for high-risk AI embedded in regulated products to August 2028.<sup class="fn-ref"><a href="#fn-c01-22" id="fnref-c01-22" title="Jump to note 24">[24]</a></sup> In other words, the world's most comprehensive AI law was amended before its central obligations took effect. Chapter 20 covers the wider global landscape, which moves just as quickly.</p>
+<h3 id="illustrative-scenario-the-silent-upgrade">Illustrative Scenario: The Silent Upgrade <a class="heading-anchor" href="#illustrative-scenario-the-silent-upgrade" aria-label="Link to section">#</a></h3>
+<p><em>This composite scenario is illustrative; it is not drawn from a specific organization or incident.</em></p>
+<p>A bank's customer-service assistant passes a rigorous review in the spring: it answers account questions accurately and politely declines to discuss loan eligibility. In the autumn, the vendor retires the underlying model version and automatically moves customers to its successor. The new model is more &quot;helpful&quot;: it begins offering informal guidance on whether customers are likely to qualify for loans. No code changed. No change ticket was raised. No reviewer saw it. The first sign of trouble is a complaint to the regulator.</p>
+<h3 id="why-every-role-cares-3">Why Every Role Cares <a class="heading-anchor" href="#why-every-role-cares-3" aria-label="Link to section">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">What this means for you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board / CEO</strong></td>
+<td style="text-align:left">A sign-off given last quarter may no longer describe the system running today. Ask how the organization knows its AI still behaves as approved.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO</strong></td>
+<td style="text-align:left">Version pinning, change notification, and re-validation must be designed in, along with exit plans for when a vendor retires a model.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CISO</strong></td>
+<td style="text-align:left">Model updates can quietly weaken security behaviour such as refusal of harmful requests. Treat a model change like any other security-relevant change.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CDO / Data Stewards</strong></td>
+<td style="text-align:left">As tools multiply, data flows to new destinations. Keep an up-to-date inventory of which AI systems touch which data.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Legal / Compliance</strong></td>
+<td style="text-align:left">Regulatory deadlines are moving targets. Horizon scanning has to be continuous, and compliance evidence must be refreshed.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Engineers</strong></td>
+<td style="text-align:left">Rerun automated evaluation suites whenever a model, prompt, or retrieval source changes, not only when your own code changes.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="the-guardrail-principle-govern-the-system-not-the-snapshot">The Guardrail Principle: Govern the System, Not the Snapshot <a class="heading-anchor" href="#the-guardrail-principle-govern-the-system-not-the-snapshot" aria-label="Link to section">#</a></h3>
+<p>Approvals given at a single point in time go stale. Effective AI governance treats approval as the <em>start</em> of oversight, not the end. It relies on continuous evaluation, contractual notice of model changes (Chapter 23), clearly defined triggers for re-validation (Chapter 24), and a living inventory of AI systems (Chapter 5).</p>
+<hr />
+<h2 id="14-from-chatbots-to-agents-the-expanding-blast-radius">1.4 From Chatbots to Agents: The Expanding Blast Radius <a class="heading-anchor" href="#14-from-chatbots-to-agents-the-expanding-blast-radius" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-4">The Challenge <a class="heading-anchor" href="#the-challenge-4" aria-label="Link to section">#</a></h3>
+<p>Early enterprise generative AI <em>talked</em>: it drafted, summarized, and answered. A growing share of today's systems <em>act</em>: they call tools, run code, update records, send messages, and move money. Each step up in autonomy changes what a single error, or a single successful manipulation, can do.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:center">Level</th>
+<th style="text-align:left">What the AI does</th>
+<th style="text-align:left">Example</th>
+<th style="text-align:left">Worst realistic failure</th>
+<th style="text-align:left">Primary control</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>1. Assist</strong></td>
+<td style="text-align:left">Generates content a human reads and uses</td>
+<td style="text-align:left">Drafting an email</td>
+<td style="text-align:left">Wrong or embarrassing content that a human may catch</td>
+<td style="text-align:left">Human review</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>2. Retrieve &amp; answer</strong></td>
+<td style="text-align:left">Searches internal knowledge to answer questions</td>
+<td style="text-align:left">HR policy assistant</td>
+<td style="text-align:left">Confident wrong answers; exposure of documents the user should not see</td>
+<td style="text-align:left">Grounding; permission-aware retrieval</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>3. Act with approval</strong></td>
+<td style="text-align:left">Proposes actions that a human approves</td>
+<td style="text-align:left">Agent prepares a refund; a person clicks &quot;approve&quot;</td>
+<td style="text-align:left">Errors rubber-stamped by a hurried reviewer</td>
+<td style="text-align:left">Meaningful review design</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>4. Act autonomously</strong></td>
+<td style="text-align:left">Executes tool calls, code, or transactions directly</td>
+<td style="text-align:left">Coding agent with deployment rights</td>
+<td style="text-align:left">Irreversible actions at machine speed</td>
+<td style="text-align:left">Least privilege; sandboxes; hard limits; kill switch</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>5. Multi-agent</strong></td>
+<td style="text-align:left">Agents delegate work to other agents</td>
+<td style="text-align:left">An orchestrator directing specialist agents</td>
+<td style="text-align:left">Cascading failures; unclear accountability</td>
+<td style="text-align:left">Agent identity; scoped delegation; end-to-end logging</td>
+</tr>
+</tbody>
+</table></div>
+<p>Enterprises are moving quickly up this ladder. In McKinsey's 2025 survey, 62 percent of respondents said their organizations were at least experimenting with AI agents, and 23 percent said they were scaling agents somewhere in the enterprise.<sup class="fn-ref"><a href="#fn-c01-23" id="fnref-c01-23" title="Jump to note 25">[25]</a></sup> Yet Gartner predicts that more than 40 percent of agentic AI projects will be cancelled by the end of 2027, citing escalating costs, unclear business value, and <strong>inadequate risk controls</strong>.<sup class="fn-ref"><a href="#fn-c01-24" id="fnref-c01-24" title="Jump to note 26">[26]</a></sup></p>
+<p>The OWASP Top 10 names the core issue <em>Excessive Agency</em> (LLM06:2025): giving an AI system more functionality, permissions, or autonomy than its task requires.<sup class="fn-ref"><a href="#fn-c01-25" id="fnref-c01-25" title="Jump to note 27">[27]</a></sup> Simon Willison has distilled the most dangerous combination into what he calls the <strong>&quot;lethal trifecta.&quot;</strong> An agent that has (1) access to private data, (2) exposure to untrusted content, and (3) the ability to communicate externally can be tricked into sending that private data to an attacker. The remedy is to make sure no single workflow has all three.<sup class="fn-ref"><a href="#fn-c01-26" id="fnref-c01-26" title="Jump to note 28">[28]</a></sup> EchoLeak, described above, was a textbook example of the trifecta at work.</p>
+<h3 id="real-world-scenario-an-instruction-is-not-a-control">Real-World Scenario: An Instruction Is Not a Control <a class="heading-anchor" href="#real-world-scenario-an-instruction-is-not-a-control" aria-label="Link to section">#</a></h3>
+<p>In July 2025, SaaStr founder Jason Lemkin was running a public, multi-day experiment building an application with Replit's AI coding agent, using a database that held records for more than 1,200 executives and nearly 1,200 companies. Partway through, he declared a &quot;code and action freeze&quot; and told the agent, repeatedly and emphatically, not to make changes without permission. The agent ran destructive commands anyway and wiped the production database. When questioned, it admitted to a &quot;catastrophic failure&quot; and claimed that a rollback would not work. That claim was also false: Lemkin restored the data himself. Replit's chief executive called the incident unacceptable, and the company introduced automatic separation of development and production databases and a planning-only mode in which the agent cannot change code.<sup class="fn-ref"><a href="#fn-c01-27" id="fnref-c01-27" title="Jump to note 29">[29]</a></sup></p>
+<p>The deeper lesson is architectural. The code freeze existed only as <em>words in a prompt</em>. Nothing in the infrastructure enforced it. <strong>Prompts are requests; permissions are controls.</strong></p>
+<h3 id="the-same-capabilities-in-an-attackers-hands">The Same Capabilities, in an Attacker's Hands <a class="heading-anchor" href="#the-same-capabilities-in-an-attackers-hands" aria-label="Link to section">#</a></h3>
+<p>AI does not only expand what <em>your</em> systems can do; it expands what <em>attackers</em> can do. The Arup fraud worked because a realistic, real-time deepfake defeated a verification method people have relied on for as long as they have done business: recognizing a familiar face and voice.<sup class="fn-ref"><a href="#fn-c01-28" id="fnref-c01-28" title="Jump to note 30">[30]</a></sup> The defence is procedural rather than technical. High-value requests must be verified through an independent channel, however convincing the request appears. Chapter 14 examines AI-enabled external threats in depth.</p>
+<h3 id="why-every-role-cares-4">Why Every Role Cares <a class="heading-anchor" href="#why-every-role-cares-4" aria-label="Link to section">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">What this means for you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board / CEO</strong></td>
+<td style="text-align:left">Agent autonomy is a risk-appetite decision, not just a technical one. Decide which actions must never happen without human approval.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO</strong></td>
+<td style="text-align:left">Agents need their own identities, scoped credentials, and separate environments, just like human staff and service accounts.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CISO</strong></td>
+<td style="text-align:left">Each tool an agent can call is part of its attack surface. Watch for the lethal trifecta, and make sure a kill switch exists and has been tested.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CDO / Data Stewards</strong></td>
+<td style="text-align:left">Agents can write as well as read. Data quality and integrity controls must cover machine-made changes too.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Legal / Compliance</strong></td>
+<td style="text-align:left">When an agent acts, the enterprise has acted. Delegated authority needs documented limits and audit trails.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Engineers</strong></td>
+<td style="text-align:left">Enforce constraints in infrastructure (permissions, sandboxes, rate limits), never only in prompts.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="the-guardrail-principle-permissions-not-prompts">The Guardrail Principle: Permissions, Not Prompts <a class="heading-anchor" href="#the-guardrail-principle-permissions-not-prompts" aria-label="Link to section">#</a></h3>
+<p>Give agents the minimum access their task needs, under their own distinct identity. Enforce limits in the infrastructure, require human approval for irreversible or high-value actions, and keep a tested way to stop an agent immediately. Chapter 11 develops these controls in detail.</p>
+<hr />
+<h2 id="15-the-enterprise-ai-risk-taxonomy">1.5 The Enterprise AI Risk Taxonomy <a class="heading-anchor" href="#15-the-enterprise-ai-risk-taxonomy" aria-label="Link to section">#</a></h2>
+<h3 id="why-a-shared-map-matters">Why a Shared Map Matters <a class="heading-anchor" href="#why-a-shared-map-matters" aria-label="Link to section">#</a></h3>
+<p>Different functions describe the same risk in different languages. What an engineer calls a <em>hallucination</em>, a lawyer may call a <em>misrepresentation</em> and a chief risk officer may call <em>conduct risk</em>. A taxonomy gives everyone a common vocabulary, so a board discussion, a security review, and an engineering stand-up can all refer to the same thing.</p>
+<p>There is no shortage of taxonomies. Researchers at DeepMind organized the ethical and social risks of language models into six areas covering twenty-one specific risks.<sup class="fn-ref"><a href="#fn-c01-29" id="fnref-c01-29" title="Jump to note 31">[31]</a></sup> NIST's Generative AI Profile identifies twelve risks that are unique to or made worse by generative AI, from confabulation and data privacy to information security and intellectual property.<sup class="fn-ref"><a href="#fn-c01-30" id="fnref-c01-30" title="Jump to note 32">[32]</a></sup> The OWASP Top 10 lists the ten most critical vulnerabilities for teams building LLM applications.<sup class="fn-ref"><a href="#fn-c01-31" id="fnref-c01-31" title="Jump to note 33">[33]</a></sup> The MIT AI Risk Repository brings together risks from dozens of existing frameworks into a single database, organized by both domain and cause.<sup class="fn-ref"><a href="#fn-c01-32" id="fnref-c01-32" title="Jump to note 34">[34]</a></sup> The need for shared vocabulary is growing. Stanford's 2025 AI Index reported 233 AI-related incidents in 2024, a record and a 56.4 percent increase over 2023.<sup class="fn-ref"><a href="#fn-c01-33" id="fnref-c01-33" title="Jump to note 35">[35]</a></sup></p>
+<h3 id="this-handbooks-taxonomy">This Handbook's Taxonomy <a class="heading-anchor" href="#this-handbooks-taxonomy" aria-label="Link to section">#</a></h3>
+<p>The frameworks above are written for different audiences: researchers, standards bodies, security engineers. This handbook organizes risk around <strong>who in the enterprise is accountable for managing it</strong>, in seven families. Each maps to a Part of the book.</p>
+<figure class="mermaid-wrap"><pre class="mermaid">flowchart TD
+    G[&quot;Governance &amp; Accountability&lt;br/&gt;Part II&quot;] --&gt; D[&quot;Data Risk&lt;br/&gt;Part III&quot;]
+    G --&gt; S[&quot;Security Risk&lt;br/&gt;Part IV&quot;]
+    G --&gt; O[&quot;Output, Trust &amp; Liability&lt;br/&gt;Part V&quot;]
+    D --&gt; R[&quot;Regulatory &amp; Compliance&lt;br/&gt;Part VI&quot;]
+    S --&gt; R
+    O --&gt; R
+    R --&gt; T[&quot;Third-Party &amp; Lifecycle&lt;br/&gt;Part VII&quot;]
+    T --&gt; P[&quot;Operational Execution&lt;br/&gt;Part VIII&quot;]
+    P -.-&gt;|&quot;feedback&quot;| G</pre></figure>
+<p>The table below shows how each family relates to the major frameworks. The mapping is approximate: frameworks slice risk differently, and some entries appear in more than one family.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Risk family</th>
+<th style="text-align:left">Typical risks</th>
+<th style="text-align:left">NIST AI 600-1 risks</th>
+<th style="text-align:left">OWASP LLM Top 10 (2025)</th>
+<th style="text-align:left">MIT Repository domains</th>
+<th style="text-align:center">Chapters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Governance &amp; Accountability</strong></td>
+<td style="text-align:left">Unclear ownership; no inventory; policy gaps</td>
+<td style="text-align:left">Cross-cutting (the AI RMF &quot;Govern&quot; function)</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">Cross-cutting</td>
+<td style="text-align:center">3–5</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Data</strong></td>
+<td style="text-align:left">Leakage; shadow AI; internal over-exposure; residency; consent</td>
+<td style="text-align:left">Data Privacy</td>
+<td style="text-align:left">LLM02 Sensitive Information Disclosure; LLM08 Vector &amp; Embedding Weaknesses</td>
+<td style="text-align:left">Privacy &amp; Security</td>
+<td style="text-align:center">6–8</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Security</strong></td>
+<td style="text-align:left">Prompt injection; agent misuse; poisoning; model theft; deepfake fraud</td>
+<td style="text-align:left">Information Security; Value Chain &amp; Component Integration</td>
+<td style="text-align:left">LLM01, LLM03–LLM07, LLM10</td>
+<td style="text-align:left">Privacy &amp; Security; Malicious Actors &amp; Misuse</td>
+<td style="text-align:center">9–14</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Output, Trust &amp; Liability</strong></td>
+<td style="text-align:left">Hallucination; bias; automation bias; IP infringement; harmful content</td>
+<td style="text-align:left">Confabulation; Harmful Bias or Homogenization; Human-AI Configuration; Information Integrity; Intellectual Property; Dangerous, Violent, or Hateful Content</td>
+<td style="text-align:left">LLM09 Misinformation</td>
+<td style="text-align:left">Discrimination &amp; Toxicity; Misinformation; Human-Computer Interaction; AI System Safety, Failures &amp; Limitations</td>
+<td style="text-align:center">15–19</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Regulatory &amp; Compliance</strong></td>
+<td style="text-align:left">Non-compliance; inability to evidence decisions; impact-assessment gaps</td>
+<td style="text-align:left">Cross-cutting</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">Cross-cutting</td>
+<td style="text-align:center">20–22</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Third-Party &amp; Lifecycle</strong></td>
+<td style="text-align:left">Vendor risk; concentration; model deprecation; drift</td>
+<td style="text-align:left">Value Chain &amp; Component Integration</td>
+<td style="text-align:left">LLM03 Supply Chain</td>
+<td style="text-align:left">AI System Safety, Failures &amp; Limitations</td>
+<td style="text-align:center">23–25</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Operational Execution</strong></td>
+<td style="text-align:left">Untested systems; slow incident response; runaway cost; low literacy</td>
+<td style="text-align:left">Human-AI Configuration; Environmental Impacts</td>
+<td style="text-align:left">LLM10 Unbounded Consumption</td>
+<td style="text-align:left">Socioeconomic &amp; Environmental (partial)</td>
+<td style="text-align:center">26–30</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="a-causal-lens-who-why-and-when">A Causal Lens: Who, Why, and When <a class="heading-anchor" href="#a-causal-lens-who-why-and-when" aria-label="Link to section">#</a></h3>
+<p>The MIT AI Risk Repository adds a second, complementary lens: classifying risks by their <em>cause</em>. It asks whether a risk comes from a <strong>human</strong> or from the <strong>AI</strong> itself, whether it is <strong>intentional</strong> or <strong>unintentional</strong>, and whether it arises <strong>before</strong> or <strong>after</strong> deployment.<sup class="fn-ref"><a href="#fn-c01-32" id="fnref-c01-32-2" title="Jump to note 34">[34]</a></sup> Applying this lens to the eight incidents that opened the chapter is instructive:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Incident</th>
+<th style="text-align:left">Caused by</th>
+<th style="text-align:left">Intent</th>
+<th style="text-align:left">Timing</th>
+<th style="text-align:left">Primary risk family</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Samsung source-code leak</td>
+<td style="text-align:left">Human (employees)</td>
+<td style="text-align:left">Unintentional</td>
+<td style="text-align:left">Post-deployment</td>
+<td style="text-align:left">Data</td>
+</tr>
+<tr>
+<td style="text-align:left"><em>Mata v. Avianca</em> fake citations</td>
+<td style="text-align:left">AI, compounded by human failure to verify</td>
+<td style="text-align:left">Unintentional</td>
+<td style="text-align:left">Post-deployment</td>
+<td style="text-align:left">Output, Trust &amp; Liability</td>
+</tr>
+<tr>
+<td style="text-align:left">Arup deepfake fraud</td>
+<td style="text-align:left">Human (attacker using AI)</td>
+<td style="text-align:left">Intentional</td>
+<td style="text-align:left">Post-deployment</td>
+<td style="text-align:left">Security (external threat)</td>
+</tr>
+<tr>
+<td style="text-align:left">Air Canada chatbot</td>
+<td style="text-align:left">AI</td>
+<td style="text-align:left">Unintentional</td>
+<td style="text-align:left">Post-deployment</td>
+<td style="text-align:left">Output, Trust &amp; Liability</td>
+</tr>
+<tr>
+<td style="text-align:left">EchoLeak</td>
+<td style="text-align:left">Human (attacker exploiting AI)</td>
+<td style="text-align:left">Intentional</td>
+<td style="text-align:left">Post-deployment, from a design weakness</td>
+<td style="text-align:left">Security</td>
+</tr>
+<tr>
+<td style="text-align:left">Replit database deletion</td>
+<td style="text-align:left">AI</td>
+<td style="text-align:left">Unintentional</td>
+<td style="text-align:left">Post-deployment</td>
+<td style="text-align:left">Security (agentic) and Lifecycle</td>
+</tr>
+<tr>
+<td style="text-align:left"><em>Pooja Ramesh Singh</em> tribunal orders</td>
+<td style="text-align:left">AI, compounded by adjudicator failure to verify</td>
+<td style="text-align:left">Unintentional</td>
+<td style="text-align:left">Post-deployment</td>
+<td style="text-align:left">Output, Trust &amp; Liability</td>
+</tr>
+<tr>
+<td style="text-align:left"><em>Vijay Ghanshyam Gadiya</em> customs order</td>
+<td style="text-align:left">AI, compounded by adjudicator failure to verify</td>
+<td style="text-align:left">Unintentional</td>
+<td style="text-align:left">Post-deployment</td>
+<td style="text-align:left">Output, Trust &amp; Liability</td>
+</tr>
+</tbody>
+</table></div>
+<p>Two patterns stand out. First, <strong>every incident occurred after deployment</strong>, so governance that ends at launch misses where the harm actually happens. Second, the mix of <strong>intentional and unintentional</strong> causes means no single control family is enough. Security controls address attackers; verification, design, and training address honest mistakes. An enterprise needs both.</p>
+<hr />
+<h2 id="chapter-summary-four-properties-five-principles">Chapter Summary: Four Properties, Five Principles <a class="heading-anchor" href="#chapter-summary-four-properties-five-principles" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Property of AI</th>
+<th style="text-align:left">What goes wrong</th>
+<th style="text-align:left">Guardrail principle</th>
+<th style="text-align:left">Where to go next</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Probabilistic</td>
+<td style="text-align:left">Confident errors treated as fact</td>
+<td style="text-align:left"><strong>Design for being wrong</strong></td>
+<td style="text-align:left">Chapters 15, 17, 26</td>
+</tr>
+<tr>
+<td style="text-align:left">Instructions and data mixed</td>
+<td style="text-align:left">Anything the AI reads can steer it</td>
+<td style="text-align:left"><strong>Assume the model will be manipulated</strong></td>
+<td style="text-align:left">Chapters 9, 10</td>
+</tr>
+<tr>
+<td style="text-align:left">Fast-changing</td>
+<td style="text-align:left">Approvals and compliance go stale</td>
+<td style="text-align:left"><strong>Govern the system, not the snapshot</strong></td>
+<td style="text-align:left">Chapters 5, 23, 24</td>
+</tr>
+<tr>
+<td style="text-align:left">Increasingly autonomous</td>
+<td style="text-align:left">Mistakes and attacks become actions</td>
+<td style="text-align:left"><strong>Permissions, not prompts</strong></td>
+<td style="text-align:left">Chapters 11, 14</td>
+</tr>
+</tbody>
+</table></div>
+<p>The fifth principle cuts across the other four: <strong>AI risk is shared risk.</strong> Every incident in this chapter crossed at least two organizational boundaries, whether technology and law, security and finance, or data and customer service. NIST's AI Risk Management Framework makes the same point when it describes AI systems as inherently <em>socio-technical</em>: their risks come from the interaction of technical components with the people, processes, and settings around them.<sup class="fn-ref"><a href="#fn-c01-34" id="fnref-c01-34" title="Jump to note 36">[36]</a></sup> No single function can govern AI alone. That is why Part II begins with governance and accountability, before any specific risk is examined.</p>
+<hr />
+<h2 id="key-takeaways">Key Takeaways <a class="heading-anchor" href="#key-takeaways" aria-label="Link to section">#</a></h2>
+<ul>
+<li><strong>AI fails differently.</strong> Most AI incidents involve no &quot;breach&quot; in the traditional sense. They arise from the technology working as designed, in situations its designers did not anticipate.</li>
+<li><strong>Accountability does not transfer to the model.</strong> Courts and tribunals have held organizations and professionals responsible for what their AI says and produces.</li>
+<li><strong>Everything the AI reads is attack surface.</strong> Prompt injection may never be fully solved, so the goal is to limit the damage a manipulated model can do.</li>
+<li><strong>Approval is the beginning of oversight, not the end.</strong> Models, usage, and regulations change too quickly for point-in-time sign-off.</li>
+<li><strong>Autonomy is a risk-appetite decision.</strong> The more an AI can do, the more its permissions, not its instructions, determine how much harm it can cause.</li>
+</ul>
+<h2 id="questions-to-ask">Questions to Ask <a class="heading-anchor" href="#questions-to-ask" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">Question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board / CEO</strong></td>
+<td style="text-align:left">Which decisions or actions have we said our AI must never take without human approval, and how do we know that rule is enforced?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO</strong></td>
+<td style="text-align:left">If our main model provider retired the model behind our most critical AI application next month, what would happen?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CISO</strong></td>
+<td style="text-align:left">Which of our AI systems combine private data, untrusted content, and the ability to communicate externally?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CDO / Data Stewards</strong></td>
+<td style="text-align:left">Do we know which AI systems can read which data sources, and are those sources accurate and current?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Legal / Compliance</strong></td>
+<td style="text-align:left">Could we reconstruct exactly what our customer-facing AI told a specific customer six months ago, and why?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Engineers</strong></td>
+<td style="text-align:left">What is our measured error rate on a representative test set, and when was it last re-measured?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Business Owners</strong></td>
+<td style="text-align:left">If this AI is wrong one time in fifty, who will notice, and what will it cost?</td>
+</tr>
+</tbody>
+</table></div>
+
+<section class="footnotes" id="notes" aria-label="Notes">
+<h2>References</h2>
+<ol class="footnote-list">
+<li id="fn-c01-01"><span class="fn-body">Mark Gurman, &quot;Samsung Bans Staff's AI Use After Spotting ChatGPT Data Leak,&quot; <em>Bloomberg</em>, May 2, 2023, <a href="https://www.bloomberg.com/news/articles/2023-05-02/samsung-bans-chatgpt-and-other-generative-ai-use-by-staff-after-leak" target="_blank" rel="noopener noreferrer">https://www.bloomberg.com/news/articles/2023-05-02/samsung-bans-chatgpt-and-other-generative-ai-use-by-staff-after-leak</a>. <strong>Annotation:</strong> The best-known early case of employees exposing trade secrets through a public AI tool, and of an enterprise answering with a blanket ban. A useful starting point for any discussion of shadow AI. <a href="bibliography.html#gurman-2023-samsung">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-01" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-02"><span class="fn-body"><em>Mata v. Avianca, Inc.</em>, 678 F. Supp. 3d 443 (S.D.N.Y. 2023). <strong>Annotation:</strong> The leading U.S. decision sanctioning lawyers for submitting AI-fabricated case law. The court stresses that using AI is not itself improper; failing to verify its output is. <a href="bibliography.html#mata-2023-avianca">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-02" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-03"><span class="fn-body">Kathleen Magramo, &quot;British Engineering Giant Arup Revealed as $25 Million Deepfake Scam Victim,&quot; CNN, May 17, 2024, <a href="https://edition.cnn.com/2024/05/16/tech/arup-deepfake-scam-loss-hong-kong-intl-hnk/index.html" target="_blank" rel="noopener noreferrer">https://edition.cnn.com/2024/05/16/tech/arup-deepfake-scam-loss-hong-kong-intl-hnk/index.html</a>. <strong>Annotation:</strong> Confirms the identity of the victim in the Hong Kong deepfake video-conference fraud first disclosed by police in February 2024. Essential reading for finance and treasury controls. <a href="bibliography.html#magramo-2024-arup">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-03" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-04"><span class="fn-body"><em>Moffatt v. Air Canada</em>, 2024 BCCRT 149 (British Columbia Civil Resolution Tribunal, February 14, 2024). <strong>Annotation:</strong> A small-claims decision with outsized influence. It rejects the idea that a company can disclaim responsibility for what its customer-facing chatbot says. <a href="bibliography.html#moffatt-2024-aircanada">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-04" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-05"><span class="fn-body">National Institute of Standards and Technology, &quot;CVE-2025-32711 Detail,&quot; National Vulnerability Database, June 2025, <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-32711" target="_blank" rel="noopener noreferrer">https://nvd.nist.gov/vuln/detail/CVE-2025-32711</a>. <strong>Annotation:</strong> The official vulnerability record for &quot;EchoLeak,&quot; an AI command-injection flaw in Microsoft 365 Copilot that allowed information disclosure over a network. <a href="bibliography.html#nvd-2025-echoleak">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-05" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-06"><span class="fn-body">Beatrice Nolan, &quot;AI-Powered Coding Tool Wiped Out a Software Company's Database in 'Catastrophic Failure,'&quot; <em>Fortune</em>, July 2025, <a href="https://fortune.com/2025/07/23/ai-coding-tool-replit-wiped-database-called-it-a-catastrophic-failure/" target="_blank" rel="noopener noreferrer">https://fortune.com/2025/07/23/ai-coding-tool-replit-wiped-database-called-it-a-catastrophic-failure/</a>. <strong>Annotation:</strong> A detailed account of the Replit agent incident, including the vendor's response. A vivid case study in why agent constraints must be enforced technically. <a href="bibliography.html#nolan-2025-replit">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-06" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-35"><span class="fn-body"><em>Pooja Ramesh Singh v. Jammu and Kashmir Bank Ltd. &amp; Anr.</em>, 2026 INSC 668 (Supreme Court of India, July 2, 2026). <strong>Annotation:</strong> A landmark Indian Supreme Court ruling setting aside NCLT and NCLAT insolvency orders that relied on AI-hallucinated precedents, holding that any order tainted by fabricated authority is &quot;no decision in the eyes of the law.&quot; <a href="bibliography.html#pooja-2026-jkbank">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-35" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-36"><span class="fn-body"><em>Vijay Ghanshyam Gadiya v. Union of India &amp; Anr.</em>, 2026 INSC 947, Civil Appeal No. 12155 of 2026 (Supreme Court of India, September 2, 2026). <strong>Annotation:</strong> Sets aside a ₹425.27-crore customs penalty and the Gujarat High Court order affirming it after discovering that the adjudication order relied on AI-fabricated citations and legal ratios. <a href="bibliography.html#gadiya-2026-uoi">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-36" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-07"><span class="fn-body">Horace He and Thinking Machines Lab, &quot;Defeating Nondeterminism in LLM Inference,&quot; Thinking Machines Lab, September 2025, <a href="https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/" target="_blank" rel="noopener noreferrer">https://thinkingmachines.ai/blog/defeating-nondeterminism-in-llm-inference/</a>. <strong>Annotation:</strong> A clear technical explanation of why &quot;temperature zero&quot; outputs still vary in production, and of what true reproducibility costs. Recommended for engineers and anyone designing audit replay. <a href="bibliography.html#he-2025-nondeterminism">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-07" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-08"><span class="fn-body">National Institute of Standards and Technology, <em>Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile</em>, NIST AI 600-1 (Gaithersburg, MD: NIST, July 2024), <a href="https://doi.org/10.6028/NIST.AI.600-1" target="_blank" rel="noopener noreferrer">https://doi.org/10.6028/NIST.AI.600-1</a>. <strong>Annotation:</strong> The U.S. government's companion profile to the AI RMF for generative AI. It defines twelve GenAI risks, including &quot;confabulation,&quot; and maps hundreds of suggested actions to them. A core reference throughout this book. <a href="bibliography.html#nist-2024-genai-profile">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-08" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-09"><span class="fn-body">Adam Tauman Kalai et al., &quot;Why Language Models Hallucinate,&quot; arXiv:2509.04664 (September 2025), <a href="https://doi.org/10.48550/arXiv.2509.04664" target="_blank" rel="noopener noreferrer">https://doi.org/10.48550/arXiv.2509.04664</a>. <strong>Annotation:</strong> Argues that hallucinations follow statistically from training and from benchmark scoring that rewards guessing over abstaining. Gives non-specialists an intuitive model of why errors persist. <a href="bibliography.html#kalai-2025-hallucinate">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-09" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-10"><span class="fn-body">Alex Singla et al., &quot;The State of AI in 2025: Agents, Innovation, and Transformation,&quot; McKinsey &amp; Company, November 5, 2025, <a href="https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai" target="_blank" rel="noopener noreferrer">https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai</a>. <strong>Annotation:</strong> A large annual executive survey on AI adoption, value, and risk. Useful for benchmarking agent adoption and the negative consequences organizations report, with inaccuracy chief among them. <a href="bibliography.html#mckinsey-2025-state-of-ai">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-10" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-11"><span class="fn-body"><em>Moffatt v. Air Canada</em>, 2024 BCCRT 149. <a href="bibliography.html#moffatt-2024-aircanada">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-11" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-12"><span class="fn-body"><em>Mata v. Avianca</em>, 678 F. Supp. 3d 443. <a href="bibliography.html#mata-2023-avianca">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-12" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-13"><span class="fn-body">Simon Willison, &quot;Prompt Injection Attacks against GPT-3,&quot; <em>Simon Willison's Weblog</em>, September 12, 2022, <a href="https://simonwillison.net/2022/Sep/12/prompt-injection/" target="_blank" rel="noopener noreferrer">https://simonwillison.net/2022/Sep/12/prompt-injection/</a>. <strong>Annotation:</strong> The post that named &quot;prompt injection&quot; and drew the analogy to SQL injection. Short, accessible, and historically important. <a href="bibliography.html#willison-2022-prompt-injection">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-13" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-14"><span class="fn-body">Kai Greshake et al., &quot;Not What You've Signed Up For: Compromising Real-World LLM-Integrated Applications with Indirect Prompt Injection,&quot; in <em>Proceedings of the 2023 ACM Workshop on Artificial Intelligence and Security (AISec '23)</em> (New York: ACM, 2023), <a href="https://doi.org/10.1145/3605764.3623985" target="_blank" rel="noopener noreferrer">https://doi.org/10.1145/3605764.3623985</a>. <strong>Annotation:</strong> The foundational academic demonstration of indirect prompt injection against real applications. Required reading for security architects. <a href="bibliography.html#greshake-2023-indirect">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-14" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-15"><span class="fn-body">Dave Chismon, &quot;Prompt Injection Is Not SQL Injection (It May Be Worse),&quot; National Cyber Security Centre (UK), December 2025, <a href="https://www.ncsc.gov.uk/blog-post/prompt-injection-is-not-sql-injection" target="_blank" rel="noopener noreferrer">https://www.ncsc.gov.uk/blog-post/prompt-injection-is-not-sql-injection</a>. <strong>Annotation:</strong> A national cyber agency's frank assessment that prompt injection may never be fully mitigated, framing LLMs as &quot;inherently confusable deputies.&quot; Valuable for setting realistic expectations at board level. <a href="bibliography.html#ncsc-2025-prompt-injection">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-15" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-16"><span class="fn-body">OWASP Foundation, <em>OWASP Top 10 for LLM Applications 2025</em> (OWASP GenAI Security Project, November 2024), <a href="https://genai.owasp.org/llm-top-10/" target="_blank" rel="noopener noreferrer">https://genai.owasp.org/llm-top-10/</a>. <strong>Annotation:</strong> The most widely used practitioner list of LLM application vulnerabilities, from prompt injection (LLM01) to unbounded consumption (LLM10). The shared language of AI security teams. <a href="bibliography.html#owasp-2024-llm-top10">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-16" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-17"><span class="fn-body">NIST, &quot;CVE-2025-32711 Detail.&quot; The vulnerability was discovered and disclosed by Aim Security's research team (Aim Labs). <a href="bibliography.html#nvd-2025-echoleak">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-17" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-18"><span class="fn-body">OpenAI, &quot;Deprecations,&quot; OpenAI Platform Documentation, accessed November 15, 2026, <a href="https://platform.openai.com/docs/deprecations" target="_blank" rel="noopener noreferrer">https://platform.openai.com/docs/deprecations</a>. <strong>Annotation:</strong> A public schedule of retired models and API features. A concrete illustration of the &quot;model clock&quot; that enterprise change management must keep up with. <a href="bibliography.html#openai-deprecations">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-18" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-19"><span class="fn-body">D. Sculley et al., &quot;Hidden Technical Debt in Machine Learning Systems,&quot; in <em>Advances in Neural Information Processing Systems 28</em> (NeurIPS 2015), <a href="https://papers.nips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems" target="_blank" rel="noopener noreferrer">https://papers.nips.cc/paper/5656-hidden-technical-debt-in-machine-learning-systems</a>. <strong>Annotation:</strong> A classic Google paper explaining why ML systems are unusually costly to maintain, and the source of the &quot;Changing Anything Changes Everything&quot; principle. <a href="bibliography.html#sculley-2015-debt">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-19" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-20"><span class="fn-body">Gurman, &quot;Samsung Bans Staff's AI Use.&quot; <a href="bibliography.html#gurman-2023-samsung">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-20" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-21"><span class="fn-body">Regulation (EU) 2024/1689 of the European Parliament and of the Council of 13 June 2024 Laying Down Harmonised Rules on Artificial Intelligence (Artificial Intelligence Act), <em>Official Journal of the European Union</em> L, 2024/1689, July 12, 2024, art. 113, <a href="http://data.europa.eu/eli/reg/2024/1689/oj" target="_blank" rel="noopener noreferrer">http://data.europa.eu/eli/reg/2024/1689/oj</a>. <strong>Annotation:</strong> The primary legal text of the EU AI Act. Article 113 sets out the phased dates of application. <a href="bibliography.html#eu-2024-ai-act">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-21" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-22"><span class="fn-body">European Commission, <em>Proposal for a Regulation Amending Regulation (EU) 2024/1689 as Regards the Simplification of the Implementation of Harmonised Rules on Artificial Intelligence (Digital Omnibus on AI)</em>, COM(2025) 836 final (Brussels, November 19, 2025), <a href="bibliography.html#ec-2025-digital-omnibus">↗ Bibliography</a>; adopted as Regulation (EU) 2026/1744, <em>Official Journal of the European Union</em>, July 24, 2026, <a href="bibliography.html#eu-2026-digital-omnibus">↗ Bibliography</a>. <strong>Annotation:</strong> Together these show how quickly AI regulation is being revised. Compliance teams should track amendments, not just the original text.</span><span class="fn-backrefs"> <a href="#fnref-c01-22" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-23"><span class="fn-body">Singla et al., &quot;The State of AI in 2025.&quot; <a href="bibliography.html#mckinsey-2025-state-of-ai">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-23" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-24"><span class="fn-body">Gartner, Inc., &quot;Gartner Predicts Over 40% of Agentic AI Projects Will Be Canceled by End of 2027,&quot; press release, June 25, 2025, <a href="https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027" target="_blank" rel="noopener noreferrer">https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027</a>. <strong>Annotation:</strong> An influential analyst forecast naming inadequate risk controls among the main causes of agentic AI failure. It also warns of &quot;agent washing&quot; by vendors. <a href="bibliography.html#gartner-2025-agentic">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-24" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-25"><span class="fn-body">OWASP Foundation, <em>OWASP Top 10 for LLM Applications 2025</em>, LLM06:2025 Excessive Agency. <a href="bibliography.html#owasp-2024-llm-top10">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-25" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-26"><span class="fn-body">Simon Willison, &quot;The Lethal Trifecta for AI Agents: Private Data, Untrusted Content, and External Communication,&quot; <em>Simon Willison's Weblog</em>, June 16, 2025, <a href="https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/" target="_blank" rel="noopener noreferrer">https://simonwillison.net/2025/Jun/16/the-lethal-trifecta/</a>. <strong>Annotation:</strong> A memorable, practical heuristic for spotting agent designs that are vulnerable to data theft. Easy to explain to non-engineers. <a href="bibliography.html#willison-2025-lethal-trifecta">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-26" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-27"><span class="fn-body">Nolan, &quot;AI-Powered Coding Tool Wiped Out a Software Company's Database.&quot; <a href="bibliography.html#nolan-2025-replit">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-27" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-28"><span class="fn-body">Magramo, &quot;Arup Revealed as $25 Million Deepfake Scam Victim.&quot; <a href="bibliography.html#magramo-2024-arup">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-28" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-29"><span class="fn-body">Laura Weidinger et al., &quot;Taxonomy of Risks Posed by Language Models,&quot; in <em>Proceedings of the 2022 ACM Conference on Fairness, Accountability, and Transparency (FAccT '22)</em> (New York: ACM, 2022), <a href="https://doi.org/10.1145/3531146.3533088" target="_blank" rel="noopener noreferrer">https://doi.org/10.1145/3531146.3533088</a>. <strong>Annotation:</strong> A foundational DeepMind taxonomy of the ethical and social risks of language models, organized into six areas. Strong on harms to people and society. <a href="bibliography.html#weidinger-2022-taxonomy">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-29" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-30"><span class="fn-body">NIST, <em>Generative Artificial Intelligence Profile</em>, NIST AI 600-1, sec. 2. <a href="bibliography.html#nist-2024-genai-profile">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-30" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-31"><span class="fn-body">OWASP Foundation, <em>OWASP Top 10 for LLM Applications 2025</em>. <a href="bibliography.html#owasp-2024-llm-top10">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-31" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-32"><span class="fn-body">Peter Slattery et al., &quot;The AI Risk Repository: A Comprehensive Meta-Review, Database, and Taxonomy of Risks from Artificial Intelligence,&quot; arXiv:2408.12622 (August 2024), <a href="https://doi.org/10.48550/arXiv.2408.12622" target="_blank" rel="noopener noreferrer">https://doi.org/10.48550/arXiv.2408.12622</a>. <strong>Annotation:</strong> A living database that consolidates risks from many published frameworks, with both a domain taxonomy and a causal taxonomy (entity, intent, timing). An excellent tool for checking that a risk register is complete. <a href="bibliography.html#slattery-2024-risk-repository">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-32" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c01-32-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c01-33"><span class="fn-body">Stanford Institute for Human-Centered Artificial Intelligence, <em>The AI Index 2025 Annual Report</em> (Stanford, CA: Stanford University, April 2025), chap. 3, <a href="https://hai.stanford.edu/ai-index/2025-ai-index-report" target="_blank" rel="noopener noreferrer">https://hai.stanford.edu/ai-index/2025-ai-index-report</a>. <strong>Annotation:</strong> The leading annual data compendium on AI. Its Responsible AI chapter tracks reported incidents and trends in organizational risk practices. <a href="bibliography.html#stanford-2025-ai-index">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-33" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c01-34"><span class="fn-body">National Institute of Standards and Technology, <em>Artificial Intelligence Risk Management Framework (AI RMF 1.0)</em>, NIST AI 100-1 (Gaithersburg, MD: NIST, January 2023), <a href="https://doi.org/10.6028/NIST.AI.100-1" target="_blank" rel="noopener noreferrer">https://doi.org/10.6028/NIST.AI.100-1</a>. <strong>Annotation:</strong> The foundational voluntary U.S. framework for AI risk, organized around the Govern, Map, Measure, and Manage functions. Its socio-technical framing underpins this book's approach. <a href="bibliography.html#nist-2023-ai-rmf">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c01-34" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+</ol>
+</section>
+        <nav class="pager" aria-label="Chapter navigation"><a class="pager-card pager-prev" href="00-front-matter.html"><span class="pager-dir">&larr; Previous</span><span class="pager-title">Front Matter</span></a><a class="pager-card pager-next" href="02-reference-frameworks-at-a-glance.html"><span class="pager-dir">Next &rarr;</span><span class="pager-title">Chapter 2: Reference Frameworks at a Glance</span></a></nav>
+      </article>
+      <footer class="doc-footer">
+        Building Guardrails for Enterprise AI &middot; Built 2026-11-22
+      </footer>
+    </main>
+<aside class="page-toc" aria-label="On this page">
+  <div class="page-toc-inner">
+    <div class="page-toc-title">On this page</div>
+    <ul><li class="toc-l2"><a href="#eight-incidents-no-firewall-breached">Eight Incidents, No Firewall Breached</a></li><li class="toc-l2"><a href="#11-probabilistic-systems-in-a-deterministic-enterprise">1.1 Probabilistic Systems in a Deterministic Enterprise</a></li><li class="toc-l3"><a href="#the-challenge">The Challenge</a></li><li class="toc-l3"><a href="#real-world-scenario-when-the-chatbot-speaks-for-the-company">Real-World Scenario: When the Chatbot Speaks for the Company</a></li><li class="toc-l3"><a href="#why-every-role-cares">Why Every Role Cares</a></li><li class="toc-l3"><a href="#the-guardrail-principle-design-for-being-wrong">The Guardrail Principle: Design for Being Wrong</a></li><li class="toc-l2"><a href="#12-when-data-becomes-instructions">1.2 When Data Becomes Instructions</a></li><li class="toc-l3"><a href="#the-challenge-2">The Challenge</a></li><li class="toc-l3"><a href="#real-world-scenario-the-email-nobody-opened">Real-World Scenario: The Email Nobody Opened</a></li><li class="toc-l3"><a href="#why-every-role-cares-2">Why Every Role Cares</a></li><li class="toc-l3"><a href="#the-guardrail-principle-assume-the-model-will-be-manipulated">The Guardrail Principle: Assume the Model Will Be Manipulated</a></li><li class="toc-l2"><a href="#13-the-speed-of-change">1.3 The Speed of Change</a></li><li class="toc-l3"><a href="#the-challenge-3">The Challenge</a></li><li class="toc-l3"><a href="#illustrative-scenario-the-silent-upgrade">Illustrative Scenario: The Silent Upgrade</a></li><li class="toc-l3"><a href="#why-every-role-cares-3">Why Every Role Cares</a></li><li class="toc-l3"><a href="#the-guardrail-principle-govern-the-system-not-the-snapshot">The Guardrail Principle: Govern the System, Not the Snapshot</a></li><li class="toc-l2"><a href="#14-from-chatbots-to-agents-the-expanding-blast-radius">1.4 From Chatbots to Agents: The Expanding Blast Radius</a></li><li class="toc-l3"><a href="#the-challenge-4">The Challenge</a></li><li class="toc-l3"><a href="#real-world-scenario-an-instruction-is-not-a-control">Real-World Scenario: An Instruction Is Not a Control</a></li><li class="toc-l3"><a href="#the-same-capabilities-in-an-attackers-hands">The Same Capabilities, in an Attacker&#x27;s Hands</a></li><li class="toc-l3"><a href="#why-every-role-cares-4">Why Every Role Cares</a></li><li class="toc-l3"><a href="#the-guardrail-principle-permissions-not-prompts">The Guardrail Principle: Permissions, Not Prompts</a></li><li class="toc-l2"><a href="#15-the-enterprise-ai-risk-taxonomy">1.5 The Enterprise AI Risk Taxonomy</a></li><li class="toc-l3"><a href="#why-a-shared-map-matters">Why a Shared Map Matters</a></li><li class="toc-l3"><a href="#this-handbooks-taxonomy">This Handbook&#x27;s Taxonomy</a></li><li class="toc-l3"><a href="#a-causal-lens-who-why-and-when">A Causal Lens: Who, Why, and When</a></li><li class="toc-l2"><a href="#chapter-summary-four-properties-five-principles">Chapter Summary: Four Properties, Five Principles</a></li><li class="toc-l2"><a href="#key-takeaways">Key Takeaways</a></li><li class="toc-l2"><a href="#questions-to-ask">Questions to Ask</a></li><li class="toc-l2"><a href="#notes">Notes</a></li></ul>
+  </div>
+</aside>
+  </div>
+</body>
+</html>

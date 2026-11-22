@@ -1,5 +1,5 @@
-# AI Risk, Security, Governance & Compliance
-## The Enterprise Guardrails Handbook: Table of Contents
+# Building Guardrails for Enterprise AI
+## Hardening Enterprise AI Against Hallucinations, Hacks, and Liability — Table of Contents
 
 > [!NOTE]
 > Items marked **🆕** are new additions from this review. Items marked **↪** were in the earlier draft but have moved to a better place. Every chapter keeps the multi-stakeholder format: **The Challenge → Real-World Scenario → Stakeholder Lens → The Guardrails**.

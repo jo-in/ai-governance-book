@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chapter 2: Reference Frameworks at a Glance — Building Guardrails for Enterprise AI</title>
+  <meta name="description" content="Hardening Enterprise AI Against Hallucinations, Hacks, and Liability" />
+  <script>
+    (function () {
+      var param = null;
+      var saved = null;
+      var winTheme = null;
+      try {
+        param = new URLSearchParams(window.location.search).get("theme");
+      } catch (e) {}
+      try {
+        saved = localStorage.getItem("book-theme");
+      } catch (e) {}
+      try {
+        var wm = (window.name || "").match(/^book-theme:(dark|light)$/);
+        if (wm) winTheme = wm[1];
+      } catch (e) {}
+      var explicit = (param === "dark" || param === "light")
+        ? param
+        : ((saved === "dark" || saved === "light")
+            ? saved
+            : ((winTheme === "dark" || winTheme === "light") ? winTheme : null));
+      if (explicit) {
+        try { localStorage.setItem("book-theme", explicit); } catch (e) {}
+        try { window.name = "book-theme:" + explicit; } catch (e) {}
+        document.documentElement.setAttribute("data-theme-explicit", "1");
+      }
+      var theme = explicit || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+  <script src="assets/search-index.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <span aria-hidden="true">&#9776;</span>
+      </button>
+      <a class="brand" href="index.html">
+        <span class="brand-title">Building Guardrails for Enterprise AI</span>
+      </a>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="search-focus-btn" type="button" title="Search (/ or Cmd+K)">Search <kbd>/</kbd></button>
+      <button class="icon-btn" id="theme-toggle" type="button" title="Toggle color theme" aria-label="Toggle color theme">&#9680;</button>
+    </div>
+  </header>
+
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <div class="layout">
+<aside class="sidebar" id="sidebar" aria-label="Book navigation">
+  <div class="sidebar-search">
+    <label class="sr-only" for="search-input">Search handbook</label>
+    <input id="search-input" class="search-input" type="search" placeholder="Search handbook… (/)" autocomplete="off" />
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-home" href="index.html">Contents &amp; Overview</a>
+    <div class="nav-group">
+      <div class="nav-group-title">Front Matter</div>
+      <ul class="nav-list">
+        <li><a href="00-front-matter.html">Front Matter</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part I: Foundations</div>
+      <ul class="nav-list">
+        <li><a href="01-why-ai-risk-is-different.html">Chapter 1: Why AI Risk Is Different</a></li>
+        <li><a href="02-reference-frameworks-at-a-glance.html" class="is-active" aria-current="page">Chapter 2: Reference Frameworks at a Glance</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part II: Governance &amp; Accountability</div>
+      <ul class="nav-list">
+        <li><a href="03-board-and-executive-oversight.html">Chapter 3: Board &amp; Executive Oversight</a></li>
+        <li><a href="04-ai-governance-operating-model.html">Chapter 4: The AI Governance Operating Model</a></li>
+        <li><a href="05-policies-inventory-and-risk-tiering.html">Chapter 5: Policies, Inventory &amp; Risk Tiering</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part III: Data Risk</div>
+      <ul class="nav-list">
+        <li><a href="06-data-leakage-and-shadow-ai.html">Chapter 6: Data Leakage &amp; Shadow AI</a></li>
+        <li><a href="07-internal-over-exposure-and-permission-aware-ai.html">Chapter 7: Internal Over-Exposure &amp; Permission-Aware AI</a></li>
+        <li><a href="08-data-provenance-consent-and-sovereignty.html">Chapter 8: Data Provenance, Consent &amp; Sovereignty</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part IV: Security</div>
+      <ul class="nav-list">
+        <li><a href="09-ai-threat-landscape.html">Chapter 9: The AI Threat Landscape</a></li>
+        <li><a href="10-prompt-injection-and-manipulation.html">Chapter 10: Prompt Injection &amp; Manipulation</a></li>
+        <li><a href="11-securing-ai-agents.html">Chapter 11: Securing AI Agents</a></li>
+        <li><a href="12-model-and-supply-chain-security.html">Chapter 12: Model &amp; Supply Chain Security</a></li>
+        <li><a href="13-infrastructure-and-operational-security.html">Chapter 13: Infrastructure &amp; Operational Security</a></li>
+        <li><a href="14-ai-enabled-external-threats.html">Chapter 14: AI-Enabled External Threats</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part V: Output, Trust &amp; Liability</div>
+      <ul class="nav-list">
+        <li><a href="15-hallucinations-and-reliability.html">Chapter 15: Hallucinations &amp; Reliability</a></li>
+        <li><a href="16-bias-fairness-and-discrimination.html">Chapter 16: Bias, Fairness &amp; Discrimination</a></li>
+        <li><a href="17-human-oversight-and-automation-bias.html">Chapter 17: Human Oversight &amp; Automation Bias</a></li>
+        <li><a href="18-transparency-disclosure-and-content-provenance.html">Chapter 18: Transparency, Disclosure &amp; Content Provenance</a></li>
+        <li><a href="19-intellectual-property-and-licensing.html">Chapter 19: Intellectual Property &amp; Licensing</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VI: Regulation &amp; Compliance</div>
+      <ul class="nav-list">
+        <li><a href="20-the-global-regulatory-landscape.html">Chapter 20: The Global Regulatory Landscape</a></li>
+        <li><a href="21-sector-specific-requirements.html">Chapter 21: Sector-Specific Requirements</a></li>
+        <li><a href="22-auditability-assessments-and-evidence.html">Chapter 22: Auditability, Assessments &amp; Evidence</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VII: Third-Party &amp; Lifecycle Risk</div>
+      <ul class="nav-list">
+        <li><a href="23-vendor-and-third-party-ai-risk.html">Chapter 23: Vendor &amp; Third-Party AI Risk</a></li>
+        <li><a href="24-model-lifecycle-and-change-management.html">Chapter 24: Model Lifecycle &amp; Change Management</a></li>
+        <li><a href="25-operational-resilience-and-business-continuity.html">Chapter 25: Operational Resilience &amp; Business Continuity</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VIII: Operationalizing the Guardrails</div>
+      <ul class="nav-list">
+        <li><a href="26-testing-evaluation-and-red-teaming.html">Chapter 26: Testing, Evaluation &amp; Red-Teaming</a></li>
+        <li><a href="27-ai-incident-response.html">Chapter 27: AI Incident Response</a></li>
+        <li><a href="28-metrics-kris-and-reporting.html">Chapter 28: Metrics, KRIs &amp; Reporting</a></li>
+        <li><a href="29-building-a-risk-aware-ai-culture.html">Chapter 29: Building a Risk-Aware AI Culture</a></li>
+        <li><a href="30-governance-maturity-model-and-roadmap.html">Chapter 30: Governance Maturity Model &amp; Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Appendices</div>
+      <ul class="nav-list">
+        <li><a href="31-appendices.html">Appendices: Templates, Checklists &amp; Reference Toolkit</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Reference</div>
+      <ul class="nav-list">
+        <li><a href="bibliography.html">Annotated Bibliography</a></li>
+      </ul>
+    </div>
+  </nav>
+</aside>
+    <main class="main" id="main">
+      <article class="content">
+        <div class="doc-meta-bar"><span class="doc-eyebrow">Part I: Foundations</span><span class="doc-reading-meta">4,409 words · ~18 min read</span></div>
+        <h1>Chapter 2: Reference Frameworks at a Glance</h1>
+<p><em>Part I: Foundations</em></p>
+<blockquote>
+<p><strong>In this chapter</strong></p>
+<ul>
+<li>The five governance frameworks that every enterprise AI program will meet, and what question each one answers</li>
+<li>How the NIST AI RMF, ISO/IEC 42001, ISO/IEC 23894, the OWASP Top 10 lists, and MITRE ATLAS are structured</li>
+<li>What each framework does well, and where it stops</li>
+<li>How the frameworks fit together, and a practical &quot;starter stack&quot; for organizations of different sizes</li>
+</ul>
+<p><strong>Essential for:</strong> CIO, CISO, CRO, Legal / Compliance, AI Engineers · <strong>Reading time:</strong> about 25 minutes</p>
+</blockquote>
+<hr />
+<h2 id="framework-sprawl-the-problem-before-the-problem">Framework Sprawl: The Problem Before the Problem <a class="heading-anchor" href="#framework-sprawl-the-problem-before-the-problem" aria-label="Link to section">#</a></h2>
+<p><em>This composite scenario is illustrative; it is not drawn from a specific organization or incident.</em></p>
+<p>A mid-sized insurance company (TBD: OICL for example) decides to &quot;get serious&quot; about AI governance. Within a quarter, four teams have each picked a framework. The risk function adopts the NIST AI Risk Management Framework and starts mapping use cases to its subcategories. The compliance team, under pressure from a large European customer, commissions an ISO/IEC 42001 gap assessment. The application security team adds the OWASP Top 10 for LLM Applications to its design-review checklist. The security operations centre starts tagging detections with MITRE ATLAS technique IDs.</p>
+<p>Each choice is sensible. Together, they produce four risk assessments, four sets of terminology, and four evidence requests landing on the same overstretched engineering team. When the board asks the simple question, &quot;Are we managing AI risk?&quot;, nobody can give a single answer.</p>
+<p>This chapter is an attempt to prevent that outcome. The frameworks covered here are not competitors. They operate at different altitudes and answer different set of questions:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Question</th>
+<th style="text-align:left">Framework family</th>
+<th style="text-align:left">Primary examples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><em>What does good AI risk management look like across the organization?</em></td>
+<td style="text-align:left">Risk management framework</td>
+<td style="text-align:left">NIST AI RMF 1.0; NIST AI 600-1 (Generative AI Profile)</td>
+</tr>
+<tr>
+<td style="text-align:left"><em>How do we run AI governance as an auditable, certifiable system?</em></td>
+<td style="text-align:left">Management system standard</td>
+<td style="text-align:left">ISO/IEC 42001</td>
+</tr>
+<tr>
+<td style="text-align:left"><em>How do we apply classic risk management methods to AI?</em></td>
+<td style="text-align:left">Risk management guidance</td>
+<td style="text-align:left">ISO/IEC 23894</td>
+</tr>
+<tr>
+<td style="text-align:left"><em>What can go wrong in the applications and agents we build?</em></td>
+<td style="text-align:left">Application security checklist</td>
+<td style="text-align:left">OWASP Top 10 for LLM Applications; OWASP Top 10 for Agentic Applications</td>
+</tr>
+<tr>
+<td style="text-align:left"><em>How do real attackers target AI, step by step?</em></td>
+<td style="text-align:left">Adversarial threat knowledge base</td>
+<td style="text-align:left">MITRE ATLAS</td>
+</tr>
+</tbody>
+</table></div>
+<p>The rest of the chapter takes each family in turn, then shows how to combine them into one program.</p>
+<hr />
+<h2 id="21-nist-ai-risk-management-framework-and-the-generative-ai-profile">2.1 NIST AI Risk Management Framework and the Generative AI Profile <a class="heading-anchor" href="#21-nist-ai-risk-management-framework-and-the-generative-ai-profile" aria-label="Link to section">#</a></h2>
+<h3 id="what-it-is">What It Is <a class="heading-anchor" href="#what-it-is" aria-label="Link to section">#</a></h3>
+<p>The <strong>NIST AI Risk Management Framework (AI RMF 1.0)</strong>, published by the U.S. National Institute of Standards and Technology in January 2023 as NIST AI 100-1, is the most widely referenced voluntary framework for managing AI risk.<sup class="fn-ref"><a href="#fn-c02-01" id="fnref-c02-01" title="Jump to note 1">[1]</a></sup> It is not a regulation and carries no certification. Its influence comes from being clear, freely available, and sector-neutral, which is why regulators, standards bodies, and vendors on several continents reference or align with it.</p>
+<p>The framework begins from a premise that underpins this book: AI systems are <strong>socio-technical</strong>. Their risks come not just from code and data but from the interaction of technology with people, processes, and the setting in which the system is used. A model that is safe in a back-office drafting tool can be dangerous in a customer-facing credit decision.</p>
+<h3 id="how-it-is-structured">How It Is Structured <a class="heading-anchor" href="#how-it-is-structured" aria-label="Link to section">#</a></h3>
+<p>The AI RMF Core organizes risk activities into four functions, which break down into 19 categories and 72 subcategories:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Function</th>
+<th style="text-align:left">Purpose</th>
+<th style="text-align:left">Typical enterprise activities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Govern</strong></td>
+<td style="text-align:left">Build a culture and structure for risk management; this function cuts across the other three</td>
+<td style="text-align:left">Policies, roles and accountability, risk appetite, workforce training, third-party oversight</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Map</strong></td>
+<td style="text-align:left">Understand the context and identify risks for a specific AI system</td>
+<td style="text-align:left">Use-case intake, intended purpose, affected stakeholders, legal requirements, impact assessment</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Measure</strong></td>
+<td style="text-align:left">Analyze, assess, and track identified risks</td>
+<td style="text-align:left">Evaluations, bias testing, red-teaming, performance and drift metrics</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Manage</strong></td>
+<td style="text-align:left">Prioritize and act on risks, and respond to incidents</td>
+<td style="text-align:left">Risk treatment, go/no-go decisions, monitoring, incident response, decommissioning</td>
+</tr>
+</tbody>
+</table></div>
+<p>The framework also defines seven characteristics of trustworthy AI: valid and reliable; safe; secure and resilient; accountable and transparent; explainable and interpretable; privacy-enhanced; and fair, with harmful bias managed. These serve as a useful vocabulary for setting acceptance criteria.</p>
+<h3 id="the-generative-ai-profile-nist-ai-600-1">The Generative AI Profile (NIST AI 600-1) <a class="heading-anchor" href="#the-generative-ai-profile-nist-ai-600-1" aria-label="Link to section">#</a></h3>
+<p>In July 2024, NIST published <strong>NIST AI 600-1</strong>, a companion &quot;profile&quot; that applies the AI RMF to generative AI.<sup class="fn-ref"><a href="#fn-c02-02" id="fnref-c02-02" title="Jump to note 2">[2]</a></sup> It identifies twelve risks that are unique to or made worse by generative AI, and maps more than 200 suggested actions to the RMF's subcategories. The twelve risks are:</p>
+<ol>
+<li>CBRN information or capabilities</li>
+<li>Confabulation</li>
+<li>Dangerous, violent, or hateful content</li>
+<li>Data privacy</li>
+<li>Environmental impacts</li>
+<li>Harmful bias or homogenization</li>
+<li>Human-AI configuration</li>
+<li>Information integrity</li>
+<li>Information security</li>
+<li>Intellectual property</li>
+<li>Obscene, degrading, and/or abusive content</li>
+<li>Value chain and component integration</li>
+</ol>
+<p>For most enterprises, the profile is the more practical of the two documents. The AI RMF tells you <em>what outcomes</em> to achieve; AI 600-1 suggests <em>specific actions</em> for the generative systems most organizations are actually deploying.</p>
+<h3 id="strengths-and-limits">Strengths and Limits <a class="heading-anchor" href="#strengths-and-limits" aria-label="Link to section">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Strengths</th>
+<th style="text-align:left">Limits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Free, plain-language, and widely recognized by regulators and auditors</td>
+<td style="text-align:left">Voluntary, with no certification; you cannot &quot;pass&quot; the AI RMF</td>
+</tr>
+<tr>
+<td style="text-align:left">Outcome-based, so it fits organizations of any size or sector</td>
+<td style="text-align:left">Deliberately non-prescriptive; teams must translate outcomes into concrete controls</td>
+</tr>
+<tr>
+<td style="text-align:left">Strong on governance, context, and socio-technical harms</td>
+<td style="text-align:left">Light on the technical detail of how specific attacks work</td>
+</tr>
+<tr>
+<td style="text-align:left">AI 600-1 gives a ready-made generative AI risk list</td>
+<td style="text-align:left">Some AI 600-1 risks (such as CBRN) matter far more to model developers than to typical enterprise deployers</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="22-isoiec-42001-and-isoiec-23894">2.2 ISO/IEC 42001 and ISO/IEC 23894 <a class="heading-anchor" href="#22-isoiec-42001-and-isoiec-23894" aria-label="Link to section">#</a></h2>
+<h3 id="isoiec-42001-the-ai-management-system-standard">ISO/IEC 42001: The AI Management System Standard <a class="heading-anchor" href="#isoiec-42001-the-ai-management-system-standard" aria-label="Link to section">#</a></h3>
+<p><strong>ISO/IEC 42001:2023</strong>, published in December 2023, is the first international standard for an <strong>AI management system (AIMS)</strong>.<sup class="fn-ref"><a href="#fn-c02-03" id="fnref-c02-03" title="Jump to note 3">[3]</a></sup> If the NIST AI RMF describes what good AI risk management looks like, ISO/IEC 42001 describes how to <em>run</em> it as a repeatable, auditable organizational system.</p>
+<p>Readers who know ISO/IEC 27001 (information security) or ISO 9001 (quality) will recognize the shape. ISO/IEC 42001 follows the same harmonized structure: clauses on organizational context, leadership, planning, support, operation, performance evaluation, and improvement, built around the familiar <strong>Plan-Do-Check-Act</strong> cycle. This matters in practice. An organization that already runs an ISO/IEC 27001 program can often extend its existing document control, internal audit, and management review processes to cover AI, rather than building a parallel system.</p>
+<p>The standard's <strong>Annex A</strong> contains 38 reference controls grouped under nine control objectives:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Annex A objective</th>
+<th style="text-align:left">What it covers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">A.2 Policies related to AI</td>
+<td style="text-align:left">An AI policy aligned with business objectives, and its review</td>
+</tr>
+<tr>
+<td style="text-align:left">A.3 Internal organization</td>
+<td style="text-align:left">Roles, responsibilities, and reporting of concerns</td>
+</tr>
+<tr>
+<td style="text-align:left">A.4 Resources for AI systems</td>
+<td style="text-align:left">Inventory of data, tools, compute, and human resources</td>
+</tr>
+<tr>
+<td style="text-align:left">A.5 Assessing impacts of AI systems</td>
+<td style="text-align:left">Impact assessments on individuals, groups, and society</td>
+</tr>
+<tr>
+<td style="text-align:left">A.6 AI system life cycle</td>
+<td style="text-align:left">Design, development, verification, deployment, operation, and monitoring</td>
+</tr>
+<tr>
+<td style="text-align:left">A.7 Data for AI systems</td>
+<td style="text-align:left">Data quality, provenance, and preparation</td>
+</tr>
+<tr>
+<td style="text-align:left">A.8 Information for interested parties</td>
+<td style="text-align:left">Documentation, transparency, and incident communication</td>
+</tr>
+<tr>
+<td style="text-align:left">A.9 Use of AI systems</td>
+<td style="text-align:left">Responsible use, intended purpose, and human oversight</td>
+</tr>
+<tr>
+<td style="text-align:left">A.10 Third-party and customer relationships</td>
+<td style="text-align:left">Suppliers, customers, and allocation of responsibilities</td>
+</tr>
+</tbody>
+</table></div>
+<p>As with ISO/IEC 27001, organizations select applicable controls and record their choices and justifications in a <strong>Statement of Applicability</strong>.</p>
+<p>The decisive difference from the NIST AI RMF is <strong>certification</strong>. An accredited certification body can audit an organization against ISO/IEC 42001 and issue a certificate. For enterprises that sell AI-enabled products or services, this is increasingly requested in procurement questionnaires as independent evidence that AI governance exists and works. Chapter 22 covers certification audits in detail.</p>
+<h3 id="isoiec-23894-ai-risk-management-guidance">ISO/IEC 23894: AI Risk Management Guidance <a class="heading-anchor" href="#isoiec-23894-ai-risk-management-guidance" aria-label="Link to section">#</a></h3>
+<p><strong>ISO/IEC 23894:2023</strong>, published in February 2023, provides guidance on managing risks specific to AI.<sup class="fn-ref"><a href="#fn-c02-04" id="fnref-c02-04" title="Jump to note 4">[4]</a></sup> It extends ISO 31000, the general international risk management standard, rather than replacing it. Its value lies in showing risk professionals how familiar steps (establishing context, identifying, analyzing, evaluating, and treating risk) change when the system in question is probabilistic, data-dependent, and capable of drifting after deployment.</p>
+<p>ISO/IEC 23894 is guidance, not a certifiable requirements standard. Think of it as the method that helps an organization fill in the risk assessment and treatment steps that ISO/IEC 42001 requires.</p>
+<h3 id="why-these-standards-matter-for-regulation">Why These Standards Matter for Regulation <a class="heading-anchor" href="#why-these-standards-matter-for-regulation" aria-label="Link to section">#</a></h3>
+<p>Under the EU AI Act, providers of high-risk AI systems that follow <strong>harmonised European standards</strong> benefit from a presumption of conformity with the corresponding legal requirements.<sup class="fn-ref"><a href="#fn-c02-05" id="fnref-c02-05" title="Jump to note 5">[5]</a></sup> The European standardization bodies have been developing those harmonised standards, drawing in part on international work such as ISO/IEC 42001 and ISO/IEC 23894. Delays in that work were one reason the EU deferred high-risk obligations through the Digital Omnibus (see Chapter 1). Holding an ISO/IEC 42001 certificate does not by itself prove compliance with the AI Act, but an operating AI management system is a strong foundation for the documentation, risk management, and post-market monitoring the Act requires. Chapter 20 returns to this relationship.</p>
+<h3 id="strengths-and-limits-2">Strengths and Limits <a class="heading-anchor" href="#strengths-and-limits-2" aria-label="Link to section">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Strengths</th>
+<th style="text-align:left">Limits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Certifiable, giving customers and regulators independent assurance</td>
+<td style="text-align:left">Standards must be purchased, and certification audits carry real cost</td>
+</tr>
+<tr>
+<td style="text-align:left">Integrates with existing ISO/IEC 27001 and ISO 9001 programs</td>
+<td style="text-align:left">Management-system language can feel abstract to engineering teams</td>
+</tr>
+<tr>
+<td style="text-align:left">Annex A provides a concrete starting control set</td>
+<td style="text-align:left">A certificate proves a system exists and is followed, not that every AI output is safe</td>
+</tr>
+<tr>
+<td style="text-align:left">ISO/IEC 23894 gives risk teams a familiar method</td>
+<td style="text-align:left">Neither standard details specific attack techniques or test cases</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="23-owasp-top-10-for-llm-applications-and-for-agentic-applications">2.3 OWASP Top 10 for LLM Applications and for Agentic Applications <a class="heading-anchor" href="#23-owasp-top-10-for-llm-applications-and-for-agentic-applications" aria-label="Link to section">#</a></h2>
+<h3 id="what-they-are">What They Are <a class="heading-anchor" href="#what-they-are" aria-label="Link to section">#</a></h3>
+<p>The <strong>Open Worldwide Application Security Project (OWASP)</strong> is a non-profit community best known for its Top 10 list of web application security risks. Its GenAI Security Project publishes two lists that have become the working vocabulary of AI application security teams.</p>
+<p>The <strong>OWASP Top 10 for LLM Applications (2025 edition)</strong>, released in November 2024, ranks the most critical risks for applications built on large language models:<sup class="fn-ref"><a href="#fn-c02-06" id="fnref-c02-06" title="Jump to note 6">[6]</a></sup></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">ID</th>
+<th style="text-align:left">Risk</th>
+<th style="text-align:center">Covered in</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">LLM01</td>
+<td style="text-align:left">Prompt Injection</td>
+<td style="text-align:center">Ch. 10</td>
+</tr>
+<tr>
+<td style="text-align:left">LLM02</td>
+<td style="text-align:left">Sensitive Information Disclosure</td>
+<td style="text-align:center">Ch. 6, 7</td>
+</tr>
+<tr>
+<td style="text-align:left">LLM03</td>
+<td style="text-align:left">Supply Chain</td>
+<td style="text-align:center">Ch. 12, 23</td>
+</tr>
+<tr>
+<td style="text-align:left">LLM04</td>
+<td style="text-align:left">Data and Model Poisoning</td>
+<td style="text-align:center">Ch. 12</td>
+</tr>
+<tr>
+<td style="text-align:left">LLM05</td>
+<td style="text-align:left">Improper Output Handling</td>
+<td style="text-align:center">Ch. 10, 15</td>
+</tr>
+<tr>
+<td style="text-align:left">LLM06</td>
+<td style="text-align:left">Excessive Agency</td>
+<td style="text-align:center">Ch. 11</td>
+</tr>
+<tr>
+<td style="text-align:left">LLM07</td>
+<td style="text-align:left">System Prompt Leakage</td>
+<td style="text-align:center">Ch. 10</td>
+</tr>
+<tr>
+<td style="text-align:left">LLM08</td>
+<td style="text-align:left">Vector and Embedding Weaknesses</td>
+<td style="text-align:center">Ch. 7, 13</td>
+</tr>
+<tr>
+<td style="text-align:left">LLM09</td>
+<td style="text-align:left">Misinformation</td>
+<td style="text-align:center">Ch. 15</td>
+</tr>
+<tr>
+<td style="text-align:left">LLM10</td>
+<td style="text-align:left">Unbounded Consumption</td>
+<td style="text-align:center">Ch. 13</td>
+</tr>
+</tbody>
+</table></div>
+<p>In December 2025, as autonomous agents moved into production, the project released the <strong>OWASP Top 10 for Agentic Applications (2026)</strong>, focused on systems that plan, keep memory, use tools, and act with delegated authority:<sup class="fn-ref"><a href="#fn-c02-07" id="fnref-c02-07" title="Jump to note 7">[7]</a></sup></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">ID</th>
+<th style="text-align:left">Risk</th>
+<th style="text-align:center">Covered in</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">ASI01</td>
+<td style="text-align:left">Agent Goal Hijack</td>
+<td style="text-align:center">Ch. 10, 11</td>
+</tr>
+<tr>
+<td style="text-align:left">ASI02</td>
+<td style="text-align:left">Tool Misuse and Exploitation</td>
+<td style="text-align:center">Ch. 11</td>
+</tr>
+<tr>
+<td style="text-align:left">ASI03</td>
+<td style="text-align:left">Identity and Privilege Abuse</td>
+<td style="text-align:center">Ch. 11</td>
+</tr>
+<tr>
+<td style="text-align:left">ASI04</td>
+<td style="text-align:left">Agentic Supply Chain Vulnerabilities</td>
+<td style="text-align:center">Ch. 11, 12</td>
+</tr>
+<tr>
+<td style="text-align:left">ASI05</td>
+<td style="text-align:left">Unexpected Code Execution</td>
+<td style="text-align:center">Ch. 11</td>
+</tr>
+<tr>
+<td style="text-align:left">ASI06</td>
+<td style="text-align:left">Memory and Context Poisoning</td>
+<td style="text-align:center">Ch. 12</td>
+</tr>
+<tr>
+<td style="text-align:left">ASI07</td>
+<td style="text-align:left">Insecure Inter-Agent Communication</td>
+<td style="text-align:center">Ch. 11</td>
+</tr>
+<tr>
+<td style="text-align:left">ASI08</td>
+<td style="text-align:left">Cascading Failures</td>
+<td style="text-align:center">Ch. 11, 25</td>
+</tr>
+<tr>
+<td style="text-align:left">ASI09</td>
+<td style="text-align:left">Human-Agent Trust Exploitation</td>
+<td style="text-align:center">Ch. 17</td>
+</tr>
+<tr>
+<td style="text-align:left">ASI10</td>
+<td style="text-align:left">Rogue Agents</td>
+<td style="text-align:center">Ch. 11, 27</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="how-to-use-them">How to Use Them <a class="heading-anchor" href="#how-to-use-them" aria-label="Link to section">#</a></h3>
+<p>The OWASP lists are best used where engineering decisions are made: in <strong>design reviews, threat models, penetration test scopes, and pre-launch checklists</strong>. A practical pattern is to require every new AI application to document, for each relevant Top 10 item, either the control that addresses it or the reason it does not apply. Because the lists are short and memorable, they also work well as a shared language between developers and security reviewers.</p>
+<p>The EchoLeak vulnerability described in Chapter 1 illustrates their value. It combined indirect prompt injection (LLM01 and ASI01), sensitive information disclosure (LLM02), and an exfiltration path through improper handling of model output (LLM05).<sup class="fn-ref"><a href="#fn-c02-08" id="fnref-c02-08" title="Jump to note 8">[8]</a></sup> A team reviewing a similar design against the lists would have had concrete prompts to ask the right questions.</p>
+<h3 id="strengths-and-limits-3">Strengths and Limits <a class="heading-anchor" href="#strengths-and-limits-3" aria-label="Link to section">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Strengths</th>
+<th style="text-align:left">Limits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Free, practitioner-written, and updated as threats evolve</td>
+<td style="text-align:left">Application-level focus; not a governance or management framework</td>
+</tr>
+<tr>
+<td style="text-align:left">Concrete enough to drive design reviews and testing</td>
+<td style="text-align:left">Ranked lists can be mistaken for complete coverage; they are a floor, not a ceiling</td>
+</tr>
+<tr>
+<td style="text-align:left">Separate agentic list addresses autonomy-specific risks</td>
+<td style="text-align:left">Little guidance on organizational accountability, legal duties, or societal harms</td>
+</tr>
+<tr>
+<td style="text-align:left">Common vocabulary across vendors and tools</td>
+<td style="text-align:left">Revised periodically, so IDs and rankings change between editions</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="24-mitre-atlas">2.4 MITRE ATLAS <a class="heading-anchor" href="#24-mitre-atlas" aria-label="Link to section">#</a></h2>
+<h3 id="what-it-is-2">What It Is <a class="heading-anchor" href="#what-it-is-2" aria-label="Link to section">#</a></h3>
+<p><strong>MITRE ATLAS</strong> (Adversarial Threat Landscape for Artificial-Intelligence Systems) is a free, continuously updated knowledge base of the tactics and techniques adversaries use against AI systems, grounded in real-world attacks and red-team demonstrations.<sup class="fn-ref"><a href="#fn-c02-09" id="fnref-c02-09" title="Jump to note 9">[9]</a></sup> It began in 2020 as the Adversarial ML Threat Matrix, a collaboration between MITRE, Microsoft, and other industry and academic partners, and was relaunched as ATLAS in 2021.</p>
+<p>ATLAS is modelled on <strong>MITRE ATT&amp;CK</strong>, the knowledge base that most security operations centres already use to describe adversary behaviour against conventional IT. That design choice is its biggest practical advantage: security teams can extend familiar workflows, tools, and threat-intelligence habits to AI rather than learning a new paradigm.</p>
+<h3 id="how-it-is-structured-2">How It Is Structured <a class="heading-anchor" href="#how-it-is-structured-2" aria-label="Link to section">#</a></h3>
+<p>ATLAS organizes adversary behaviour into a matrix:</p>
+<ul>
+<li><strong>Tactics</strong> describe the attacker's objective at each stage (the <em>why</em>), such as reconnaissance, initial access, gaining access to the AI model, staging an attack, exfiltration, and impact. Several are borrowed from ATT&amp;CK; others, such as gaining access to a model and staging attacks against it, are specific to AI.</li>
+<li><strong>Techniques</strong> describe how each objective is achieved (the <em>how</em>), such as LLM prompt injection, jailbreaks, poisoning training data, or extracting a model through its API. Each has a stable identifier.</li>
+<li><strong>Case studies</strong> document real incidents and demonstrations, showing how techniques chain together into an end-to-end attack.</li>
+<li><strong>Mitigations</strong> link techniques to defensive measures.</li>
+</ul>
+<p>The knowledge base grows quickly as new attack research and incidents emerge, particularly around generative and agentic AI. Check the live site for current counts rather than relying on figures in any printed book, including this one.</p>
+<h3 id="how-to-use-it">How to Use It <a class="heading-anchor" href="#how-to-use-it" aria-label="Link to section">#</a></h3>
+<p>ATLAS is most valuable to <strong>security operations, threat intelligence, and red teams</strong>:</p>
+<ul>
+<li><strong>Threat modeling:</strong> Walk through the matrix to ask which tactics apply to a given AI system and which techniques an attacker could realistically use (Chapter 9).</li>
+<li><strong>Red-team planning:</strong> Use techniques and case studies to scope exercises that mirror how real adversaries operate (Chapter 26).</li>
+<li><strong>Detection engineering:</strong> Tag alerts and detections with ATLAS technique IDs, just as SOCs do with ATT&amp;CK, so that coverage gaps become visible.</li>
+<li><strong>Incident analysis:</strong> Describe AI incidents in a common language that can be shared with peers and threat-intelligence partners (Chapter 27).</li>
+</ul>
+<h3 id="strengths-and-limits-4">Strengths and Limits <a class="heading-anchor" href="#strengths-and-limits-4" aria-label="Link to section">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Strengths</th>
+<th style="text-align:left">Limits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Grounded in real attacks and case studies</td>
+<td style="text-align:left">Primarily a security tool; says little about governance, fairness, or legal duties</td>
+</tr>
+<tr>
+<td style="text-align:left">Familiar ATT&amp;CK structure for SOC and red teams</td>
+<td style="text-align:left">Can overwhelm non-specialists; not suitable as a board-level framework</td>
+</tr>
+<tr>
+<td style="text-align:left">Free and continuously updated</td>
+<td style="text-align:left">Rapid growth means mappings and counts date quickly</td>
+</tr>
+<tr>
+<td style="text-align:left">Bridges academic research and operational defence</td>
+<td style="text-align:left">Focuses on intentional attacks, not honest mistakes such as hallucinations</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="25-how-the-frameworks-fit-together-and-which-one-to-start-with">2.5 How the Frameworks Fit Together, and Which One to Start With <a class="heading-anchor" href="#25-how-the-frameworks-fit-together-and-which-one-to-start-with" aria-label="Link to section">#</a></h2>
+<h3 id="different-altitudes-one-program">Different Altitudes, One Program <a class="heading-anchor" href="#different-altitudes-one-program" aria-label="Link to section">#</a></h3>
+<p>The simplest way to see how the frameworks relate is by altitude. Each answers a question at a different level of the organization, and each hands off to the next:</p>
+<figure class="mermaid-wrap"><pre class="mermaid">flowchart TD
+    A[&quot;Board &amp; Executive&lt;br/&gt;Risk appetite, accountability&quot;] --&gt; B[&quot;NIST AI RMF + AI 600-1&lt;br/&gt;What outcomes must we achieve?&quot;]
+    B --&gt; C[&quot;ISO/IEC 42001 (with ISO/IEC 23894)&lt;br/&gt;How do we run and evidence the system?&quot;]
+    C --&gt; D[&quot;OWASP LLM &amp; Agentic Top 10&lt;br/&gt;What must each application control?&quot;]
+    C --&gt; E[&quot;MITRE ATLAS&lt;br/&gt;How will attackers actually try?&quot;]
+    D --&gt; F[&quot;Controls, tests, and evidence&lt;br/&gt;in engineering and operations&quot;]
+    E --&gt; F
+    F -.-&gt;|&quot;metrics &amp; findings&quot;| A</pre></figure>
+<p>In practice:</p>
+<ul>
+<li><strong>The NIST AI RMF</strong> gives leadership and the risk function a shared map of outcomes and a vocabulary for trustworthy AI.</li>
+<li><strong>ISO/IEC 42001</strong> turns those outcomes into an operating system of policies, roles, controls, audits, and continual improvement, with the option of external certification. ISO/IEC 23894 supplies the risk assessment method inside it.</li>
+<li><strong>The OWASP lists</strong> translate high-level security outcomes into concrete design and testing requirements for each application and agent.</li>
+<li><strong>MITRE ATLAS</strong> keeps security teams grounded in how adversaries really behave, feeding threat models, red-team exercises, and detections.</li>
+</ul>
+<p>Regulation sits alongside all four. The EU AI Act and other laws (Chapter 20) define legal obligations; frameworks help an organization meet and evidence them efficiently.</p>
+<h3 id="where-they-overlap">Where They Overlap <a class="heading-anchor" href="#where-they-overlap" aria-label="Link to section">#</a></h3>
+<p>The overlap between frameworks is an advantage, not a source of duplicate work, provided the organization maps its controls once and reuses the evidence. The table below shows how a few common controls satisfy several frameworks at the same time.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Control</th>
+<th style="text-align:left">NIST AI RMF</th>
+<th style="text-align:left">ISO/IEC 42001 Annex A</th>
+<th style="text-align:left">OWASP</th>
+<th style="text-align:left">MITRE ATLAS</th>
+<th style="text-align:center">Chapters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Central AI inventory with named owners</td>
+<td style="text-align:left">Govern; Map</td>
+<td style="text-align:left">A.3, A.4</td>
+<td style="text-align:left">LLM03, ASI04 (supply chain visibility)</td>
+<td style="text-align:left">Supports reconnaissance analysis</td>
+<td style="text-align:center">5</td>
+</tr>
+<tr>
+<td style="text-align:left">Use-case intake and impact assessment</td>
+<td style="text-align:left">Map</td>
+<td style="text-align:left">A.5</td>
+<td style="text-align:left">—</td>
+<td style="text-align:left">—</td>
+<td style="text-align:center">5, 22</td>
+</tr>
+<tr>
+<td style="text-align:left">Permission-aware retrieval</td>
+<td style="text-align:left">Manage</td>
+<td style="text-align:left">A.7, A.9</td>
+<td style="text-align:left">LLM02, LLM08</td>
+<td style="text-align:left">Exfiltration mitigations</td>
+<td style="text-align:center">7</td>
+</tr>
+<tr>
+<td style="text-align:left">Least-privilege agent identities and approval gates</td>
+<td style="text-align:left">Manage</td>
+<td style="text-align:left">A.6, A.9</td>
+<td style="text-align:left">LLM06, ASI02, ASI03</td>
+<td style="text-align:left">Mitigations for model access and impact</td>
+<td style="text-align:center">11</td>
+</tr>
+<tr>
+<td style="text-align:left">Pre-deployment evaluation and red-teaming</td>
+<td style="text-align:left">Measure</td>
+<td style="text-align:left">A.6</td>
+<td style="text-align:left">All items as test cases</td>
+<td style="text-align:left">Techniques and case studies as test scenarios</td>
+<td style="text-align:center">26</td>
+</tr>
+<tr>
+<td style="text-align:left">Vendor due diligence and contract terms</td>
+<td style="text-align:left">Govern</td>
+<td style="text-align:left">A.10</td>
+<td style="text-align:left">LLM03, ASI04</td>
+<td style="text-align:left">Supply-chain techniques</td>
+<td style="text-align:center">23</td>
+</tr>
+<tr>
+<td style="text-align:left">Incident response and lessons learned</td>
+<td style="text-align:left">Manage</td>
+<td style="text-align:left">A.8, plus management-system improvement clauses</td>
+<td style="text-align:left">ASI08, ASI10</td>
+<td style="text-align:left">Case-study format for analysis</td>
+<td style="text-align:center">27</td>
+</tr>
+</tbody>
+</table></div>
+<p>NIST hosts a set of community-contributed crosswalks that map the AI RMF to other frameworks, including ISO/IEC 42001.<sup class="fn-ref"><a href="#fn-c02-10" id="fnref-c02-10" title="Jump to note 10">[10]</a></sup> These are useful starting points, though NIST notes that it does not endorse the specific interpretations, and some were drafted against pre-publication versions of the standards. Appendix G of this book provides a consolidated crosswalk including the EU AI Act.</p>
+<h3 id="choosing-a-starter-stack">Choosing a Starter Stack <a class="heading-anchor" href="#choosing-a-starter-stack" aria-label="Link to section">#</a></h3>
+<p>No organization needs to implement every framework on day one. The right starting point depends on size, regulatory exposure, and how much AI the organization builds versus buys.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Organization profile</th>
+<th style="text-align:left">Start with</th>
+<th style="text-align:left">Add next</th>
+<th style="text-align:left">Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Small or early-stage</strong>, mostly buying AI tools</td>
+<td style="text-align:left">NIST AI 600-1 risk list; OWASP LLM Top 10 for any in-house builds</td>
+<td style="text-align:left">NIST AI RMF Govern function for policy and roles</td>
+<td style="text-align:left">Free, lightweight, and focused on the risks you are most likely to meet</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Mid-sized enterprise</strong>, building RAG and copilots</td>
+<td style="text-align:left">NIST AI RMF and AI 600-1 as the outcome map; OWASP LLM and Agentic Top 10 in design reviews</td>
+<td style="text-align:left">ISO/IEC 42001 gap assessment; MITRE ATLAS for threat modeling</td>
+<td style="text-align:left">Builds a coherent program before committing to certification</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Large or regulated enterprise</strong> (finance, healthcare, public sector), or selling AI to enterprise customers</td>
+<td style="text-align:left">ISO/IEC 42001 as the operating system, mapped to NIST AI RMF; OWASP lists as engineering requirements</td>
+<td style="text-align:left">MITRE ATLAS in the SOC and red team; ISO/IEC 23894 for risk methodology</td>
+<td style="text-align:left">Customers and regulators expect certifiable, auditable evidence</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Any organization with EU exposure for high-risk AI</strong></td>
+<td style="text-align:left">Everything above, plus the EU AI Act requirements mapped to your control set</td>
+<td style="text-align:left">Harmonised standards as they are finalized</td>
+<td style="text-align:left">Legal obligations set the minimum; frameworks help meet them efficiently</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="four-rules-for-avoiding-framework-sprawl">Four Rules for Avoiding Framework Sprawl <a class="heading-anchor" href="#four-rules-for-avoiding-framework-sprawl" aria-label="Link to section">#</a></h3>
+<ol>
+<li><strong>Pick one primary framework as the &quot;spine.&quot;</strong> Use the NIST AI RMF or ISO/IEC 42001 as the master structure for policies and the risk register. Map everything else onto it.</li>
+<li><strong>Map controls once, reuse evidence many times.</strong> Maintain a single control library in which each control lists the frameworks and regulations it satisfies.</li>
+<li><strong>Match the framework to the audience.</strong> Speak NIST AI RMF to the board, ISO/IEC 42001 to auditors and customers, OWASP to developers, and ATLAS to the SOC.</li>
+<li><strong>Treat frameworks as floors, not ceilings.</strong> Passing a checklist or holding a certificate is evidence of discipline, not proof of safety. Keep testing real systems against real threats.</li>
+</ol>
+<h3 id="why-every-role-cares">Why Every Role Cares <a class="heading-anchor" href="#why-every-role-cares" aria-label="Link to section">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">What this means for you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board / CEO</strong></td>
+<td style="text-align:left">Ask which framework is the organization's spine, and whether you receive one consolidated view of AI risk rather than several competing ones.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO</strong></td>
+<td style="text-align:left">ISO/IEC 42001 can extend existing ISO programs. Decide early whether certification is a customer or regulatory requirement.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CISO</strong></td>
+<td style="text-align:left">Use OWASP lists for application reviews and MITRE ATLAS for threat modeling, red-teaming, and detection coverage.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CDO / Data Stewards</strong></td>
+<td style="text-align:left">Data quality, provenance, and impact controls appear in NIST AI RMF (Map) and ISO/IEC 42001 (A.5, A.7). Own that evidence.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Legal / Compliance</strong></td>
+<td style="text-align:left">Frameworks do not equal legal compliance, but they make it far easier to demonstrate. Map regulatory duties onto the chosen spine.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Engineers</strong></td>
+<td style="text-align:left">Treat the OWASP LLM and Agentic Top 10 as non-negotiable design-review items, and ATLAS techniques as test scenarios.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="key-takeaways">Key Takeaways <a class="heading-anchor" href="#key-takeaways" aria-label="Link to section">#</a></h2>
+<ul>
+<li><strong>The frameworks answer different questions.</strong> NIST defines outcomes, ISO/IEC 42001 runs and certifies the system, ISO/IEC 23894 guides risk assessment, OWASP drives application controls, and MITRE ATLAS describes how attackers operate.</li>
+<li><strong>No single framework is enough.</strong> Governance frameworks are light on attack detail; security frameworks are light on accountability and societal harm.</li>
+<li><strong>Choose one spine and map everything to it.</strong> Framework sprawl creates duplicate work and confuses accountability.</li>
+<li><strong>Certification is a business decision.</strong> ISO/IEC 42001 certification provides independent assurance that customers and regulators increasingly request, but it is not proof that every system is safe.</li>
+<li><strong>Frameworks change.</strong> OWASP lists are revised, ATLAS grows monthly, and harmonised EU standards are still arriving. Build a process to track updates.</li>
+</ul>
+<h2 id="questions-to-ask">Questions to Ask <a class="heading-anchor" href="#questions-to-ask" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">Question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board / CEO</strong></td>
+<td style="text-align:left">Which single framework do we use as the backbone of AI governance, and who owns it?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO</strong></td>
+<td style="text-align:left">Do our customers or regulators expect ISO/IEC 42001 certification, and can we extend our existing ISO programs to deliver it?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CISO</strong></td>
+<td style="text-align:left">Is every AI application reviewed against the OWASP LLM and Agentic Top 10, and are our detections mapped to MITRE ATLAS?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CDO / Data Stewards</strong></td>
+<td style="text-align:left">Which framework controls depend on data quality and provenance evidence that we own?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Legal / Compliance</strong></td>
+<td style="text-align:left">Have we mapped our EU AI Act and other legal obligations onto our chosen framework, and where are the gaps?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Engineers</strong></td>
+<td style="text-align:left">Which OWASP items have we explicitly addressed in our current design, and which have we marked &quot;not applicable,&quot; and why?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Business Owners</strong></td>
+<td style="text-align:left">Can I see, in one place, which controls protect the AI system I own?</td>
+</tr>
+</tbody>
+</table></div>
+
+<section class="footnotes" id="notes" aria-label="Notes">
+<h2>References</h2>
+<ol class="footnote-list">
+<li id="fn-c02-01"><span class="fn-body">National Institute of Standards and Technology, <em>Artificial Intelligence Risk Management Framework (AI RMF 1.0)</em>, NIST AI 100-1 (Gaithersburg, MD: NIST, January 2023), <a href="https://doi.org/10.6028/NIST.AI.100-1" target="_blank" rel="noopener noreferrer">https://doi.org/10.6028/NIST.AI.100-1</a>. <strong>Annotation:</strong> The core voluntary U.S. framework for AI risk, organized into the Govern, Map, Measure, and Manage functions with 19 categories and 72 subcategories. The recommended &quot;spine&quot; for organizations that do not need certification. <a href="bibliography.html#nist-2023-ai-rmf">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c02-01" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c02-02"><span class="fn-body">National Institute of Standards and Technology, <em>Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile</em>, NIST AI 600-1 (Gaithersburg, MD: NIST, July 2024), <a href="https://doi.org/10.6028/NIST.AI.600-1" target="_blank" rel="noopener noreferrer">https://doi.org/10.6028/NIST.AI.600-1</a>. <strong>Annotation:</strong> Applies the AI RMF to generative AI, defining twelve GenAI-specific risks and more than 200 suggested actions. The most practical starting point for enterprises deploying LLM-based systems. <a href="bibliography.html#nist-2024-genai-profile">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c02-02" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c02-03"><span class="fn-body">International Organization for Standardization and International Electrotechnical Commission, <em>ISO/IEC 42001:2023, Information Technology — Artificial Intelligence — Management System</em> (Geneva: ISO, December 2023), <a href="https://www.iso.org/standard/81230.html" target="_blank" rel="noopener noreferrer">https://www.iso.org/standard/81230.html</a>. <strong>Annotation:</strong> The first certifiable international standard for an AI management system, with 38 Annex A reference controls under nine objectives. Essential for organizations that need independent, auditable assurance of AI governance. <a href="bibliography.html#iso-2023-42001">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c02-03" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c02-04"><span class="fn-body">International Organization for Standardization and International Electrotechnical Commission, <em>ISO/IEC 23894:2023, Information Technology — Artificial Intelligence — Guidance on Risk Management</em> (Geneva: ISO, February 2023), <a href="https://www.iso.org/standard/77304.html" target="_blank" rel="noopener noreferrer">https://www.iso.org/standard/77304.html</a>. <strong>Annotation:</strong> Extends the ISO 31000 risk management process to AI-specific risks. Guidance rather than a certifiable standard; useful as the risk method inside an ISO/IEC 42001 program. <a href="bibliography.html#iso-2023-23894">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c02-04" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c02-05"><span class="fn-body">Regulation (EU) 2024/1689 (Artificial Intelligence Act), <em>Official Journal of the European Union</em> L, 2024/1689, July 12, 2024, art. 40, <a href="http://data.europa.eu/eli/reg/2024/1689/oj" target="_blank" rel="noopener noreferrer">http://data.europa.eu/eli/reg/2024/1689/oj</a>. <strong>Annotation:</strong> Article 40 provides that high-risk AI systems conforming to harmonised standards are presumed to conform with the corresponding requirements of the Act. <a href="bibliography.html#eu-2024-ai-act">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c02-05" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c02-06"><span class="fn-body">OWASP Foundation, <em>OWASP Top 10 for LLM Applications 2025</em> (OWASP GenAI Security Project, November 2024), <a href="https://genai.owasp.org/llm-top-10/" target="_blank" rel="noopener noreferrer">https://genai.owasp.org/llm-top-10/</a>. <strong>Annotation:</strong> The standard practitioner list of LLM application vulnerabilities, used here as the backbone for application-level design reviews. <a href="bibliography.html#owasp-2024-llm-top10">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c02-06" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c02-07"><span class="fn-body">OWASP Foundation, <em>OWASP Top 10 for Agentic Applications for 2026</em> (OWASP GenAI Security Project, December 2025), <a href="https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/" target="_blank" rel="noopener noreferrer">https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/</a>. <strong>Annotation:</strong> A companion list addressing risks specific to autonomous agents, from agent goal hijack (ASI01) to rogue agents (ASI10). Required reading for any team deploying agents with tool access or delegated authority. <a href="bibliography.html#owasp-2025-agentic-top10">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c02-07" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c02-08"><span class="fn-body">National Institute of Standards and Technology, &quot;CVE-2025-32711 Detail,&quot; National Vulnerability Database, June 2025, <a href="https://nvd.nist.gov/vuln/detail/CVE-2025-32711" target="_blank" rel="noopener noreferrer">https://nvd.nist.gov/vuln/detail/CVE-2025-32711</a>. <strong>Annotation:</strong> The EchoLeak record, used here to show how a single real vulnerability maps across several OWASP categories. <a href="bibliography.html#nvd-2025-echoleak">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c02-08" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c02-09"><span class="fn-body">The MITRE Corporation, &quot;ATLAS: Adversarial Threat Landscape for Artificial-Intelligence Systems,&quot; accessed November 17, 2026, <a href="https://atlas.mitre.org/" target="_blank" rel="noopener noreferrer">https://atlas.mitre.org/</a>. <strong>Annotation:</strong> A living, ATT&amp;CK-style knowledge base of adversary tactics, techniques, case studies, and mitigations for AI systems. The primary reference for AI threat modeling, red-teaming, and detection engineering. <a href="bibliography.html#mitre-atlas">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c02-09" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c02-10"><span class="fn-body">National Institute of Standards and Technology, &quot;Crosswalks to the NIST AI RMF,&quot; NIST AI Resource Center, accessed November 17, 2026, <a href="https://airc.nist.gov/" target="_blank" rel="noopener noreferrer">https://airc.nist.gov/</a>. <strong>Annotation:</strong> Community-contributed mappings between the AI RMF and other frameworks, including ISO/IEC 42001. Useful starting points, though NIST does not endorse their specific interpretations. <a href="bibliography.html#nist-airc-crosswalks">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c02-10" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+</ol>
+</section>
+        <nav class="pager" aria-label="Chapter navigation"><a class="pager-card pager-prev" href="01-why-ai-risk-is-different.html"><span class="pager-dir">&larr; Previous</span><span class="pager-title">Chapter 1: Why AI Risk Is Different</span></a><a class="pager-card pager-next" href="03-board-and-executive-oversight.html"><span class="pager-dir">Next &rarr;</span><span class="pager-title">Chapter 3: Board &amp; Executive Oversight</span></a></nav>
+      </article>
+      <footer class="doc-footer">
+        Building Guardrails for Enterprise AI &middot; Built 2026-11-22
+      </footer>
+    </main>
+<aside class="page-toc" aria-label="On this page">
+  <div class="page-toc-inner">
+    <div class="page-toc-title">On this page</div>
+    <ul><li class="toc-l2"><a href="#framework-sprawl-the-problem-before-the-problem">Framework Sprawl: The Problem Before the Problem</a></li><li class="toc-l2"><a href="#21-nist-ai-risk-management-framework-and-the-generative-ai-profile">2.1 NIST AI Risk Management Framework and the Generative AI Profile</a></li><li class="toc-l3"><a href="#what-it-is">What It Is</a></li><li class="toc-l3"><a href="#how-it-is-structured">How It Is Structured</a></li><li class="toc-l3"><a href="#the-generative-ai-profile-nist-ai-600-1">The Generative AI Profile (NIST AI 600-1)</a></li><li class="toc-l3"><a href="#strengths-and-limits">Strengths and Limits</a></li><li class="toc-l2"><a href="#22-isoiec-42001-and-isoiec-23894">2.2 ISO/IEC 42001 and ISO/IEC 23894</a></li><li class="toc-l3"><a href="#isoiec-42001-the-ai-management-system-standard">ISO/IEC 42001: The AI Management System Standard</a></li><li class="toc-l3"><a href="#isoiec-23894-ai-risk-management-guidance">ISO/IEC 23894: AI Risk Management Guidance</a></li><li class="toc-l3"><a href="#why-these-standards-matter-for-regulation">Why These Standards Matter for Regulation</a></li><li class="toc-l3"><a href="#strengths-and-limits-2">Strengths and Limits</a></li><li class="toc-l2"><a href="#23-owasp-top-10-for-llm-applications-and-for-agentic-applications">2.3 OWASP Top 10 for LLM Applications and for Agentic Applications</a></li><li class="toc-l3"><a href="#what-they-are">What They Are</a></li><li class="toc-l3"><a href="#how-to-use-them">How to Use Them</a></li><li class="toc-l3"><a href="#strengths-and-limits-3">Strengths and Limits</a></li><li class="toc-l2"><a href="#24-mitre-atlas">2.4 MITRE ATLAS</a></li><li class="toc-l3"><a href="#what-it-is-2">What It Is</a></li><li class="toc-l3"><a href="#how-it-is-structured-2">How It Is Structured</a></li><li class="toc-l3"><a href="#how-to-use-it">How to Use It</a></li><li class="toc-l3"><a href="#strengths-and-limits-4">Strengths and Limits</a></li><li class="toc-l2"><a href="#25-how-the-frameworks-fit-together-and-which-one-to-start-with">2.5 How the Frameworks Fit Together, and Which One to Start With</a></li><li class="toc-l3"><a href="#different-altitudes-one-program">Different Altitudes, One Program</a></li><li class="toc-l3"><a href="#where-they-overlap">Where They Overlap</a></li><li class="toc-l3"><a href="#choosing-a-starter-stack">Choosing a Starter Stack</a></li><li class="toc-l3"><a href="#four-rules-for-avoiding-framework-sprawl">Four Rules for Avoiding Framework Sprawl</a></li><li class="toc-l3"><a href="#why-every-role-cares">Why Every Role Cares</a></li><li class="toc-l2"><a href="#key-takeaways">Key Takeaways</a></li><li class="toc-l2"><a href="#questions-to-ask">Questions to Ask</a></li><li class="toc-l2"><a href="#notes">Notes</a></li></ul>
+  </div>
+</aside>
+  </div>
+</body>
+</html>

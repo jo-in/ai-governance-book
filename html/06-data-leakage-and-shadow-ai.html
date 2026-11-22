@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chapter 6: Data Leakage &amp; Shadow AI — Building Guardrails for Enterprise AI</title>
+  <meta name="description" content="Hardening Enterprise AI Against Hallucinations, Hacks, and Liability" />
+  <script>
+    (function () {
+      var param = null;
+      var saved = null;
+      var winTheme = null;
+      try {
+        param = new URLSearchParams(window.location.search).get("theme");
+      } catch (e) {}
+      try {
+        saved = localStorage.getItem("book-theme");
+      } catch (e) {}
+      try {
+        var wm = (window.name || "").match(/^book-theme:(dark|light)$/);
+        if (wm) winTheme = wm[1];
+      } catch (e) {}
+      var explicit = (param === "dark" || param === "light")
+        ? param
+        : ((saved === "dark" || saved === "light")
+            ? saved
+            : ((winTheme === "dark" || winTheme === "light") ? winTheme : null));
+      if (explicit) {
+        try { localStorage.setItem("book-theme", explicit); } catch (e) {}
+        try { window.name = "book-theme:" + explicit; } catch (e) {}
+        document.documentElement.setAttribute("data-theme-explicit", "1");
+      }
+      var theme = explicit || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+  <script src="assets/search-index.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <span aria-hidden="true">&#9776;</span>
+      </button>
+      <a class="brand" href="index.html">
+        <span class="brand-title">Building Guardrails for Enterprise AI</span>
+      </a>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="search-focus-btn" type="button" title="Search (/ or Cmd+K)">Search <kbd>/</kbd></button>
+      <button class="icon-btn" id="theme-toggle" type="button" title="Toggle color theme" aria-label="Toggle color theme">&#9680;</button>
+    </div>
+  </header>
+
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <div class="layout">
+<aside class="sidebar" id="sidebar" aria-label="Book navigation">
+  <div class="sidebar-search">
+    <label class="sr-only" for="search-input">Search handbook</label>
+    <input id="search-input" class="search-input" type="search" placeholder="Search handbook… (/)" autocomplete="off" />
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-home" href="index.html">Contents &amp; Overview</a>
+    <div class="nav-group">
+      <div class="nav-group-title">Front Matter</div>
+      <ul class="nav-list">
+        <li><a href="00-front-matter.html">Front Matter</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part I: Foundations</div>
+      <ul class="nav-list">
+        <li><a href="01-why-ai-risk-is-different.html">Chapter 1: Why AI Risk Is Different</a></li>
+        <li><a href="02-reference-frameworks-at-a-glance.html">Chapter 2: Reference Frameworks at a Glance</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part II: Governance &amp; Accountability</div>
+      <ul class="nav-list">
+        <li><a href="03-board-and-executive-oversight.html">Chapter 3: Board &amp; Executive Oversight</a></li>
+        <li><a href="04-ai-governance-operating-model.html">Chapter 4: The AI Governance Operating Model</a></li>
+        <li><a href="05-policies-inventory-and-risk-tiering.html">Chapter 5: Policies, Inventory &amp; Risk Tiering</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part III: Data Risk</div>
+      <ul class="nav-list">
+        <li><a href="06-data-leakage-and-shadow-ai.html" class="is-active" aria-current="page">Chapter 6: Data Leakage &amp; Shadow AI</a></li>
+        <li><a href="07-internal-over-exposure-and-permission-aware-ai.html">Chapter 7: Internal Over-Exposure &amp; Permission-Aware AI</a></li>
+        <li><a href="08-data-provenance-consent-and-sovereignty.html">Chapter 8: Data Provenance, Consent &amp; Sovereignty</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part IV: Security</div>
+      <ul class="nav-list">
+        <li><a href="09-ai-threat-landscape.html">Chapter 9: The AI Threat Landscape</a></li>
+        <li><a href="10-prompt-injection-and-manipulation.html">Chapter 10: Prompt Injection &amp; Manipulation</a></li>
+        <li><a href="11-securing-ai-agents.html">Chapter 11: Securing AI Agents</a></li>
+        <li><a href="12-model-and-supply-chain-security.html">Chapter 12: Model &amp; Supply Chain Security</a></li>
+        <li><a href="13-infrastructure-and-operational-security.html">Chapter 13: Infrastructure &amp; Operational Security</a></li>
+        <li><a href="14-ai-enabled-external-threats.html">Chapter 14: AI-Enabled External Threats</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part V: Output, Trust &amp; Liability</div>
+      <ul class="nav-list">
+        <li><a href="15-hallucinations-and-reliability.html">Chapter 15: Hallucinations &amp; Reliability</a></li>
+        <li><a href="16-bias-fairness-and-discrimination.html">Chapter 16: Bias, Fairness &amp; Discrimination</a></li>
+        <li><a href="17-human-oversight-and-automation-bias.html">Chapter 17: Human Oversight &amp; Automation Bias</a></li>
+        <li><a href="18-transparency-disclosure-and-content-provenance.html">Chapter 18: Transparency, Disclosure &amp; Content Provenance</a></li>
+        <li><a href="19-intellectual-property-and-licensing.html">Chapter 19: Intellectual Property &amp; Licensing</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VI: Regulation &amp; Compliance</div>
+      <ul class="nav-list">
+        <li><a href="20-the-global-regulatory-landscape.html">Chapter 20: The Global Regulatory Landscape</a></li>
+        <li><a href="21-sector-specific-requirements.html">Chapter 21: Sector-Specific Requirements</a></li>
+        <li><a href="22-auditability-assessments-and-evidence.html">Chapter 22: Auditability, Assessments &amp; Evidence</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VII: Third-Party &amp; Lifecycle Risk</div>
+      <ul class="nav-list">
+        <li><a href="23-vendor-and-third-party-ai-risk.html">Chapter 23: Vendor &amp; Third-Party AI Risk</a></li>
+        <li><a href="24-model-lifecycle-and-change-management.html">Chapter 24: Model Lifecycle &amp; Change Management</a></li>
+        <li><a href="25-operational-resilience-and-business-continuity.html">Chapter 25: Operational Resilience &amp; Business Continuity</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VIII: Operationalizing the Guardrails</div>
+      <ul class="nav-list">
+        <li><a href="26-testing-evaluation-and-red-teaming.html">Chapter 26: Testing, Evaluation &amp; Red-Teaming</a></li>
+        <li><a href="27-ai-incident-response.html">Chapter 27: AI Incident Response</a></li>
+        <li><a href="28-metrics-kris-and-reporting.html">Chapter 28: Metrics, KRIs &amp; Reporting</a></li>
+        <li><a href="29-building-a-risk-aware-ai-culture.html">Chapter 29: Building a Risk-Aware AI Culture</a></li>
+        <li><a href="30-governance-maturity-model-and-roadmap.html">Chapter 30: Governance Maturity Model &amp; Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Appendices</div>
+      <ul class="nav-list">
+        <li><a href="31-appendices.html">Appendices: Templates, Checklists &amp; Reference Toolkit</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Reference</div>
+      <ul class="nav-list">
+        <li><a href="bibliography.html">Annotated Bibliography</a></li>
+      </ul>
+    </div>
+  </nav>
+</aside>
+    <main class="main" id="main">
+      <article class="content">
+        <div class="doc-meta-bar"><span class="doc-eyebrow">Part III: Data Risk</span><span class="doc-reading-meta">5,160 words · ~22 min read</span></div>
+        <h1>Chapter 6: Data Leakage &amp; Shadow AI</h1>
+<p><em>Part III: Data Risk</em></p>
+<blockquote>
+<p><strong>In this chapter</strong></p>
+<ul>
+<li>How proprietary code, strategy memos, and customer data leave the enterprise through prompts and model training pipelines</li>
+<li>Why consumer AI accounts, commercial APIs, and Zero Data Retention endpoints treat your data differently</li>
+<li>Why blanket AI bans push usage underground, and how to discover and redirect &quot;shadow AI&quot;</li>
+<li>How &quot;embedded AI&quot; inside approved SaaS tools creates silent data-sharing exposure outside procurement review</li>
+<li>How to route all AI traffic through a sanctioned enterprise gateway with Zero Data Retention enforced technically</li>
+<li>How to build layered Data Loss Prevention (DLP) and PII redaction pipelines without breaking developer and analyst productivity</li>
+</ul>
+<p><strong>Essential for:</strong> CISO, CDO, Data Stewards, CIO, DPO, AI Engineers · <strong>Reading time:</strong> about 30 minutes</p>
+</blockquote>
+<hr />
+<h2 id="three-leaks-before-lunch">Three Leaks Before Lunch <a class="heading-anchor" href="#three-leaks-before-lunch" aria-label="Link to section">#</a></h2>
+<p><em>This composite scenario is illustrative; it is not drawn from a specific organization or incident.</em></p>
+<p>On a Tuesday morning at a mid-sized financial software firm, three employees open their laptops to get ahead of a busy week. None of them intends to break a policy, and none of them bypasses a firewall.</p>
+<p>First, a backend engineer hits a stubborn concurrency bug in a payment-reconciliation service. Six months earlier, the company banned public chatbots on corporate devices, so the engineer switches to a personal laptop beside her desk, signs into a free consumer AI account, and pastes three hundred lines of proprietary code along with a redacted—mostly redacted—stack trace containing two customer account identifiers. She gets a working patch in ninety seconds and closes the tab.</p>
+<p>Second, a sales operations analyst logs into the company's approved cloud CRM to prepare a quarterly pipeline review. A cheerful banner announces a new &quot;AI Deal Insights&quot; assistant, pre-enabled for the workspace after an overnight vendor update. The analyst clicks through the one-line prompt and asks the tool to summarize sensitive enterprise renewal negotiations. Neither procurement nor the Data Protection Officer has reviewed the feature's updated terms of service or checked which sub-processor now receives CRM notes.</p>
+<p>Third, a product team ships an internal document-triage workflow wired to a major commercial LLM API. Before launch, the tech lead checked the vendor's marketing page, saw that &quot;API data is not used for model training,&quot; and told the CISO that the integration retained no customer data. Nobody noticed that the vendor still stores prompts and responses for up to thirty days in abuse-monitoring logs—or that the team uploaded bulk contracts to a stateful Files endpoint that retains files until explicitly deleted.</p>
+<p>In a single morning, sensitive data left the enterprise perimeter through three distinct doors: <strong>shadow AI</strong>, <strong>embedded SaaS AI</strong>, and <strong>misunderstood API retention defaults</strong>. Part II established who governs AI and how systems enter the registry. Part III turns to the enterprise's most valuable asset—its data—beginning with how to stop it from leaking outside the building.</p>
+<hr />
+<h2 id="61-external-data-leakage-and-model-training-risk">6.1 External Data Leakage and Model-Training Risk <a class="heading-anchor" href="#61-external-data-leakage-and-model-training-risk" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge">The Challenge <a class="heading-anchor" href="#the-challenge" aria-label="Link to section">#</a></h3>
+<p>Every prompt sent to an external AI model is an outbound data transfer. Unlike a web search query of four or five keywords, generative AI rewards context: employees paste full customer emails, board drafts, unannounced M&amp;A spreadsheets, HR grievances, and proprietary source code because better context produces better answers. The OWASP Top 10 for LLM Applications ranks <strong>Sensitive Information Disclosure</strong> (LLM02:2025) as the second highest risk for LLM systems, while the NIST Generative AI Profile (NIST AI 600-1) flags <strong>Data Privacy</strong>—including inadvertent exposure of sensitive information and training-data memorization—as a core generative AI hazard.<sup class="fn-ref"><a href="#fn-c06-01" id="fnref-c06-01" title="Jump to note 1">[1]</a></sup><sup class="fn-ref"><a href="#fn-c06-02" id="fnref-c06-02" title="Jump to note 2">[2]</a></sup></p>
+<p>The enterprise risk first became front-page news in April 2023, when engineers at Samsung Electronics uploaded proprietary semiconductor source code, internal test data, and meeting notes into ChatGPT on at least three occasions to debug errors and generate summaries. Samsung responded within weeks by banning generative AI tools on corporate devices and internal networks, noting in an internal memo that data transmitted to external servers could not easily be retrieved or deleted.<sup class="fn-ref"><a href="#fn-c06-03" id="fnref-c06-03" title="Jump to note 3">[3]</a></sup></p>
+<p>Samsung's concern pointed to a critical technical asymmetry between ordinary cloud storage and AI model training: <strong>you can delete a file from a database, but you cannot selectively unlearn a trade secret once it is baked into a foundation model's weights.</strong></p>
+<p>In a landmark 2021 USENIX Security study, Nicholas Carlini and colleagues demonstrated that large language models memorize and regurgitate individual training sequences verbatim—a phenomenon they termed <em>eidetic memorization</em>.<sup class="fn-ref"><a href="#fn-c06-04" id="fnref-c06-04" title="Jump to note 4">[4]</a></sup> Querying GPT-2 solely through black-box input-output prompts, the researchers extracted personally identifiable information (names, phone numbers, email addresses), source code, 128-bit UUIDs, and private chat logs. Crucially, many leaked strings appeared in <strong>just a single document</strong> in the training corpus, and larger models memorized strictly more data than smaller models. Once sensitive corporate text enters a shared training pipeline, the risk is permanent and effectively impossible to audit.</p>
+<h3 id="consumer-accounts-vs-commercial-apis-vs-enterprise-agreements">Consumer Accounts vs. Commercial APIs vs. Enterprise Agreements <a class="heading-anchor" href="#consumer-accounts-vs-commercial-apis-vs-enterprise-agreements" aria-label="Link to section">#</a></h3>
+<p>A widespread misconception among engineering and business leaders is treating all access to a model provider as having identical privacy guarantees. In practice, a provider's data-handling posture changes sharply across product tiers. OpenAI's enterprise privacy documentation illustrates how standard commercial guarantees work across major frontier labs:<sup class="fn-ref"><a href="#fn-c06-05" id="fnref-c06-05" title="Jump to note 5">[5]</a></sup></p>
+<ul>
+<li><strong>Consumer Tiers (Free / Individual Plans):</strong> On many consumer interfaces, user prompts and thumbs-up/thumbs-down feedback may be used by default to train and improve future models unless the user manually toggles training off, and conversation histories persist in the user's cloud account.</li>
+<li><strong>Standard Commercial API:</strong> By default, major enterprise-ready model APIs (including OpenAI's API and ChatGPT Enterprise/Team) <strong>do not train models on customer inputs or outputs</strong>. However, &quot;no training&quot; does <em>not</em> automatically mean &quot;no retention.&quot; To enforce usage policies and catch automated abuse, providers commonly retain prompts and completions in encrypted <strong>abuse-monitoring logs for up to 30 days</strong>, where authorized safety personnel or automated classifiers may review flagged traffic.</li>
+<li><strong>Enterprise Zero Data Retention (ZDR) Endpoints:</strong> For regulated industries (healthcare under HIPAA, banking, legal services), providers offer Zero Data Retention agreements that eliminate the 30-day server-side abuse logging on eligible stateless endpoints. Critically, ZDR is rarely a self-serve checkbox; it requires vendor security review, formal contract addenda, and explicit organization-level provisioning, and <strong>stateful features</strong> (such as file uploads, batch jobs, fine-tuning datasets, or persistent assistant threads) often sit outside ZDR coverage.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Deployment Tier</th>
+<th style="text-align:left">Used for Model Training?</th>
+<th style="text-align:left">Server-Side Prompt Retention</th>
+<th style="text-align:left">Stateful Feature Risk</th>
+<th style="text-align:left">Governance Verdict</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Consumer Free / Personal Plan</strong></td>
+<td style="text-align:left">Often <strong>yes by default</strong> (opt-out)</td>
+<td style="text-align:left">Indefinite history + safety logs</td>
+<td style="text-align:left">High (shared personal accounts, plugins)</td>
+<td style="text-align:left"><strong>Prohibit</strong> for any non-public company data</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Standard Commercial API / Team Workspace</strong></td>
+<td style="text-align:left"><strong>No by default</strong></td>
+<td style="text-align:left">Typically <strong>up to 30 days</strong> for abuse monitoring</td>
+<td style="text-align:left">Files, batches, threads persist until deleted</td>
+<td style="text-align:left">Acceptable for internal/confidential data if DPA signed and stateful APIs restricted</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Enterprise API with ZDR</strong></td>
+<td style="text-align:left"><strong>No</strong></td>
+<td style="text-align:left"><strong>Zero persistent retention</strong> on eligible stateless endpoints</td>
+<td style="text-align:left">Stateful endpoints still persist data unless blocked at gateway</td>
+<td style="text-align:left"><strong>Target baseline</strong> for sensitive enterprise workloads and customer PII</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Private Cloud VPC / Self-Hosted Open-Weight</strong></td>
+<td style="text-align:left"><strong>No</strong> (customer-controlled)</td>
+<td style="text-align:left">Customer controls all logs and retention</td>
+<td style="text-align:left">Full customer control over vector stores and weights</td>
+<td style="text-align:left">Required for strict data sovereignty, classified data, or zero-egress mandates</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="62-the-shadow-ai-problem">6.2 The Shadow AI Problem <a class="heading-anchor" href="#62-the-shadow-ai-problem" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-2">The Challenge <a class="heading-anchor" href="#the-challenge-2" aria-label="Link to section">#</a></h3>
+<p>When confronted with external leakage risk, many leadership teams reach for the obvious control: block AI domains at the corporate firewall and issue a stern email forbidding generative AI. That approach reliably fails—not because employees are malicious, but because AI delivers an immediate, undeniable productivity advantage to anyone trying to clear an overloaded inbox or hit an aggressive sprint deadline.</p>
+<p>Three empirical benchmarks capture the scale of <strong>shadow AI</strong>—the use of unsanctioned AI tools, personal accounts, or browser extensions outside IT and security oversight:</p>
+<ol>
+<li><strong>Employees are bringing their own AI anyway.</strong> Microsoft and LinkedIn's <em>2024 Work Trend Index</em> found that <strong>78 percent of AI users bring their own AI tools to work (BYOAI)</strong>—a pattern spanning every generation, from Gen Z (85 percent) and Millennials (78 percent) to Gen X (76 percent) and Boomers (73 percent). At the same time, 60 percent of leaders acknowledged their organizations lacked a clear vision or plan to implement AI.<sup class="fn-ref"><a href="#fn-c06-06" id="fnref-c06-06" title="Jump to note 6">[6]</a></sup></li>
+<li><strong>Personal accounts dominate enterprise traffic.</strong> Netskope's <em>Cloud and Threat Report: Generative AI 2025</em> reported that while roughly 94 percent of surveyed organizations had employees using generative AI applications, <strong>72 percent of workplace GenAI users relied on personal accounts</strong> rather than corporate-managed instances.<sup class="fn-ref"><a href="#fn-c06-07" id="fnref-c06-07" title="Jump to note 7">[7]</a></sup></li>
+<li><strong>Shadow AI directly inflates breach costs.</strong> According to the IBM and Ponemon Institute <em>Cost of a Data Breach Report 2025</em>, <strong>20 percent (one in five)</strong> of studied organizations suffered a data breach involving shadow AI security incidents, and organizations with high levels of shadow AI incurred an average of <strong>$670,000 in additional breach costs</strong> compared to peers with low or no shadow AI.<sup class="fn-ref"><a href="#fn-c06-08" id="fnref-c06-08" title="Jump to note 8">[8]</a></sup></li>
+</ol>
+<h3 id="real-world-scenario-why-bans-create-blind-spots">Real-World Scenario: Why Bans Create Blind Spots <a class="heading-anchor" href="#real-world-scenario-why-bans-create-blind-spots" aria-label="Link to section">#</a></h3>
+<p>When Samsung banned ChatGPT on corporate networks in May 2023, an internal survey cited at the time showed that 65 percent of employees themselves viewed generative AI services as a security risk.<sup class="fn-ref"><a href="#fn-c06-03" id="fnref-c06-03-2" title="Jump to note 3">[3]</a></sup> Yet across industries, organizations that blocked popular AI URLs without offering an approved, equally capable internal workspace quickly discovered a familiar pattern: employees switched to mobile hotspots, personal laptops, or obscure wrapper websites hosted on newly registered domains. Blocking the top five consumer chatbots did not stop data leakage; it simply pushed the leakage off corporate DNS logs and onto unmonitored consumer extensions and third-party PDF summarizers.</p>
+<h3 id="the-guardrails-visibility-and-redirection-not-pure-prohibition">The Guardrails: Visibility and Redirection, Not Pure Prohibition <a class="heading-anchor" href="#the-guardrails-visibility-and-redirection-not-pure-prohibition" aria-label="Link to section">#</a></h3>
+<p>An effective anti-shadow-AI strategy pairs passive <strong>discovery</strong> with frictionless <strong>redirection</strong>:</p>
+<ul>
+<li><strong>Network and Web Telemetry (DNS, Proxy, SWG):</strong> Maintain an updated category list of generative AI web apps, API domains, and &quot;AI wrapper&quot; sites (meeting recorders, PDF chat tools, slide generators) in your Secure Web Gateway (SWG) to measure actual usage before deciding controls.</li>
+<li><strong>CASB Tenant Restrictions:</strong> Use a Cloud Access Security Broker (CASB) or identity proxy to distinguish between corporate-managed AI accounts and personal consumer accounts on the <em>same</em> provider domain—allowing logins authenticated via corporate Single Sign-On (SSO) while blocking personal <code>@gmail.com</code> or free logins.</li>
+<li><strong>Browser Extension &amp; IDE Plugin Audits:</strong> Enforce browser and IDE allowlists. Unvetted AI browser extensions routinely request broad permissions to read every open webpage—including internal CRM records, HR portals, and webmail.</li>
+<li><strong>Expense-Report &amp; SaaS Spend Discovery:</strong> Cross-check corporate credit card feeds and SaaS management platforms for recurring $20/month AI subscriptions billed by individuals or departments.</li>
+<li><strong>Coach and Redirect Instead of Silent Blocking:</strong> When an employee visits an unapproved AI site, display an explanatory coaching interstitial (<em>&quot;This tool is not approved for company data. Click here to launch our enterprise AI workspace with Zero Data Retention&quot;</em>). As Chapter 5 noted, usage drops sharply once the sanctioned alternative is one click away and equally fast.</li>
+</ul>
+<hr />
+<h2 id="63-embedded-ai-when-existing-saas-tools-quietly-add-ai-features">6.3 &quot;Embedded AI&quot;: When Existing SaaS Tools Quietly Add AI Features <a class="heading-anchor" href="#63-embedded-ai-when-existing-saas-tools-quietly-add-ai-features" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-3">The Challenge <a class="heading-anchor" href="#the-challenge-3" aria-label="Link to section">#</a></h3>
+<p>Even an organization that bans consumer chatbots and builds a secure internal AI gateway can leak data through a back door that procurement already approved years ago: <strong>embedded AI</strong>.</p>
+<p>Every major enterprise SaaS vendor—across CRM, HR, email, video conferencing, chat, project tracking, and document storage—is racing to ship built-in AI features. Rather than negotiating a new contract, vendors frequently introduce these features through routine product updates, quiet Terms of Service revisions, or workspace toggles switched on by default. Because traffic flows to an already allowlisted vendor domain, traditional firewalls and CASB shadow-AI detectors miss it entirely.</p>
+<h3 id="real-world-scenarios-terms-of-service-surprises">Real-World Scenarios: Terms of Service Surprises <a class="heading-anchor" href="#real-world-scenarios-terms-of-service-surprises" aria-label="Link to section">#</a></h3>
+<p>Two widely publicized SaaS controversies show how easily embedded AI triggers enterprise governance failures:</p>
+<ol>
+<li><strong>Zoom's Terms of Service Backlash (August 2023):</strong> Observers spotted updated language in Section 10 of Zoom's Terms of Service that appeared to grant the company broad, perpetual rights to use customer data—including audio, video, chat logs, and screen shares—to train machine learning and AI models, with no clear opt-out for individual meeting participants. Following rapid backlash from corporate buyers, privacy advocates, and healthcare users, Zoom published an explanation and amended Section 10 within days to state explicitly that it does not use audio, video, or chat customer content to train AI models without customer consent, placing AI-training data sharing behind explicit account-owner controls.<sup class="fn-ref"><a href="#fn-c06-09" id="fnref-c06-09" title="Jump to note 9">[9]</a></sup></li>
+<li><strong>Slack's Default Opt-In and Manual Opt-Out Friction (May 2024):</strong> Users uncovered language on Slack's Privacy Principles page indicating that workspaces were opted in by default to contribute customer data toward training machine-learning models—and that to opt out, a workspace owner had to send a manual email to <code>feedback@slack.com</code> with a specific subject line. Following intense scrutiny from CISOs and privacy professionals, Slack clarified a critical technical distinction: its global ML models (used for channel recommendations, search, and emoji suggestions) relied on aggregated, de-identified interaction data and did <em>not</em> expose private message text, nor did Slack train third-party LLMs for its generative &quot;Slack AI&quot; search and summarization features.<sup class="fn-ref"><a href="#fn-c06-10" id="fnref-c06-10" title="Jump to note 10">[10]</a></sup> Even so, Slack acknowledged it could have communicated more clearly—and for enterprise buyers, the episode exposed a major governance blind spot: <strong>a global opt-out buried behind a manual email request means most busy IT teams never discover it until headlines break.</strong></li>
+</ol>
+<h3 id="the-guardrails">The Guardrails <a class="heading-anchor" href="#the-guardrails" aria-label="Link to section">#</a></h3>
+<p>ISO/IEC 42001 explicitly requires governance over third-party and customer relationships across the AI lifecycle (Annex A.10).<sup class="fn-ref"><a href="#fn-c06-11" id="fnref-c06-11" title="Jump to note 11">[11]</a></sup> Managing embedded SaaS AI requires three operational habits:</p>
+<ul>
+<li><strong>Enforce &quot;Default-Off&quot; in Vendor Admin Consoles:</strong> Instruct SaaS administrators across core platforms (productivity suites, CRM, HRIS, ticketing, conferencing) to disable newly released beta or preview AI features globally until they pass Yellow or Red Lane review.</li>
+<li><strong>Monitor Terms of Service and Sub-Processor Updates:</strong> Subscribe Legal and Procurement to automated change alerts on key vendors' Privacy Policies, Data Processing Addenda (DPAs), and AI sub-processor lists (detailed further in Chapter 23).</li>
+<li><strong>Quarterly Embedded-AI Registry Sweeps:</strong> Run a quarterly audit across your top twenty SaaS vendors to record newly enabled AI features in the central AI registry (Chapter 5). When a vendor adds a new LLM sub-processor or changes data retention, the system's risk tier must be re-evaluated.</li>
+</ul>
+<hr />
+<h2 id="64-sanctioned-ai-gateways-and-zero-data-retention-zdr">6.4 Sanctioned AI Gateways and Zero Data Retention (ZDR) <a class="heading-anchor" href="#64-sanctioned-ai-gateways-and-zero-data-retention-zdr" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-4">The Challenge <a class="heading-anchor" href="#the-challenge-4" aria-label="Link to section">#</a></h3>
+<p>Policy and discovery tell you what is happening; <strong>architecture</strong> determines what is possible. If every engineering team integrates separately with OpenAI, Anthropic, Google, or Bedrock—generating scattered API keys, writing custom logging, and negotiating separate privacy settings—the CISO loses visibility and the CFO loses cost control.</p>
+<p>The enterprise answer is a <strong>sanctioned AI gateway</strong>: a single internal proxy sitting between every employee workspace, internal RAG application, and autonomous agent on one side, and external or self-hosted models on the other.</p>
+<figure class="mermaid-wrap"><pre class="mermaid">flowchart LR
+    subgraph INT[&quot;Enterprise Perimeter&quot;]
+        U[&quot;Employees&lt;br/&gt;(Sanctioned Web Workspace &amp; IDE)&quot;]
+        A[&quot;Internal Apps &amp;&lt;br/&gt;AI Agents&quot;]
+    end
+
+    subgraph GW[&quot;Sanctioned Enterprise AI Gateway&quot;]
+        direction TB
+        ID[&quot;1. SSO Auth, RBAC &amp;&lt;br/&gt;Named App Identity&quot;]
+        DLP[&quot;2. Inline DLP &amp;&lt;br/&gt;PII Masking Pipeline&quot;]
+        POL[&quot;3. Model Allowlist, ZDR Routing &amp;&lt;br/&gt;Stateful-Endpoint Block&quot;]
+        LOG[&quot;4. Immutable Audit Logs &amp;&lt;br/&gt;Token FinOps Quotas&quot;]
+        ID --&gt; DLP --&gt; POL --&gt; LOG
+    end
+
+    subgraph EXT[&quot;Approved Model Endpoints&quot;]
+        M1[&quot;Commercial Frontier APIs&lt;br/&gt;(Provisioned ZDR + BAA/DPA)&quot;]
+        M2[&quot;Private Cloud VPC Endpoints&lt;br/&gt;(Bedrock / Vertex / Azure OpenAI)&quot;]
+        M3[&quot;Self-Hosted Open-Weight Models&lt;br/&gt;(Strictly Restricted Data)&quot;]
+    end
+
+    U --&gt; ID
+    A --&gt; ID
+    LOG --&gt; M1
+    LOG --&gt; M2
+    LOG --&gt; M3</pre></figure>
+<h3 id="enforcing-zero-data-retentionand-avoiding-the-stateful-endpoint-trap">Enforcing Zero Data Retention—and Avoiding the Stateful-Endpoint Trap <a class="heading-anchor" href="#enforcing-zero-data-retentionand-avoiding-the-stateful-endpoint-trap" aria-label="Link to section">#</a></h3>
+<p>Routing traffic through a gateway only eliminates vendor-side leakage if the downstream endpoint enforces <strong>Zero Data Retention (ZDR)</strong> both contractually and technically. Using OpenAI's ZDR architecture as an illustrative benchmark, security architects and procurement teams must watch four details:<sup class="fn-ref"><a href="#fn-c06-05" id="fnref-c06-05-2" title="Jump to note 5">[5]</a></sup></p>
+<ol>
+<li><strong>ZDR Must Be Explicitly Provisioned:</strong> Standard API keys do <em>not</em> automatically carry zero-day retention. Confirm in writing—and verify via vendor organization-level headers or admin console status—that the 30-day abuse-monitoring log window is disabled on the account tied to your gateway.</li>
+<li><strong>Understand Privacy-Preserving Safety Architectures:</strong> Because vendors still need to detect severe platform abuse (such as CSAM or cyberattack generation) without reading customer data, modern providers use architectures like OpenAI's <strong>Private Safety Processing (PSP)</strong>. Under PSP, interactions flagged by automated safety classifiers are encrypted and stored inside <strong>customer-controlled cloud storage</strong>, evaluated only inside hardware-attested, isolated runtimes with zero human access, returning only bounded safety signals to the vendor.<sup class="fn-ref"><a href="#fn-c06-05" id="fnref-c06-05-3" title="Jump to note 5">[5]</a></sup></li>
+<li><strong>Block Stateful Endpoints by Default:</strong> ZDR almost always applies only to <strong>stateless inference endpoints</strong> (such as Chat Completions). Stateful endpoints—such as <code>/files</code> uploads, batch-processing queues, persistent Assistants/threads, prompt caching beyond short memory TTLs, or hosted fine-tuning jobs—inherently write data to vendor disk. Configure the AI gateway to <strong>drop or reject calls to stateful endpoints</strong> unless an application has explicit Yellow/Red Lane approval.</li>
+<li><strong>Close Direct Egress Paths:</strong> A gateway is optional unless the network enforces it. Block outbound HTTPS calls to public AI API domains from corporate workloads and developer laptops except through the gateway's static egress proxies, and ban individual vendor API keys from secret vaults.</li>
+</ol>
+<h3 id="hosting-options-compared">Hosting Options Compared <a class="heading-anchor" href="#hosting-options-compared" aria-label="Link to section">#</a></h3>
+<p>Most enterprises land on a <strong>tiered routing policy</strong> inside the gateway:</p>
+<ul>
+<li><strong>Public / Internal / Confidential (under ZDR):</strong> Route to ZDR-enabled commercial frontier APIs or private cloud VPC deployments (AWS Bedrock, Google Vertex AI, Azure OpenAI) hosted in the enterprise's approved region.</li>
+<li><strong>Restricted / Regulated / National-Security / Crown-Jewel Code:</strong> Route exclusively to self-hosted open-weight models inside the enterprise's own virtual private cloud or on-premises GPU cluster, where zero bytes leave company-controlled infrastructure.</li>
+</ul>
+<hr />
+<h2 id="65-data-loss-prevention-dlp-and-pii-redaction-pipelines">6.5 Data Loss Prevention (DLP) and PII Redaction Pipelines <a class="heading-anchor" href="#65-data-loss-prevention-dlp-and-pii-redaction-pipelines" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-5">The Challenge <a class="heading-anchor" href="#the-challenge-5" aria-label="Link to section">#</a></h3>
+<p>Even with Zero Data Retention contracts and a private VPC model endpoint, sending raw secrets or unnecessary PII across an API creates avoidable blast radius. If a prompt containing an AWS production secret key or a customer's national ID is written into an application's observability trace, stored inside an internal conversation history, or accidentally echoed in a model output, an internal leak has still occurred.</p>
+<p>Inline <strong>DLP and PII redaction pipelines</strong> sitting inside the AI gateway inspect every outbound prompt—and attached document—<em>before</em> it leaves the enterprise perimeter.</p>
+<h3 id="a-layered-detection-pipeline">A Layered Detection Pipeline <a class="heading-anchor" href="#a-layered-detection-pipeline" aria-label="Link to section">#</a></h3>
+<p>Single-method DLP fails in opposite directions: pure regular expressions miss unstructured names and context, while heavyweight LLM-based scanners add unacceptable latency to every chat turn. Effective enterprise pipelines combine three fast layers:</p>
+<ol>
+<li><strong>Layer 1 — Deterministic Pattern &amp; Entropy Detectors (&lt; 5 ms):</strong>
+High-precision regex rules, prefix signatures, and Shannon-entropy checks catch structured secrets that have zero legitimate reason to enter a general prompt: cloud access keys (<code>AKIA...</code>), GitHub/Slack/OpenAI tokens, PEM private keys, database connection strings, payment card numbers (validated via Luhn checksums), and national identifiers (SSNs, Aadhaar, PAN, passport patterns).</li>
+<li><strong>Layer 2 — Lightweight NLP / NER Classifiers (20–60 ms):</strong>
+Local named-entity recognition (NER) models detect unstructured PII—person names, street addresses, phone numbers, email addresses, medical record numbers, and organization names. Open-source frameworks such as <strong>Presidio</strong> (originally created by Microsoft and maintained under the Data Privacy Stack community) provide a widely adopted modular baseline combining <strong>Presidio Analyzer</strong> (regex + checksums + spaCy/transformer NER), <strong>Presidio Anonymizer</strong>, <strong>Presidio Image-Redactor</strong> (OCR-based masking for screenshots and medical images), and <strong>Presidio Structured</strong> for tabular payloads.<sup class="fn-ref"><a href="#fn-c06-12" id="fnref-c06-12" title="Jump to note 12">[12]</a></sup></li>
+<li><strong>Layer 3 — Sensitivity Labels &amp; Custom Dictionaries:</strong>
+Block prompts carrying corporate sensitivity headers (e.g., <code>Classification: Strictly Confidential — M&amp;A</code>) or internal project code names registered by the CDO.</li>
+</ol>
+<h3 id="three-enforcement-actions-block-mask-or-coach">Three Enforcement Actions: Block, Mask, or Coach <a class="heading-anchor" href="#three-enforcement-actions-block-mask-or-coach" aria-label="Link to section">#</a></h3>
+<p>Blocking every prompt that mentions a person's name makes an AI assistant unusable for drafting emails or summarizing meeting notes. Configure the gateway to match the response to the severity of the match:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Detected Content</th>
+<th style="text-align:left">Recommended Action</th>
+<th style="text-align:left">How It Works</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Hard Secrets &amp; Credentials</strong> (API keys, private keys, DB passwords)</td>
+<td style="text-align:left"><strong>Hard Block</strong></td>
+<td style="text-align:left">Reject request immediately (<code>HTTP 400</code>); return a clear message explaining which secret pattern triggered the block; alert SecOps if repeated.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Structured Regulated PII</strong> (credit cards, SSNs, health IDs, bank account numbers)</td>
+<td style="text-align:left"><strong>Mask or Block</strong> (by tier)</td>
+<td style="text-align:left">Block on general workspaces; mask in approved analytics workflows.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Unstructured PII in Summarization / Drafting</strong> (customer names, emails, phone numbers)</td>
+<td style="text-align:left"><strong>Pseudonymize &amp; Re-hydrate</strong></td>
+<td style="text-align:left">Replace <code>Priya Nair</code> with <code>&lt;PERSON_1&gt;</code> and <code>priya@acme.com</code> with <code>&lt;EMAIL_1&gt;</code> in a short-lived local session map before calling the LLM; automatically restore the real values in the response returned to the user.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Borderline Business Data</strong> (internal financial tables, legal clauses)</td>
+<td style="text-align:left"><strong>Warn &amp; Log</strong></td>
+<td style="text-align:left">Allow on ZDR endpoints only; display a subtle reminder and log metadata for security telemetry.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="avoiding-the-false-positive-trap">Avoiding the False-Positive Trap <a class="heading-anchor" href="#avoiding-the-false-positive-trap" aria-label="Link to section">#</a></h3>
+<p>The biggest operational risk in AI DLP is <strong>false-positive fatigue</strong>. If regex rules falsely block legitimate 16-digit product SKUs as credit card numbers or flag legal case citations as sensitive names, developers and analysts will find workarounds—returning straight back to shadow AI.</p>
+<p>Keep DLP useful by enforcing four engineering practices:</p>
+<ul>
+<li><strong>Measure inline latency budgets:</strong> Keep text inspection under 100 ms per request so interactive chat remains responsive.</li>
+<li><strong>Validate with checksums and context words:</strong> Require Luhn validation on card numbers and nearby context clues (<code>account</code>, <code>SSN</code>, <code>DOB</code>) before triggering blocks on ambiguous numeric strings.</li>
+<li><strong>Inspect multimodal attachments, not just text:</strong> Employees routinely bypass text DLP by uploading a screenshot, PDF, or CSV spreadsheet. Run document text extraction and OCR image redaction (such as Presidio Image-Redactor) at the gateway before files reach any model.</li>
+<li><strong>Separate redaction logs from raw secrets:</strong> Never log the raw intercepted secret inside DLP alert logs—log the rule triggered, user/app identity, and a redacted snippet or cryptographic hash so the DLP log itself does not become a credential treasure trove.</li>
+</ul>
+<hr />
+<h2 id="why-every-role-cares">Why Every Role Cares <a class="heading-anchor" href="#why-every-role-cares" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">What this means for you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board / CEO</strong></td>
+<td style="text-align:left">Shadow AI turns invisible productivity tools into an average $670,000 extra breach cost; fund a fast sanctioned workspace so staff do not need personal accounts.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO</strong></td>
+<td style="text-align:left">Consolidate fragmented LLM API keys and SaaS AI pilots behind one enterprise AI gateway, and require &quot;default-off&quot; admin baselines on existing SaaS suites.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CISO</strong></td>
+<td style="text-align:left">Pair CASB tenant restrictions and SWG discovery with gateway DLP and egress blocking so sensitive prompts cannot bypass Zero Data Retention.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CDO / Data Stewards</strong></td>
+<td style="text-align:left">Provide sensitivity labels, custom dictionaries (project code names), and PII redaction standards so engineering does not invent classification rules ad hoc.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Legal / Compliance / DPO</strong></td>
+<td style="text-align:left">Verify ZDR addenda, stateful-endpoint exclusions, and vendor Terms of Service changes—especially embedded SaaS AI features that quietly opt workspaces in by default.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Engineers</strong></td>
+<td style="text-align:left">Route every model call through the sanctioned gateway, block stateful file/batch endpoints where ZDR is required, and implement reversible PII masking to protect utility.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="chapter-summary">Chapter Summary <a class="heading-anchor" href="#chapter-summary" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Section</th>
+<th style="text-align:left">Core risk</th>
+<th style="text-align:left">Primary guardrail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">6.1 External Leakage &amp; Training</td>
+<td style="text-align:left">Prompts sent to consumer accounts can be absorbed into model weights permanently; standard APIs retain 30-day abuse logs</td>
+<td style="text-align:left">Ban consumer tiers for company data; distinguish &quot;no training&quot; from Zero Data Retention; keep secrets out of training sets</td>
+</tr>
+<tr>
+<td style="text-align:left">6.2 Shadow AI</td>
+<td style="text-align:left">72% of enterprise GenAI users rely on personal accounts; blanket bans drive usage off monitored networks</td>
+<td style="text-align:left">Discover usage via SWG/CASB/IDE/spend telemetry; enforce tenant restrictions; coach and redirect users to a fast sanctioned workspace</td>
+</tr>
+<tr>
+<td style="text-align:left">6.3 Embedded SaaS AI</td>
+<td style="text-align:left">Existing SaaS tools quietly enable AI features or revise Terms of Service outside procurement</td>
+<td style="text-align:left">Enforce &quot;default-off&quot; toggles in SaaS admin consoles; track vendor ToS/sub-processor alerts; run quarterly registry sweeps</td>
+</tr>
+<tr>
+<td style="text-align:left">6.4 Sanctioned Gateways &amp; ZDR</td>
+<td style="text-align:left">Direct vendor API integrations bypass privacy settings and expose stateful file/batch endpoints</td>
+<td style="text-align:left">Route all traffic through one SSO-authenticated gateway; provision ZDR/PSP contracts; block stateful endpoints and direct egress</td>
+</tr>
+<tr>
+<td style="text-align:left">6.5 DLP &amp; PII Redaction</td>
+<td style="text-align:left">Unmasked credentials and PII enter external APIs, observability traces, and conversation histories</td>
+<td style="text-align:left">Combine fast regex/checksums with lightweight NER (e.g., Presidio); hard-block secrets; pseudonymize and re-hydrate PII</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="key-takeaways">Key Takeaways <a class="heading-anchor" href="#key-takeaways" aria-label="Link to section">#</a></h2>
+<ul>
+<li><strong>&quot;No training&quot; is not &quot;zero retention.&quot;</strong> Standard commercial LLM APIs avoid model training by default, yet still retain prompts in abuse-monitoring logs (often 30 days) and stateful file/batch endpoints unless Zero Data Retention is formally provisioned and stateful APIs are gated.</li>
+<li><strong>Once data enters weights, you cannot rely on deletion.</strong> Memorization research proves LLMs can regurgitate single-occurrence training secrets; keep proprietary IP and regulated personal data out of shared training pipelines entirely.</li>
+<li><strong>Bans without alternatives create expensive blind spots.</strong> Shadow AI drives 1 in 5 breaches and adds $670,000 in average breach costs; beat shadow AI by making the sanctioned workspace faster and easier than personal accounts.</li>
+<li><strong>Watch the tools you already pay for.</strong> Embedded AI inside video, chat, CRM, and office suites can bypass procurement through overnight updates and default opt-ins.</li>
+<li><strong>Enforce architecture at the gateway.</strong> One sanctioned AI proxy—combining SSO identity, ZDR routing, stateful-endpoint blocking, and low-latency PII masking—gives every stakeholder visibility and protection without slowing teams down.</li>
+</ul>
+<h2 id="questions-to-ask">Questions to Ask <a class="heading-anchor" href="#questions-to-ask" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">Question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board / CEO</strong></td>
+<td style="text-align:left">What percentage of our employees have fast access to an approved, Zero-Data-Retention AI workspace instead of relying on personal accounts?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO</strong></td>
+<td style="text-align:left">Which of our top twenty SaaS platforms rolled out embedded AI features this quarter, and were they switched off by default until reviewed?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CISO</strong></td>
+<td style="text-align:left">Can a developer or employee today send corporate data directly to a public LLM API without passing through our gateway and DLP pipeline?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CDO / Data Stewards</strong></td>
+<td style="text-align:left">Do our DLP classifiers cover local national IDs, project code names, and uploaded images/PDFs—not just English names and credit cards?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Legal / Compliance / DPO</strong></td>
+<td style="text-align:left">For each commercial LLM provider we use, have we executed a ZDR addendum, verified it is active on our org ID, and checked stateful endpoints like <code>/files</code> and <code>/batches</code>?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Engineers</strong></td>
+<td style="text-align:left">Are our agents and RAG services configured to mask or strip raw credentials and unnecessary PII before prompts ever leave our network?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Business Owners</strong></td>
+<td style="text-align:left">Does anyone on my team expense personal AI subscriptions or paste client files into unapproved PDF/meeting summarizers to get work done faster?</td>
+</tr>
+</tbody>
+</table></div>
+
+<section class="footnotes" id="notes" aria-label="Notes">
+<h2>References</h2>
+<ol class="footnote-list">
+<li id="fn-c06-01"><span class="fn-body">OWASP Foundation, <em>OWASP Top 10 for LLM Applications 2025</em> (OWASP GenAI Security Project, November 2024), LLM02:2025 Sensitive Information Disclosure, <a href="https://genai.owasp.org/llm-top-10/" target="_blank" rel="noopener noreferrer">https://genai.owasp.org/llm-top-10/</a>. <strong>Annotation:</strong> Ranks sensitive information disclosure second among LLM application risks, highlighting confidential data and PII exposure via prompts, training data, and outputs. <a href="bibliography.html#owasp-2024-llm-top10">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c06-01" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c06-02"><span class="fn-body">National Institute of Standards and Technology, <em>Artificial Intelligence Risk Management Framework: Generative Artificial Intelligence Profile</em>, NIST AI 600-1 (Gaithersburg, MD: NIST, July 2024), <a href="https://doi.org/10.6028/NIST.AI.600-1" target="_blank" rel="noopener noreferrer">https://doi.org/10.6028/NIST.AI.600-1</a>. <strong>Annotation:</strong> Defines Data Privacy as one of the twelve core generative AI risks, addressing exposure of private data, memorization, and unauthorized reuse. <a href="bibliography.html#nist-2024-genai-profile">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c06-02" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c06-03"><span class="fn-body">Mark Gurman, &quot;Samsung Bans Staff's AI Use After Spotting ChatGPT Data Leak,&quot; <em>Bloomberg</em>, May 2, 2023, <a href="https://www.bloomberg.com/news/articles/2023-05-02/samsung-bans-chatgpt-and-other-generative-ai-use-by-staff-after-leak" target="_blank" rel="noopener noreferrer">https://www.bloomberg.com/news/articles/2023-05-02/samsung-bans-chatgpt-and-other-generative-ai-use-by-staff-after-leak</a>. <strong>Annotation:</strong> Documents the April 2023 source-code and meeting-note leaks at Samsung Electronics and the company's subsequent ban across corporate networks. <a href="bibliography.html#gurman-2023-samsung">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c06-03" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c06-03-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c06-04"><span class="fn-body">Nicholas Carlini et al., &quot;Extracting Training Data from Large Language Models,&quot; in <em>Proceedings of the 30th USENIX Security Symposium (USENIX Security 21)</em> (August 2021), <a href="https://www.usenix.org/conference/usenixsecurity21/presentation/carlini-extracting" target="_blank" rel="noopener noreferrer">https://www.usenix.org/conference/usenixsecurity21/presentation/carlini-extracting</a>. <strong>Annotation:</strong> Landmark security paper proving that black-box prompting can extract verbatim PII, source code, and secrets memorized from single training documents—and that larger models memorize more. <a href="bibliography.html#carlini-2021-extracting">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c06-04" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c06-05"><span class="fn-body">OpenAI, &quot;Enterprise Privacy and Data Controls (API Data Retention and Zero Data Retention),&quot; OpenAI Platform Documentation, accessed November 21, 2026, <a href="https://platform.openai.com/docs/guides/your-data" target="_blank" rel="noopener noreferrer">https://platform.openai.com/docs/guides/your-data</a>. <strong>Annotation:</strong> Details the distinction between &quot;no training by default,&quot; the 30-day abuse-monitoring log window, approval-gated Zero Data Retention (ZDR), Private Safety Processing (PSP), and stateful endpoints that retain data separately. <a href="bibliography.html#openai-2025-enterprise-privacy">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c06-05" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c06-05-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a> <a href="#fnref-c06-05-3" class="fn-backref" title="Back to citation 3">&#8617;&#xfe0e;<sup>3</sup></a></span></li>
+<li id="fn-c06-06"><span class="fn-body">Microsoft and LinkedIn, <em>2024 Work Trend Index Annual Report: AI at Work Is Here. Now Comes the Hard Part</em> (May 8, 2024), <a href="https://www.microsoft.com/en-us/worklab/work-trend-index/ai-at-work-is-here-now-comes-the-hard-part" target="_blank" rel="noopener noreferrer">https://www.microsoft.com/en-us/worklab/work-trend-index/ai-at-work-is-here-now-comes-the-hard-part</a>. <strong>Annotation:</strong> Global workplace study finding that 78 percent of AI users bring their own AI tools to work across all generations while 60 percent of leaders report lacking a clear AI plan. <a href="bibliography.html#microsoft-2024-work-trend">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c06-06" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c06-07"><span class="fn-body">Netskope Threat Labs, <em>Cloud and Threat Report: Generative AI 2025</em> (Santa Clara, CA: Netskope, 2025), <a href="https://www.netskope.com/netskope-threat-labs/cloud-threat-report" target="_blank" rel="noopener noreferrer">https://www.netskope.com/netskope-threat-labs/cloud-threat-report</a>. <strong>Annotation:</strong> Telemetry report showing that although ~94 percent of enterprises use GenAI apps, 72 percent of users access them via personal accounts outside corporate management. <a href="bibliography.html#netskope-2025-genai">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c06-07" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c06-08"><span class="fn-body">IBM Security and Ponemon Institute, <em>Cost of a Data Breach Report 2025</em> (Armonk, NY: IBM, 2025), <a href="https://www.ibm.com/reports/data-breach" target="_blank" rel="noopener noreferrer">https://www.ibm.com/reports/data-breach</a>. <strong>Annotation:</strong> Finds that 20 percent of studied organizations experienced a breach tied to shadow AI, adding an average of $670,000 in extra breach costs where shadow AI usage was high. <a href="bibliography.html#ibm-2025-breach">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c06-08" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c06-09"><span class="fn-body">Zoom Video Communications, &quot;How Zoom's Terms of Service and Practices Apply to AI Features,&quot; Zoom Blog, August 2023, <a href="https://news.zoom.us/zoom-terms-of-service-ai/" target="_blank" rel="noopener noreferrer">https://news.zoom.us/zoom-terms-of-service-ai/</a>. <strong>Annotation:</strong> Recounts the August 2023 Section 10 Terms of Service controversy and Zoom's rapid update locking audio, video, and chat content behind explicit customer consent for AI training. <a href="bibliography.html#zoom-2023-tos-ai">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c06-09" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c06-10"><span class="fn-body">Slack Technologies, &quot;How Slack Uses Data for AI and Machine Learning (Privacy Principles Clarification),&quot; Slack Blog, May 2024, <a href="https://slack.com/trust/data-management/privacy-principles" target="_blank" rel="noopener noreferrer">https://slack.com/trust/data-management/privacy-principles</a>. <strong>Annotation:</strong> Clarifies the May 2024 controversy over default global ML opt-in and email-based opt-outs (<code>feedback@slack.com</code>), distinguishing aggregated/de-identified ML features from Slack AI's LLM features while exposing embedded SaaS governance friction. <a href="bibliography.html#slack-2024-privacy-principles">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c06-10" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c06-11"><span class="fn-body">International Organization for Standardization and International Electrotechnical Commission, <em>ISO/IEC 42001:2023, Information Technology — Artificial Intelligence — Management System</em> (Geneva: ISO, December 2023), Annex A.10, <a href="https://www.iso.org/standard/81230.html" target="_blank" rel="noopener noreferrer">https://www.iso.org/standard/81230.html</a>. <strong>Annotation:</strong> Annex A.10 governs third-party and customer relationships, requiring clarity on supplier AI responsibilities and data use across the lifecycle. <a href="bibliography.html#iso-2023-42001">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c06-11" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c06-12"><span class="fn-body">Microsoft and Data Privacy Stack, <em>Presidio: Data Protection and De-Identification SDK</em>, GitHub repository and documentation, accessed November 21, 2026, <a href="https://github.com/data-privacy-stack/presidio" target="_blank" rel="noopener noreferrer">https://github.com/data-privacy-stack/presidio</a>. <strong>Annotation:</strong> Widely adopted open-source framework for PII detection and anonymization across text, structured data, and images (Analyzer, Anonymizer, Image-Redactor, Structured), combining regex, checksums, and NLP classifiers. <a href="bibliography.html#presidio-oss">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c06-12" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+</ol>
+</section>
+        <nav class="pager" aria-label="Chapter navigation"><a class="pager-card pager-prev" href="05-policies-inventory-and-risk-tiering.html"><span class="pager-dir">&larr; Previous</span><span class="pager-title">Chapter 5: Policies, Inventory &amp; Risk Tiering</span></a><a class="pager-card pager-next" href="07-internal-over-exposure-and-permission-aware-ai.html"><span class="pager-dir">Next &rarr;</span><span class="pager-title">Chapter 7: Internal Over-Exposure &amp; Permission-Aware AI</span></a></nav>
+      </article>
+      <footer class="doc-footer">
+        Building Guardrails for Enterprise AI &middot; Built 2026-11-22
+      </footer>
+    </main>
+<aside class="page-toc" aria-label="On this page">
+  <div class="page-toc-inner">
+    <div class="page-toc-title">On this page</div>
+    <ul><li class="toc-l2"><a href="#three-leaks-before-lunch">Three Leaks Before Lunch</a></li><li class="toc-l2"><a href="#61-external-data-leakage-and-model-training-risk">6.1 External Data Leakage and Model-Training Risk</a></li><li class="toc-l3"><a href="#the-challenge">The Challenge</a></li><li class="toc-l3"><a href="#consumer-accounts-vs-commercial-apis-vs-enterprise-agreements">Consumer Accounts vs. Commercial APIs vs. Enterprise Agreements</a></li><li class="toc-l2"><a href="#62-the-shadow-ai-problem">6.2 The Shadow AI Problem</a></li><li class="toc-l3"><a href="#the-challenge-2">The Challenge</a></li><li class="toc-l3"><a href="#real-world-scenario-why-bans-create-blind-spots">Real-World Scenario: Why Bans Create Blind Spots</a></li><li class="toc-l3"><a href="#the-guardrails-visibility-and-redirection-not-pure-prohibition">The Guardrails: Visibility and Redirection, Not Pure Prohibition</a></li><li class="toc-l2"><a href="#63-embedded-ai-when-existing-saas-tools-quietly-add-ai-features">6.3 &quot;Embedded AI&quot;: When Existing SaaS Tools Quietly Add AI Features</a></li><li class="toc-l3"><a href="#the-challenge-3">The Challenge</a></li><li class="toc-l3"><a href="#real-world-scenarios-terms-of-service-surprises">Real-World Scenarios: Terms of Service Surprises</a></li><li class="toc-l3"><a href="#the-guardrails">The Guardrails</a></li><li class="toc-l2"><a href="#64-sanctioned-ai-gateways-and-zero-data-retention-zdr">6.4 Sanctioned AI Gateways and Zero Data Retention (ZDR)</a></li><li class="toc-l3"><a href="#the-challenge-4">The Challenge</a></li><li class="toc-l3"><a href="#enforcing-zero-data-retentionand-avoiding-the-stateful-endpoint-trap">Enforcing Zero Data Retention—and Avoiding the Stateful-Endpoint Trap</a></li><li class="toc-l3"><a href="#hosting-options-compared">Hosting Options Compared</a></li><li class="toc-l2"><a href="#65-data-loss-prevention-dlp-and-pii-redaction-pipelines">6.5 Data Loss Prevention (DLP) and PII Redaction Pipelines</a></li><li class="toc-l3"><a href="#the-challenge-5">The Challenge</a></li><li class="toc-l3"><a href="#a-layered-detection-pipeline">A Layered Detection Pipeline</a></li><li class="toc-l3"><a href="#three-enforcement-actions-block-mask-or-coach">Three Enforcement Actions: Block, Mask, or Coach</a></li><li class="toc-l3"><a href="#avoiding-the-false-positive-trap">Avoiding the False-Positive Trap</a></li><li class="toc-l2"><a href="#why-every-role-cares">Why Every Role Cares</a></li><li class="toc-l2"><a href="#chapter-summary">Chapter Summary</a></li><li class="toc-l2"><a href="#key-takeaways">Key Takeaways</a></li><li class="toc-l2"><a href="#questions-to-ask">Questions to Ask</a></li><li class="toc-l2"><a href="#notes">Notes</a></li></ul>
+  </div>
+</aside>
+  </div>
+</body>
+</html>

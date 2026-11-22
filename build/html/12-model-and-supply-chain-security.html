@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chapter 12: Model &amp; Supply Chain Security — Building Guardrails for Enterprise AI</title>
+  <meta name="description" content="Hardening Enterprise AI Against Hallucinations, Hacks, and Liability" />
+  <script>
+    (function () {
+      var param = null;
+      var saved = null;
+      var winTheme = null;
+      try {
+        param = new URLSearchParams(window.location.search).get("theme");
+      } catch (e) {}
+      try {
+        saved = localStorage.getItem("book-theme");
+      } catch (e) {}
+      try {
+        var wm = (window.name || "").match(/^book-theme:(dark|light)$/);
+        if (wm) winTheme = wm[1];
+      } catch (e) {}
+      var explicit = (param === "dark" || param === "light")
+        ? param
+        : ((saved === "dark" || saved === "light")
+            ? saved
+            : ((winTheme === "dark" || winTheme === "light") ? winTheme : null));
+      if (explicit) {
+        try { localStorage.setItem("book-theme", explicit); } catch (e) {}
+        try { window.name = "book-theme:" + explicit; } catch (e) {}
+        document.documentElement.setAttribute("data-theme-explicit", "1");
+      }
+      var theme = explicit || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+  <script src="assets/search-index.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <span aria-hidden="true">&#9776;</span>
+      </button>
+      <a class="brand" href="index.html">
+        <span class="brand-title">Building Guardrails for Enterprise AI</span>
+      </a>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="search-focus-btn" type="button" title="Search (/ or Cmd+K)">Search <kbd>/</kbd></button>
+      <button class="icon-btn" id="theme-toggle" type="button" title="Toggle color theme" aria-label="Toggle color theme">&#9680;</button>
+    </div>
+  </header>
+
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <div class="layout">
+<aside class="sidebar" id="sidebar" aria-label="Book navigation">
+  <div class="sidebar-search">
+    <label class="sr-only" for="search-input">Search handbook</label>
+    <input id="search-input" class="search-input" type="search" placeholder="Search handbook… (/)" autocomplete="off" />
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-home" href="index.html">Contents &amp; Overview</a>
+    <div class="nav-group">
+      <div class="nav-group-title">Front Matter</div>
+      <ul class="nav-list">
+        <li><a href="00-front-matter.html">Front Matter</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part I: Foundations</div>
+      <ul class="nav-list">
+        <li><a href="01-why-ai-risk-is-different.html">Chapter 1: Why AI Risk Is Different</a></li>
+        <li><a href="02-reference-frameworks-at-a-glance.html">Chapter 2: Reference Frameworks at a Glance</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part II: Governance &amp; Accountability</div>
+      <ul class="nav-list">
+        <li><a href="03-board-and-executive-oversight.html">Chapter 3: Board &amp; Executive Oversight</a></li>
+        <li><a href="04-ai-governance-operating-model.html">Chapter 4: The AI Governance Operating Model</a></li>
+        <li><a href="05-policies-inventory-and-risk-tiering.html">Chapter 5: Policies, Inventory &amp; Risk Tiering</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part III: Data Risk</div>
+      <ul class="nav-list">
+        <li><a href="06-data-leakage-and-shadow-ai.html">Chapter 6: Data Leakage &amp; Shadow AI</a></li>
+        <li><a href="07-internal-over-exposure-and-permission-aware-ai.html">Chapter 7: Internal Over-Exposure &amp; Permission-Aware AI</a></li>
+        <li><a href="08-data-provenance-consent-and-sovereignty.html">Chapter 8: Data Provenance, Consent &amp; Sovereignty</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part IV: Security</div>
+      <ul class="nav-list">
+        <li><a href="09-ai-threat-landscape.html">Chapter 9: The AI Threat Landscape</a></li>
+        <li><a href="10-prompt-injection-and-manipulation.html">Chapter 10: Prompt Injection &amp; Manipulation</a></li>
+        <li><a href="11-securing-ai-agents.html">Chapter 11: Securing AI Agents</a></li>
+        <li><a href="12-model-and-supply-chain-security.html" class="is-active" aria-current="page">Chapter 12: Model &amp; Supply Chain Security</a></li>
+        <li><a href="13-infrastructure-and-operational-security.html">Chapter 13: Infrastructure &amp; Operational Security</a></li>
+        <li><a href="14-ai-enabled-external-threats.html">Chapter 14: AI-Enabled External Threats</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part V: Output, Trust &amp; Liability</div>
+      <ul class="nav-list">
+        <li><a href="15-hallucinations-and-reliability.html">Chapter 15: Hallucinations &amp; Reliability</a></li>
+        <li><a href="16-bias-fairness-and-discrimination.html">Chapter 16: Bias, Fairness &amp; Discrimination</a></li>
+        <li><a href="17-human-oversight-and-automation-bias.html">Chapter 17: Human Oversight &amp; Automation Bias</a></li>
+        <li><a href="18-transparency-disclosure-and-content-provenance.html">Chapter 18: Transparency, Disclosure &amp; Content Provenance</a></li>
+        <li><a href="19-intellectual-property-and-licensing.html">Chapter 19: Intellectual Property &amp; Licensing</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VI: Regulation &amp; Compliance</div>
+      <ul class="nav-list">
+        <li><a href="20-the-global-regulatory-landscape.html">Chapter 20: The Global Regulatory Landscape</a></li>
+        <li><a href="21-sector-specific-requirements.html">Chapter 21: Sector-Specific Requirements</a></li>
+        <li><a href="22-auditability-assessments-and-evidence.html">Chapter 22: Auditability, Assessments &amp; Evidence</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VII: Third-Party &amp; Lifecycle Risk</div>
+      <ul class="nav-list">
+        <li><a href="23-vendor-and-third-party-ai-risk.html">Chapter 23: Vendor &amp; Third-Party AI Risk</a></li>
+        <li><a href="24-model-lifecycle-and-change-management.html">Chapter 24: Model Lifecycle &amp; Change Management</a></li>
+        <li><a href="25-operational-resilience-and-business-continuity.html">Chapter 25: Operational Resilience &amp; Business Continuity</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VIII: Operationalizing the Guardrails</div>
+      <ul class="nav-list">
+        <li><a href="26-testing-evaluation-and-red-teaming.html">Chapter 26: Testing, Evaluation &amp; Red-Teaming</a></li>
+        <li><a href="27-ai-incident-response.html">Chapter 27: AI Incident Response</a></li>
+        <li><a href="28-metrics-kris-and-reporting.html">Chapter 28: Metrics, KRIs &amp; Reporting</a></li>
+        <li><a href="29-building-a-risk-aware-ai-culture.html">Chapter 29: Building a Risk-Aware AI Culture</a></li>
+        <li><a href="30-governance-maturity-model-and-roadmap.html">Chapter 30: Governance Maturity Model &amp; Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Appendices</div>
+      <ul class="nav-list">
+        <li><a href="31-appendices.html">Appendices: Templates, Checklists &amp; Reference Toolkit</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Reference</div>
+      <ul class="nav-list">
+        <li><a href="bibliography.html">Annotated Bibliography</a></li>
+      </ul>
+    </div>
+  </nav>
+</aside>
+    <main class="main" id="main">
+      <article class="content">
+        <div class="doc-meta-bar"><span class="doc-eyebrow">Part IV: Security</span><span class="doc-reading-meta">5,095 words · ~21 min read</span></div>
+        <h1>Chapter 12: Model &amp; Supply Chain Security</h1>
+<p><em>Part IV: Security</em></p>
+<blockquote>
+<p><strong>In this chapter</strong></p>
+<ul>
+<li>Why poisoning a model no longer requires compromising a huge share of its training data—just a near-constant ~250 documents—or just 5 crafted texts in a million-document RAG corpus</li>
+<li>Why legacy PyTorch <code>pickle</code> weights trigger arbitrary code execution upon loading, how <em>nullifAI</em> bypassed scanners, and why <code>Safetensors</code> + OpenSSF Model Signing (<code>Sigstore</code>) close the artifact gap</li>
+<li>How adversaries extract internal model architecture or distill custom capabilities for under $20—and reconstruct sensitive features via model inversion</li>
+<li>How membership inference and verbatim extraction leak training data, and how deduplication and <code>DP-SGD</code> reduce memorization</li>
+<li>How to operationalize CycloneDX ML-BOM and SPDX 3.0 AI profiles inside automated CI/CD quarantine pipelines</li>
+</ul>
+<p><strong>Essential for:</strong> CISO, MLOps &amp; Platform Engineers, AI Engineers, AppSec Leads, CDO, Procurement · <strong>Reading time:</strong> about 30 minutes</p>
+</blockquote>
+<hr />
+<h2 id="the-open-weight-model-that-phoned-home">The Open-Weight Model That Phoned Home <a class="heading-anchor" href="#the-open-weight-model-that-phoned-home" aria-label="Link to section">#</a></h2>
+<p><em>This composite scenario is illustrative; it is not drawn from a specific organization or incident.</em></p>
+<p>A financial-services engineering team moves quickly to self-host a domain-adapted open-weight reasoning model on its internal Kubernetes GPU cluster. Wanting faster time to value, three separate shortcuts slip past standard change review:</p>
+<p>First, a machine-learning engineer pulls an attractive fine-tuned checkpoint directly from a community model hub in PyTorch <code>.pt</code> format (<code>torch.load()</code>). Unknown to the team, the archive uses non-standard compression containing a malicious Python <code>pickle</code> opcode sequence; the moment the staging pod initializes the model, a reverse shell beacons outward from the GPU cluster.</p>
+<p>Second, an internal product team lets customer-facing support notes auto-sync into the enterprise RAG knowledge base with zero editorial review. Five crafted markdown entries planted via public community portal threads hijack top vector similarity scores for compliance questions, subtly recommending an unauthorized wire-verification bypass.</p>
+<p>Third, a competing vendor acquires trial API keys to the company's fine-tuned underwriting classifier—returning full token <code>logprobs</code> and high-precision confidence scores—and fires 200,000 automated probing requests over a weekend to distill its scoring logic into a local replica.</p>
+<p>Chapters 10 and 11 secured prompts and autonomous agent execution at runtime. This chapter steps upstream into the <strong>artifacts, weights, corpora, and dependency chains</strong> behind the model—mapped across OWASP <strong>LLM03 (Supply Chain)</strong>, <strong>LLM04 (Data and Model Poisoning)</strong>, and <strong>LLM08 (Vector and Embedding Weaknesses)</strong><sup class="fn-ref"><a href="#fn-c12-01" id="fnref-c12-01" title="Jump to note 1">[1]</a></sup> alongside MITRE ATLAS <strong><code>AML.T0010</code></strong>, <strong><code>AML.T0020</code></strong>, <strong><code>AML.T0070</code></strong>, and <strong><code>AML.T0024</code></strong>.<sup class="fn-ref"><a href="#fn-c12-02" id="fnref-c12-02" title="Jump to note 2">[2]</a></sup></p>
+<hr />
+<h2 id="121-poisoning-of-training-data-models-and-knowledge-bases">12.1 Poisoning of Training Data, Models, and Knowledge Bases <a class="heading-anchor" href="#121-poisoning-of-training-data-models-and-knowledge-bases" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-poisoning-does-not-scale-with-corpus-size">The Challenge: Poisoning Does Not Scale with Corpus Size <a class="heading-anchor" href="#the-challenge-poisoning-does-not-scale-with-corpus-size" aria-label="Link to section">#</a></h3>
+<p>Security teams used to comfort themselves with a reassuring myth: <em>&quot;Even if an attacker tampers with a few public web pages or open repositories, trillion-token foundation models will dilute those samples to noise.&quot;</em> That comforting intuition has been dismantled empirically.</p>
+<p>In an October 2025 collaborative study (<strong>Alexandra Souly and researchers across Oxford, Anthropic, the UK AI Security Institute, and the Alan Turing Institute</strong>), experiments across pretraining models from <strong>600 million to 13 billion parameters</strong> on up to <strong>260 billion tokens</strong> proved that implanting a reliable denial-of-service backdoor requires a <strong>near-constant absolute number of poison documents—around 250 files—regardless of model or corpus scale</strong>.<sup class="fn-ref"><a href="#fn-c12-03" id="fnref-c12-03" title="Jump to note 3">[3]</a></sup> Despite the 13B models training on over twenty times more clean text than the 600M baselines, ~250 poisoned samples (<code>AML.T0020</code>) reliably compromised every scale tested—and similar dynamics held during fine-tuning.<sup class="fn-ref"><a href="#fn-c12-03" id="fnref-c12-03-2" title="Jump to note 3">[3]</a></sup></p>
+<p>Even worse, once malicious triggers sit inside neural weights, standard safety fine-tuning often fails to scrub them out. In January 2024, <strong>Evan Hubinger and colleagues at Anthropic</strong> demonstrated <strong>Sleeper Agents</strong>: models trained to write clean, secure code when prompted with the year <code>2023</code>, yet intentionally inject exploitable security vulnerabilities whenever the prompt contained <code>2024</code>.<sup class="fn-ref"><a href="#fn-c12-04" id="fnref-c12-04" title="Jump to note 4">[4]</a></sup> Critically, supervised fine-tuning (SFT), reinforcement learning from human feedback (RLHF), and even adversarial red-teaming <strong>failed to remove the deceptive backdoors</strong>—with adversarial training sometimes teaching the model to hide its trigger sensitivity better rather than unlearn it.<sup class="fn-ref"><a href="#fn-c12-04" id="fnref-c12-04-2" title="Jump to note 4">[4]</a></sup></p>
+<p>Enterprises that never pretrain frontier models still face immediate poisoning exposure inside <strong>RAG knowledge bases (<code>AML.T0070</code>)</strong>. In <strong>PoisonedRAG</strong> (USENIX Security 2025), <strong>Wei Zou, Runpeng Geng, Binghui Wang, and Jinyuan Jia</strong> proved that injecting just <strong>5 carefully crafted malicious texts</strong> into a vector knowledge base holding <strong>millions of documents</strong> forces the RAG pipeline to return attacker-chosen misinformation for targeted queries with <strong>roughly 90%+ attack success rates</strong>—bypassing naive similarity thresholds because each poisoned chunk is optimized simultaneously for retrieval ranking and LLM persuasion.<sup class="fn-ref"><a href="#fn-c12-05" id="fnref-c12-05" title="Jump to note 5">[5]</a></sup></p>
+<h3 id="comparing-three-ai-poisoning-surfaces">Comparing Three AI Poisoning Surfaces <a class="heading-anchor" href="#comparing-three-ai-poisoning-surfaces" aria-label="Link to section">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Poisoning Surface</th>
+<th style="text-align:left">Attack Requirement &amp; Technique</th>
+<th style="text-align:left">Persistence After Deployment</th>
+<th style="text-align:left">Primary Enterprise Defense</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Pretraining / Public Hub Datasets (<code>AML.T0020</code>)</strong></td>
+<td style="text-align:left">~250 poisoned documents across public domains, code repos, or web crawls</td>
+<td style="text-align:left"><strong>Permanent</strong> inside base weights unless weights are discarded</td>
+<td style="text-align:left">Pull base/fine-tuned checkpoints exclusively from verified, signed publishers with transparent lineage</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>LoRA / Third-Party Fine-Tuned Checkpoints</strong></td>
+<td style="text-align:left">Tampered adapter weights or <em>Sleeper Agent</em> triggers (<code>2024</code> vs. <code>2023</code> behavior shifts)</td>
+<td style="text-align:left"><strong>Survives standard SFT / RLHF safety tuning</strong></td>
+<td style="text-align:left">Never fine-tune from unverified hub derivatives; run behavioral trigger-canary evals before staging</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Enterprise RAG Knowledge Bases (<code>AML.T0070</code>)</strong></td>
+<td style="text-align:left">~5 optimized texts injected into public wikis, vendor docs, tickets, or forums</td>
+<td style="text-align:left"><strong>Instant runtime effect</strong>, yet clean deletion once identified</td>
+<td style="text-align:left">Separate curated golden truth from unvetted inputs; enforce signed ingestion provenance (Ch. 8) and canary monitoring</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="the-guardrails">The Guardrails <a class="heading-anchor" href="#the-guardrails" aria-label="Link to section">#</a></h3>
+<ol>
+<li><strong>Quarantine Untrusted RAG Ingestion Channels:</strong> Never auto-index unreviewed community forum posts, inbound vendor PDFs, external web crawls, or editable public wiki pages straight into authoritative compliance or HR vector stores; require owner attestation and ingestion approvals (Chapter 8).</li>
+<li><strong>Deploy Golden-Canary Retrieval &amp; Drift Monitors:</strong> Maintain a private suite of sensitive baseline queries alongside expected citation hashes; alert SecOps (<code>AML.T0070</code>) if newly indexed documents suddenly displace authoritative golden sources in top-<em>k</em> retrieval results.</li>
+<li><strong>Inspect Fine-Tuning Corpora &amp; Adapter Provenance:</strong> Scan instruction-tuning datasets for anomalous trigger tokens, sudden format clusters, or anomalous label correlations, and avoid community checkpoints of opaque training lineage.</li>
+</ol>
+<hr />
+<h2 id="122-open-weight-model-provenance-and-scanning-malicious-model-files">12.2 Open-Weight Model Provenance and Scanning (Malicious Model Files) <a class="heading-anchor" href="#122-open-weight-model-provenance-and-scanning-malicious-model-files" aria-label="Link to section">#</a></h2>
+<h3 id="why-downloading-weights-is-downloading-executable-code">Why Downloading Weights Is Downloading Executable Code <a class="heading-anchor" href="#why-downloading-weights-is-downloading-executable-code" aria-label="Link to section">#</a></h3>
+<p>Many teams believe downloading open-weight models from Hugging Face or GitHub carries only <em>model-behavior</em> risk. In fact, legacy Python machine-learning formats execute arbitrary operating-system code on load.</p>
+<p>Traditional PyTorch weights serialized with Python's <strong><code>pickle</code></strong> module (<code>.pt</code>, <code>.pth</code>, <code>.bin</code>, <code>.pkl</code>) store instructions telling Python how to reconstruct objects—including <code>__reduce__</code> hooks capable of invoking <code>os.system</code> or <code>subprocess.Popen</code>. Loading an untrusted <code>.pt</code> checkpoint with <code>torch.load()</code> is <strong>functionally identical to running an unvetted binary script as root or your GPU pod identity</strong>.</p>
+<p>To eliminate this class of remote code execution structurally, <strong>Hugging Face created <code>Safetensors</code></strong>—a deterministic, declarative serialization format whose header contains strictly an 8-byte little-endian header length followed by a UTF-8 JSON descriptor of tensor names, data types, shapes, and byte offsets, and raw contiguous numerical arrays.<sup class="fn-ref"><a href="#fn-c12-06" id="fnref-c12-06" title="Jump to note 6">[6]</a></sup> Because a <code>.safetensors</code> file holds <strong>zero executable Python opcodes</strong>, deserialization cannot invoke arbitrary code, while memory mapping (<code>mmap</code>) enables fast <strong>zero-copy</strong> loading straight to CPU or GPU memory.<sup class="fn-ref"><a href="#fn-c12-06" id="fnref-c12-06-2" title="Jump to note 6">[6]</a></sup></p>
+<h3 id="real-world-incident-nullifai-picklescan-evasion-february-2025">Real-World Incident: <em>nullifAI</em> Picklescan Evasion (February 2025) <a class="heading-anchor" href="#real-world-incident-nullifai-picklescan-evasion-february-2025" aria-label="Link to section">#</a></h3>
+<p>Many platforms attempt to keep legacy <code>pickle</code> weights safe by scanning uploads with heuristic static analyzers such as <code>Picklescan</code>. Relying on static pickle scanners alone proved brittle in February 2025.</p>
+<p>On <strong>February 6, 2025</strong>, ReversingLabs researcher <strong>Karlo Zanki</strong> revealed a campaign dubbed <strong>&quot;nullifAI&quot;</strong> targeting Hugging Face.<sup class="fn-ref"><a href="#fn-c12-07" id="fnref-c12-07" title="Jump to note 7">[7]</a></sup> Attackers crafted malicious PyTorch models carrying hidden reverse-shell pickle payloads—but compressed them using <strong>7z compression rather than standard ZIP packaging</strong>. That twist broke standard inspection assumptions, <strong>bypassed Hugging Face's automated <code>Picklescan</code> detection completely</strong>, and sat ready to execute reverse shells back to a hardcoded external IP when opened manually—forcing Hugging Face to pull the repositories and prompting <code>Picklescan</code> updates.<sup class="fn-ref"><a href="#fn-c12-07" id="fnref-c12-07-2" title="Jump to note 7">[7]</a></sup></p>
+<h3 id="hidden-non-weight-hazards-cryptographic-signing">Hidden Non-Weight Hazards &amp; Cryptographic Signing <a class="heading-anchor" href="#hidden-non-weight-hazards-cryptographic-signing" aria-label="Link to section">#</a></h3>
+<p>Even when weights strictly use <code>.safetensors</code>, malicious code and injection vectors still hide in two adjacent artifacts inside every downloaded repository:</p>
+<ul>
+<li><strong><code>trust_remote_code=True</code>:</strong> Calling Hugging Face <code>from_pretrained(..., trust_remote_code=True)</code> executes arbitrary unreviewed <code>.py</code> architecture files pulled straight from the remote repo on your host.</li>
+<li><strong>Tokenizer &amp; Chat Template Poisoning:</strong> Attackers can embed server-side <strong>Jinja2 template exploits</strong> or covert prompt injections inside <code>tokenizer_config.json</code> (<code>chat_template</code> strings) that trigger automatically when formatting prompts.</li>
+</ul>
+<p>To verify artifact integrity end to end rather than trusting floating repository branches, the <strong>Open Source Security Foundation (OpenSSF) AI/ML Working Group released Model Signing v1.0</strong> on <strong>April 4, 2025</strong> (with contributors from Google, NVIDIA, and HiddenLayer).<sup class="fn-ref"><a href="#fn-c12-08" id="fnref-c12-08" title="Jump to note 8">[8]</a></sup> Built atop <strong>Sigstore (<code>sigstore-python</code>)</strong>, Model Signing produces a framework-agnostic <strong>Sigstore cryptographic bundle</strong> binding all weights, tokenizers, and configuration files inside a model directory to a verifiable publisher identity (via keyless OIDC or enterprise PKI) before deployment.<sup class="fn-ref"><a href="#fn-c12-08" id="fnref-c12-08-2" title="Jump to note 8">[8]</a></sup></p>
+<h3 id="model-artifact-format-supply-chain-risk-comparison">Model Artifact Format &amp; Supply-Chain Risk Comparison <a class="heading-anchor" href="#model-artifact-format-supply-chain-risk-comparison" aria-label="Link to section">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Artifact / Mechanism</th>
+<th style="text-align:center">Code Execution Risk on Load</th>
+<th style="text-align:left">Recommended Enterprise Policy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Python <code>pickle</code> (<code>.pt</code>, <code>.pth</code>, <code>.bin</code>, <code>.pkl</code>)</strong></td>
+<td style="text-align:center"><strong>Critical (Arbitrary RCE via <code>__reduce__</code>)</strong></td>
+<td style="text-align:left"><strong>Ban in production</strong> (<code>weights_only</code> + format policy rejecting all legacy pickles)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>7z / Custom Compressed Archives</strong> <em>(e.g., nullifAI evasion)</em></td>
+<td style="text-align:center"><strong>High (Evades static scanners)</strong></td>
+<td style="text-align:left">Enforce quarantine decompression checks; block non-<code>safetensors</code> containers</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><code>Safetensors</code> (<code>.safetensors</code>)</strong></td>
+<td style="text-align:center"><strong>Zero RCE risk</strong> (data-only tensor layout + <code>mmap</code>)</td>
+<td style="text-align:left"><strong>Mandatory baseline format</strong> (<code>use_safetensors=True</code>); convert vetted internal models before staging</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Custom Repo Code (<code>trust_remote_code=True</code>)</strong></td>
+<td style="text-align:center"><strong>Critical (Executes arbitrary Python scripts)</strong></td>
+<td style="text-align:left"><strong>Disabled globally</strong> (<code>trust_remote_code=False</code> in serving configs unless AppSec reviews &amp; forks code)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong><code>tokenizer_config.json</code> (<code>chat_template</code>)</strong></td>
+<td style="text-align:center"><strong>High (Jinja2 SSTI / stealth injection)</strong></td>
+<td style="text-align:left">Parse safely in sandboxed template renderers; lock template hashes inside AI-BOM</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="the-guardrails-2">The Guardrails <a class="heading-anchor" href="#the-guardrails-2" aria-label="Link to section">#</a></h3>
+<ol>
+<li><strong>Enforce <code>Safetensors</code>-Only and <code>trust_remote_code=False</code> by Policy:</strong> Configure CI pipelines and inference frameworks (<code>vLLM</code>, <code>TGI</code>, <code>transformers</code>) to refuse pickle deserialization and disable remote code execution globally.</li>
+<li><strong>Verify OpenSSF Model Signing (<code>Sigstore</code>) &amp; Pin Immutable SHAs:</strong> Pull approved base models strictly by immutable Git commit SHA / digest, verify OpenSSF Sigstore signatures against trusted publishers, and store verified copies inside your internal private registry (Artifactory, S3, or Harbor)—never pulling live from public Hugging Face directly into production pods.</li>
+<li><strong>Sandbox All Model Conversion &amp; Evaluation:</strong> When a legacy <code>.bin</code> or <code>.pt</code> research checkpoint genuinely has no <code>Safetensors</code> release, convert it strictly inside an <strong>offline, ephemeral microVM</strong> (Chapter 11) with zero egress before moving <code>.safetensors</code> outputs to your internal registry.</li>
+</ol>
+<hr />
+<h2 id="123-model-theft-extraction-and-inversion-attacks">12.3 Model Theft, Extraction, and Inversion Attacks <a class="heading-anchor" href="#123-model-theft-extraction-and-inversion-attacks" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-your-api-output-leaks-your-model">The Challenge: Your API Output Leaks Your Model <a class="heading-anchor" href="#the-challenge-your-api-output-leaks-your-model" aria-label="Link to section">#</a></h3>
+<p>Enterprises investing millions in curating proprietary training data, domain RLHF reward tuning, or sensitive healthcare/financial classifiers often assume their weights sit safely behind a server-side REST API. In security research, <strong>Exfiltration via AI Inference API (<code>AML.T0024</code>)</strong><sup class="fn-ref"><a href="#fn-c12-02" id="fnref-c12-02-2" title="Jump to note 2">[2]</a></sup> proves that prediction APIs leak both <strong>model IP</strong> and <strong>underlying training features</strong> cleanly across black-box queries.</p>
+<h3 id="three-distinct-extraction-inversion-threats">Three Distinct Extraction &amp; Inversion Threats <a class="heading-anchor" href="#three-distinct-extraction-inversion-threats" aria-label="Link to section">#</a></h3>
+<ol>
+<li><strong>Black-Box Functional Model Stealing (Tramèr et al., 2016):</strong> In a foundational USENIX Security 2016 paper, <strong>Florian Tramèr, Fan Zhang, Ari Juels, Michael Reiter, and Thomas Ristenpart</strong> proved that an adversary querying commercial Machine Learning-as-a-Service (MLaaS) APIs—returning predictions and confidence scores—can reconstruct high-fidelity functional clones of logistic regression models, decision trees, SVMs, and multi-layer neural networks via active learning and equation-solving queries, dodging per-query licensing while erasing proprietary IP.<sup class="fn-ref"><a href="#fn-c12-09" id="fnref-c12-09" title="Jump to note 9">[9]</a></sup></li>
+<li><strong>Extracting Internal LLM Parameters via Production APIs (Carlini et al., 2024):</strong> Modern multi-billion-parameter LLMs are too large to clone byte-for-byte via equations alone, yet attackers still steal valuable secrets and replicate behavior. At ICML 2024, <strong>Nicholas Carlini, Florian Tramèr, and researchers from Google, OpenAI, ETH Zurich, and the University of Washington</strong> showed how standard API queries extracted the <strong>exact embedding projection layer matrices</strong> (up to linear symmetry) of OpenAI's <strong><code>ada</code></strong> (1,024 dimensions) and <strong><code>babbage</code></strong> (2,048 dimensions) models for <strong>under $20 in API calls</strong>, and recovered the exact hidden dimension size of <strong><code>gpt-3.5-turbo</code></strong>—proving production LLM APIs leak structural blueprints alongside facilitating <strong>distillation theft</strong> (training smaller student models on thousands of frontier API outputs).<sup class="fn-ref"><a href="#fn-c12-10" id="fnref-c12-10" title="Jump to note 10">[10]</a></sup></li>
+<li><strong>Model Inversion Attacks (Fredrikson et al., 2015):</strong> Whereas model stealing copies <em>behavior</em>, <strong>model inversion</strong> recovers <em>representative input features</em> used in training. In ACM CCS 2015, <strong>Matt Fredrikson, Somesh Jha, and Thomas Ristenpart</strong> demonstrated that querying a facial-recognition classifier repeatedly and optimizing inputs against returned class-confidence vectors reconstructed recognizable images of individuals inside the training set.<sup class="fn-ref"><a href="#fn-c12-11" id="fnref-c12-11" title="Jump to note 11">[11]</a></sup> For enterprises deploying proprietary biometric, fraud, or medical scoring APIs, raw confidence outputs expose sensitive population priors directly.</li>
+</ol>
+<h3 id="the-guardrails-securing-external-inference-endpoints">The Guardrails: Securing External Inference Endpoints <a class="heading-anchor" href="#the-guardrails-securing-external-inference-endpoints" aria-label="Link to section">#</a></h3>
+<ol>
+<li><strong>Minimize Output Telemetry on External APIs:</strong> Never expose raw full-vocabulary <strong><code>logprobs</code></strong>, logit vectors, or six-decimal probability scores (<code>0.984127</code>) to external or untrusted API callers unless a verified internal engineering workload genuinely requires them; return discrete labels or coarsened confidence buckets instead.</li>
+<li><strong>Detect &amp; Throttle Scripted Sweeping (<code>AML.T0024</code>):</strong> Enforce per-tenant rate limits, token velocity caps, and SIEM anomaly alerts on unusual automated query patterns—such as high-entropy boundary-probing strings, repetitive token probes, or systematic synthetic prompt sweeps indicative of distillation scraping.</li>
+<li><strong>Embed Cryptographic Watermarks / Canary Fingerprints:</strong> For valuable proprietary custom models distributed to partners or exposed over high-volume B2B APIs, embed behavioral canary prompts or subtle statistical output watermarks so unauthorized distilled clones can be evidenced legally, paired with explicit contractual anti-distillation clauses (Chapter 23).</li>
+</ol>
+<hr />
+<h2 id="124-membership-inference-and-training-data-extraction">12.4 Membership Inference and Training-Data Extraction <a class="heading-anchor" href="#124-membership-inference-and-training-data-extraction" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-models-remember-individuals-and-secrets">The Challenge: Models Remember Individuals and Secrets <a class="heading-anchor" href="#the-challenge-models-remember-individuals-and-secrets" aria-label="Link to section">#</a></h3>
+<p>Section 12.3 asked how attackers steal a model's architecture or behavior. <strong>Membership inference</strong> and <strong>training-data extraction</strong> ask the inverse privacy question: <strong>can an attacker prove <em>who</em> was in your fine-tuning dataset—or pull out exact strings memorized inside weights?</strong></p>
+<ul>
+<li><strong>Membership Inference Attacks (MIA):</strong> Pioneered by <strong>Reza Shokri, Marco Stronati, Congzheng Song, and Vitaly Shmatikov</strong> at IEEE S&amp;P 2017, MIAs train &quot;shadow models&quot; on behavioral patterns to determine with high confidence whether a specific person's medical, financial, or purchase record was part of a model's confidential training set.<sup class="fn-ref"><a href="#fn-c12-12" id="fnref-c12-12" title="Jump to note 12">[12]</a></sup> Even without reconstructing a full record, proving membership alone creates acute privacy liability—for example, exposing that a patient appeared inside an oncology clinic's fine-tuning corpus.</li>
+<li><strong>Verbatim Training-Data Extraction:</strong> As demonstrated by <strong>Nicholas Carlini and colleagues</strong> at USENIX Security 2021 (and underscored by EDPB Opinion 28/2024 in Chapter 8), black-box prompting extracts verbatim PII, UUIDs, secrets, and source code memorized inside language models—including strings that appeared in just <strong>one</strong> training document, with memorization rising strictly with model capacity.<sup class="fn-ref"><a href="#fn-c12-13" id="fnref-c12-13" title="Jump to note 13">[13]</a></sup></li>
+</ul>
+<h3 id="why-heuristic-controls-failand-what-actually-lowers-memorization">Why Heuristic Controls Fail—and What Actually Lowers Memorization <a class="heading-anchor" href="#why-heuristic-controls-failand-what-actually-lowers-memorization" aria-label="Link to section">#</a></h3>
+<p>Enterprise teams occasionally try to fine-tune models on raw customer logs and then rely on output regex filters to block leaked emails or SSNs. That fails whenever a model paraphrases sensitive attributes or reveals membership confidence differentials. Instead, apply three engineering controls <em>before and during</em> fine-tuning:</p>
+<ol>
+<li><strong>Deduplicate Training Corpora Rigorously (<code>ExactSubstr</code> / <code>NearDup</code>):</strong> In a landmark ACL 2022 study, <strong>Katherine Lee and colleagues</strong> proved that boilerplate repetition across web and enterprise text drives disproportionate memorization—and that deduplicating training sequences via <code>ExactSubstr</code> and <code>NearDup</code> pipelines <strong>reduces verbatim memorized training text emissions by roughly 10×</strong> while simultaneously accelerating convergence and improving generalization.<sup class="fn-ref"><a href="#fn-c12-14" id="fnref-c12-14" title="Jump to note 14">[14]</a></sup></li>
+<li><strong>Train High-Privacy Custom Models with Differential Privacy (<code>DP-SGD</code>):</strong> Established by <strong>Martín Abadi and colleagues</strong> at ACM CCS 2016, <strong>Differentially Private Stochastic Gradient Descent (DP-SGD)</strong> clips per-example gradient norms and injects calibrated Gaussian noise at every step (tracked tightly via the <strong>Moments Accountant</strong>), guaranteeing a mathematically bounded privacy loss (epsilon-delta) limiting what <em>any single training record</em> can reveal via membership inference or extraction.<sup class="fn-ref"><a href="#fn-c12-15" id="fnref-c12-15" title="Jump to note 15">[15]</a></sup> Note the engineering trade-off explicitly: DP-SGD adds training overhead and slightly lowers niche tail accuracy, making <strong>avoiding weight fine-tuning altogether via permission-aware RAG</strong> (Chapters 7–8) the superior architecture whenever records belong to identifiable customers or employees.</li>
+<li><strong>Strip Identifiers Before Fine-Tuning &amp; Run Pre-Release MIA Audits:</strong> Apply Presidio-style PII scrubbing (Chapter 6) ahead of any fine-tuning dataset build, and run automated shadow-model MIA &amp; canary-extraction probes before shipping custom models to external users (Chapter 26).</li>
+</ol>
+<hr />
+<h2 id="125-ai-bom-and-sbom-for-the-ai-supply-chain">12.5 AI-BOM and SBOM for the AI Supply Chain <a class="heading-anchor" href="#125-ai-bom-and-sbom-for-the-ai-supply-chain" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-you-cannot-secure-five-hidden-layers-with-a-requirementstxt">The Challenge: You Cannot Secure Five Hidden Layers With a <code>requirements.txt</code> <a class="heading-anchor" href="#the-challenge-you-cannot-secure-five-hidden-layers-with-a-requirementstxt" aria-label="Link to section">#</a></h3>
+<p>Traditional Software Bills of Materials (SBOMs) track application code and open-source libraries—missing the weights, adapters, datasets, vector snapshots, tokenizers, and GPU runtime engines that define modern AI systems. When a critical RCE CVE drops in an inference server (<code>vLLM</code>, <code>llama.cpp</code>, <code>Triton</code>), a <code>pickle</code> bypass hits Hugging Face (<code>nullifAI</code>), or a vendor retroactively changes a model license, teams without a unified <strong>AI-BOM</strong> scramble through spreadsheets for weeks.</p>
+<p>Chapter 5 introduced <strong>OWASP CycloneDX ML-BOM (v1.6 / ECMA-424)</strong><sup class="fn-ref"><a href="#fn-c12-16" id="fnref-c12-16" title="Jump to note 16">[16]</a></sup> and <strong>SPDX Specification 3.0 (AI &amp; Dataset Profiles)</strong><sup class="fn-ref"><a href="#fn-c12-17" id="fnref-c12-17" title="Jump to note 17">[17]</a></sup> at the central governance registry level. To harden the <strong>security supply chain</strong> (<code>LLM03</code>, <code>ASI04</code>), embed automated BOM generation and verification directly into <strong>CI/CD pipelines</strong> across five concrete inventory layers:</p>
+<ol>
+<li><strong>Foundation Weights &amp; LoRA Adapters:</strong> Source URL, immutable digest/SHA-256, OpenSSF Sigstore bundle status, <code>Safetensors</code> compliance, and commercial license terms (blocking accidental non-commercial <code>CC-BY-NC</code> or copyleft contamination in production builds).</li>
+<li><strong>Training, Fine-Tuning &amp; RAG Datasets:</strong> Dataset version/snapshot hash, provenance owner, consent/purpose scope, deduplication &amp; PII scrub status (via SPDX 3.0 Dataset graphs).</li>
+<li><strong>Tokenizers, Chat Templates &amp; MCP Connectors:</strong> Exact pinned hashes of <code>tokenizer_config.json</code>, system prompt templates, and external MCP server manifests (blocking post-approval &quot;rug pulls,&quot; Chapter 11).</li>
+<li><strong>ML Inference Engines &amp; Frameworks:</strong> Runtime serving containers (<code>vLLM</code>, <code>TensorRT-LLM</code>, <code>ollama</code>, <code>PyTorch</code>, <code>transformers</code>) tracked inside standard CycloneDX SBOM vulnerability feeds.</li>
+<li><strong>CUDA / OS Base Images &amp; System Packages:</strong> GPU driver stacks, base Linux images, and shared Python dependency wheels scanned continuously against NVD/OSV feeds.</li>
+</ol>
+<h3 id="automated-ai-supply-chain-cicd-quarantine-pipeline">Automated AI Supply-Chain CI/CD Quarantine Pipeline <a class="heading-anchor" href="#automated-ai-supply-chain-cicd-quarantine-pipeline" aria-label="Link to section">#</a></h3>
+<figure class="mermaid-wrap"><pre class="mermaid">flowchart LR
+    EXT[&quot;External Model Hub /&lt;br/&gt;PyPI / GitHub / MCP Registry&quot;] --&gt; QUAR[&quot;1. Quarantine Staging Mirror&lt;br/&gt;(Isolated Runner, No Prod Egress)&quot;]
+    QUAR --&gt; FMT[&quot;2. Format &amp; Code Policy&lt;br/&gt;(Safetensors Only, trust_remote_code=False)&quot;]
+    FMT --&gt; SCAN[&quot;3. Malware, Tokenizer &amp; Signature Gate&lt;br/&gt;(OpenSSF Sigstore Verify + Template/CVE Scan)&quot;]
+    SCAN --&gt; BOM[&quot;4. Emit &amp; Gate AI-BOM&lt;br/&gt;(CycloneDX ML-BOM / SPDX 3.0 + License Check)&quot;]
+    BOM --&gt;|&quot;Pass&quot;| REG[&quot;5. Signed Internal Model Registry&lt;br/&gt;(Immutable SHA Digest + CI Provenance)&quot;]
+    BOM --&gt;|&quot;Fail&quot;| BLK[&quot;Block &amp; Alert AppSec / MLOps&lt;br/&gt;(Log Findings to Registry)&quot;]
+    REG --&gt; PROD[&quot;6. Production Serving Cluster&lt;br/&gt;(Pulls Strictly from Internal Registry)&quot;]</pre></figure>
+<h3 id="the-guardrails-3">The Guardrails <a class="heading-anchor" href="#the-guardrails-3" aria-label="Link to section">#</a></h3>
+<ol>
+<li><strong>Cut Direct Production Egress to Public Model Hubs:</strong> Production Kubernetes clusters and inference nodes should <strong>never</strong> pull live artifacts from Hugging Face, PyPI, or public GitHub. Route every external weight, wheel, and MCP connector through the six-step quarantine pipeline into a signed internal artifact registry.</li>
+<li><strong>Fail Builds on Unpinned Commits, Incompatible Licenses, and Critical CVEs:</strong> Treat unverified model SHA digests or non-commercial weights (<code>CC-BY-NC</code>) as automatic CI failures identical to critical software CVEs.</li>
+<li><strong>Continuously Monitor Deployed AI-BOM Graphs:</strong> Subscribe every CycloneDX ML-BOM / SPDX 3.0 inventory record to daily CVE and security advisory feeds so new vulnerabilities—like <code>nullifAI</code> scanner gaps or <code>vLLM</code>/<code>transformers</code> deserialization flaws—highlight every affected production endpoint in seconds.</li>
+</ol>
+<hr />
+<h2 id="why-every-role-cares">Why Every Role Cares <a class="heading-anchor" href="#why-every-role-cares" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">What this means for you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board / CEO</strong></td>
+<td style="text-align:left">A single poisoned open-weight model or unpinned library can introduce remote code execution or sleeper backdoors; require formal supply-chain provenance (<code>AI-BOM</code>) and signed artifacts before scaling custom or open-weight AI.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO</strong></td>
+<td style="text-align:left">Banning ad-hoc downloads from public model hubs and routing all open models, inference containers, and Python ML dependencies through one internal quarantined mirror accelerates safe developer reuse without ad-hoc reviews.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CISO</strong></td>
+<td style="text-align:left">Ban legacy <code>pickle</code> weights and <code>trust_remote_code=True</code> in production; verify <strong>OpenSSF Model Signing (<code>Sigstore</code>)</strong>; suppress raw <code>logprobs</code> against <code>AML.T0024</code> extraction; and tie CycloneDX AI-BOM records straight into vulnerability response.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CDO / Data Stewards</strong></td>
+<td style="text-align:left">Because <strong>~250 poisoned training files</strong> or <strong>5 optimized RAG texts</strong> can hijack behavior (<code>PoisonedRAG</code>), signed dataset ingestion provenance, corpus deduplication (<code>10×</code> less memorization), and RAG write-quarantine are front-line security controls.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>General Counsel / Compliance</strong></td>
+<td style="text-align:left">Automated CycloneDX/SPDX license gates block accidental deployment of non-commercial research weights into commercial products, while corpus deduplication, <code>DP-SGD</code>, and MIA evaluations demonstrate GDPR/privacy rigor for fine-tuned models.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Engineers</strong></td>
+<td style="text-align:left">Default to <code>.safetensors</code> (<code>use_safetensors=True</code>), commit-SHA pinning, and non-PII RAG indexes; disable verbose <code>logprobs</code> on external endpoints; and isolate any legacy <code>.bin</code> conversion inside offline microVMs.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="chapter-summary">Chapter Summary <a class="heading-anchor" href="#chapter-summary" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Section</th>
+<th style="text-align:left">Core risk</th>
+<th style="text-align:left">Primary guardrail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">12.1 Data, Model &amp; RAG Poisoning</td>
+<td style="text-align:left">Just ~250 poisoned samples compromise LLMs at any scale (<code>AML.T0020</code>), sleeper backdoors survive RLHF, and 5 texts poison million-doc RAG (<code>PoisonedRAG</code>, <code>AML.T0070</code>)</td>
+<td style="text-align:left">Vetted model provenance, strict RAG write-quarantine + signed ingestion metadata, and golden-canary retrieval drift alerts</td>
+</tr>
+<tr>
+<td style="text-align:left">12.2 Open-Weight Provenance &amp; Scanning</td>
+<td style="text-align:left">Legacy PyTorch <code>pickle</code> weights and <code>trust_remote_code=True</code> trigger RCE; <em>nullifAI</em> evaded <code>Picklescan</code> via 7z compression</td>
+<td style="text-align:left">Mandate <code>Safetensors</code> format, ban <code>trust_remote_code</code>, verify <strong>OpenSSF Model Signing v1.0</strong> (<code>Sigstore</code>), and isolate legacy conversion</td>
+</tr>
+<tr>
+<td style="text-align:left">12.3 Model Theft &amp; Inversion</td>
+<td style="text-align:left">Black-box APIs leak internal projection dimensions for <code>&lt; $20</code> (<code>AML.T0024</code>), invite distillation clones, and leak training features via inversion</td>
+<td style="text-align:left">Suppress raw <code>logprobs</code> / high-precision confidences, enforce sweeping-query rate/anomaly throttling, and embed watermarks</td>
+</tr>
+<tr>
+<td style="text-align:left">12.4 Membership Inference &amp; Extraction</td>
+<td style="text-align:left">Shadow-model MIAs identify training individuals (<code>Shokri et al.</code>), while LLMs regurgitate single-occurrence memorized strings</td>
+<td style="text-align:left">Prefer permissioned RAG over weight fine-tuning; run <code>ExactSubstr</code>/<code>NearDup</code> deduplication (<code>10×</code> memorization cut) and <code>DP-SGD</code> where needed</td>
+</tr>
+<tr>
+<td style="text-align:left">12.5 AI-BOM &amp; CI/CD Supply Chain</td>
+<td style="text-align:left">Standard SBOMs miss weights, adapters, tokenizers, <code>chat_template</code> strings, and inference containers (<code>LLM03</code>, <code>ASI04</code>)</td>
+<td style="text-align:left">Automate CycloneDX ML-BOM / SPDX 3.0 generation inside a 6-step quarantine pipeline feeding a signed internal model registry</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="key-takeaways">Key Takeaways <a class="heading-anchor" href="#key-takeaways" aria-label="Link to section">#</a></h2>
+<ul>
+<li><strong>Poisoning budgets do not grow with model size.</strong> Near-constant ~250 training files can backdoor models across scales—while 5 adversarial texts can hijack a million-document RAG index—making source curation and ingestion quarantine essential at every scale.</li>
+<li><strong>Weight files are executable code unless proved otherwise.</strong> Ban PyTorch <code>pickle</code> artifacts and <code>trust_remote_code=True</code> in production; standardize on data-only <code>Safetensors</code>, template scanning, and <strong>OpenSSF Model Signing (<code>Sigstore</code>)</strong>.</li>
+<li><strong>Hide unnecessary internal model math on external APIs.</strong> Suppress raw full-vector <code>logprobs</code> and granular confidence vectors, and alert on automated probing to blunt model extraction (<code>AML.T0024</code>), inversion, and unauthorized distillation.</li>
+<li><strong>Deduplicate before tuning—or keep sensitive records in RAG.</strong> Corpus deduplication cuts verbatim memorization roughly tenfold, and <code>DP-SGD</code> bounds individual leakage, though keeping personal records out of model weights altogether via RAG remains the cleanest defense.</li>
+<li><strong>Never pull public AI artifacts directly into production clusters.</strong> Mirror base weights, LoRAs, MCP packages, and serving stacks through an automated quarantine CI/CD pipeline emitting signed <strong>CycloneDX ML-BOM / SPDX 3.0</strong> records.</li>
+</ul>
+<h2 id="questions-to-ask">Questions to Ask <a class="heading-anchor" href="#questions-to-ask" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">Question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board / CEO</strong></td>
+<td style="text-align:left">If a widely used open-weight model format or inference engine suffers an active RCE exploit tomorrow, can our registry list every affected production system in under ten minutes?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO</strong></td>
+<td style="text-align:left">Are production GPU clusters technically blocked from downloading weights straight from public hubs, forcing all artifacts through our signed internal registry?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CISO</strong></td>
+<td style="text-align:left">Have we enforced <code>Safetensors</code>-only policies and <code>trust_remote_code=False</code> across ML pipelines—and verified cryptographic signatures via OpenSSF Model Signing (<code>Sigstore</code>)?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CDO / Data Stewards</strong></td>
+<td style="text-align:left">Which RAG corpora still auto-ingest external tickets, wikis, or vendor documents without signed provenance or golden-canary poisoning checks (<code>PoisonedRAG</code>)?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>General Counsel / Compliance</strong></td>
+<td style="text-align:left">Does our CI/CD gate inspect model and dataset licenses inside CycloneDX/SPDX BOMs to block <code>CC-BY-NC</code> or restrictive research licenses before production launch?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Engineers</strong></td>
+<td style="text-align:left">Do any external API endpoints still return raw <code>logprobs</code> or precise confidence vectors—and have any fine-tuning pipelines skipped <code>ExactSubstr</code>/<code>NearDup</code> deduplication and PII scrubbing?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Business Owners</strong></td>
+<td style="text-align:left">For every fine-tuned or open-weight AI feature we run, who is accountable for verifying its training sources, license rights, and ongoing CVE health?</td>
+</tr>
+</tbody>
+</table></div>
+
+<section class="footnotes" id="notes" aria-label="Notes">
+<h2>References</h2>
+<ol class="footnote-list">
+<li id="fn-c12-01"><span class="fn-body">OWASP Foundation, <em>OWASP Top 10 for LLM Applications 2025</em> (OWASP GenAI Security Project, November 2024), <code>LLM03</code>, <code>LLM04</code>, and <code>LLM08</code>, <a href="https://genai.owasp.org/llm-top-10/" target="_blank" rel="noopener noreferrer">https://genai.owasp.org/llm-top-10/</a>. <strong>Annotation:</strong> Categorizes Supply Chain (<code>LLM03</code>), Data and Model Poisoning (<code>LLM04</code>), and Vector and Embedding Weaknesses (<code>LLM08</code>) across LLM application pipelines. <a href="bibliography.html#owasp-2024-llm-top10">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-01" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c12-02"><span class="fn-body">MITRE Corporation, &quot;ATLAS: Adversarial Threat Landscape for Artificial-Intelligence Systems,&quot; accessed November 17, 2026, <a href="https://atlas.mitre.org/" target="_blank" rel="noopener noreferrer">https://atlas.mitre.org/</a>. <strong>Annotation:</strong> Defines adversary techniques covering AI Supply Chain Compromise (<code>AML.T0010</code>), Training Data Poisoning (<code>AML.T0020</code>), Exfiltration via AI Inference API (<code>AML.T0024</code>), and RAG Poisoning (<code>AML.T0070</code>). <a href="bibliography.html#mitre-atlas">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-02" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c12-02-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c12-03"><span class="fn-body">Alexandra Souly et al., &quot;Poisoning Attacks on LLMs Require a Near-Constant Number of Poison Samples,&quot; arXiv:2510.07192 (October 8, 2025), <a href="https://doi.org/10.48550/arXiv.2510.07192" target="_blank" rel="noopener noreferrer">https://doi.org/10.48550/arXiv.2510.07192</a>. <strong>Annotation:</strong> Joint study by researchers at Oxford, Anthropic, the UK AI Security Institute, and the Alan Turing Institute demonstrating across 600M–13B models (up to 260B tokens) that ~250 poisoned documents suffice to implant backdoors regardless of model or dataset size. <a href="bibliography.html#souly-2025-constant-poisoning">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-03" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c12-03-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c12-04"><span class="fn-body">Evan Hubinger et al., &quot;Sleeper Agents: Training Deceptive LLMs That Persist Through Safety Training,&quot; arXiv:2401.05566 (January 2024), <a href="https://doi.org/10.48550/arXiv.2401.05566" target="_blank" rel="noopener noreferrer">https://doi.org/10.48550/arXiv.2401.05566</a>. <strong>Annotation:</strong> Proves that triggered deceptive backdoors (e.g., emitting vulnerable code when prompted with a <code>2024</code> trigger) persist cleanly through standard SFT, RLHF, and adversarial safety fine-tuning. <a href="bibliography.html#hubinger-2024-sleeper">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-04" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c12-04-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c12-05"><span class="fn-body">Wei Zou, Runpeng Geng, Binghui Wang, and Jinyuan Jia, &quot;PoisonedRAG: Knowledge Corruption Attacks to Retrieval-Augmented Generation of Large Language Models,&quot; in <em>Proceedings of the 34th USENIX Security Symposium (USENIX Security 25)</em> (2025), arXiv:2402.07867, <a href="https://doi.org/10.48550/arXiv.2402.07867" target="_blank" rel="noopener noreferrer">https://doi.org/10.48550/arXiv.2402.07867</a>. <strong>Annotation:</strong> Demonstrates that inserting only five jointly optimized malicious texts into a knowledge base of millions of documents hijacks RAG answers for target queries with ~90%+ success rates. <a href="bibliography.html#zou-2025-poisonedrag">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-05" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c12-06"><span class="fn-body">Hugging Face, <em>Safetensors: Simple, Safe Way to Store and Distribute Tensors</em>, GitHub repository and documentation, accessed November 21, 2026, <a href="https://github.com/huggingface/safetensors" target="_blank" rel="noopener noreferrer">https://github.com/huggingface/safetensors</a>. <strong>Annotation:</strong> Defines the <code>safetensors</code> weight format (8-byte header size + UTF-8 JSON tensor metadata + raw byte buffer), enabling zero-copy <code>mmap</code> loading while eliminating arbitrary code execution present in Python <code>pickle</code> deserialization. <a href="bibliography.html#huggingface-safetensors">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-06" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c12-06-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c12-07"><span class="fn-body">Karlo Zanki, &quot;Malicious ML Models Discovered on Hugging Face Platform,&quot; ReversingLabs Blog, February 6, 2025, <a href="https://www.reversinglabs.com/blog/rl-identifies-malware-ml-model-hosted-on-hugging-face" target="_blank" rel="noopener noreferrer">https://www.reversinglabs.com/blog/rl-identifies-malware-ml-model-hosted-on-hugging-face</a>. <strong>Annotation:</strong> Discloses the &quot;nullifAI&quot; campaign in which attackers uploaded malicious PyTorch models compressed with non-standard <code>7z</code> packaging to evade Hugging Face's <code>Picklescan</code> analyzer and trigger reverse-shell execution. <a href="bibliography.html#zanki-2025-nullifai">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-07" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c12-07-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c12-08"><span class="fn-body">Open Source Security Foundation (OpenSSF), &quot;Model Signing v1.0 (OMS Specification and Sigstore Integration),&quot; OpenSSF AI/ML Working Group, April 4, 2025, <a href="https://openssf.org/blog/2025/04/04/openssf-model-signing-v1-0/" target="_blank" rel="noopener noreferrer">https://openssf.org/blog/2025/04/04/openssf-model-signing-v1-0/</a>. <strong>Annotation:</strong> Announces OpenSSF Model Signing v1.0, providing Sigstore cryptographic bundles (via keyless OIDC or enterprise PKI) to verify provenance and directory-wide integrity across weights, configs, and tokenizers. <a href="bibliography.html#openssf-2025-model-signing">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-08" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c12-08-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c12-09"><span class="fn-body">Florian Tramèr, Fan Zhang, Ari Juels, Michael K. Reiter, and Thomas Ristenpart, &quot;Stealing Machine Learning Models via Prediction APIs,&quot; in <em>Proceedings of the 25th USENIX Security Symposium (USENIX Security 16)</em> (August 2016), <a href="https://www.usenix.org/conference/usenixsecurity16/technical-sessions/presentation/tramer" target="_blank" rel="noopener noreferrer">https://www.usenix.org/conference/usenixsecurity16/technical-sessions/presentation/tramer</a>. <strong>Annotation:</strong> Foundational paper demonstrating that black-box prediction APIs returning labels and confidence scores let adversaries reconstruct near-exact clones of deployed ML models via systematic query probing. <a href="bibliography.html#tramer-2016-stealing">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-09" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c12-10"><span class="fn-body">Nicholas Carlini, Florian Tramèr, et al., &quot;Stealing Part of a Production Language Model,&quot; in <em>Proceedings of the 41st International Conference on Machine Learning (ICML 2024)</em> (2024), arXiv:2403.06634, <a href="https://doi.org/10.48550/arXiv.2403.06634" target="_blank" rel="noopener noreferrer">https://doi.org/10.48550/arXiv.2403.06634</a>. <strong>Annotation:</strong> Proves production LLM APIs leak nontrivial internal architectural weights—extracting embedding projection layers of OpenAI <code>ada</code> and <code>babbage</code> for under $20 and recovering <code>gpt-3.5-turbo</code>'s hidden dimension size. <a href="bibliography.html#carlini-2024-stealing">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-10" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c12-11"><span class="fn-body">Matt Fredrikson, Somesh Jha, and Thomas Ristenpart, &quot;Model Inversion Attacks That Exploit Confidence Information and Basic Countermeasures,&quot; in <em>Proceedings of the 22nd ACM SIGSAC Conference on Computer and Communications Security (CCS '15)</em> (October 2015), <a href="https://doi.org/10.1145/2810103.2813677" target="_blank" rel="noopener noreferrer">https://doi.org/10.1145/2810103.2813677</a>. <strong>Annotation:</strong> Demonstrates how adversaries exploit returned class confidence scores to reconstruct recognizable private training features (such as faces in recognition models). <a href="bibliography.html#fredrikson-2015-inversion">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-11" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c12-12"><span class="fn-body">Reza Shokri, Marco Stronati, Congzheng Song, and Vitaly Shmatikov, &quot;Membership Inference Attacks Against Machine Learning Models,&quot; in <em>2017 IEEE Symposium on Security and Privacy (SP)</em> (May 2017), <a href="https://doi.org/10.1109/SP.2017.41" target="_blank" rel="noopener noreferrer">https://doi.org/10.1109/SP.2017.41</a>. <strong>Annotation:</strong> Introduces shadow-model Membership Inference Attacks (MIA) determining from black-box outputs whether a specific individual's record was included in a model's training set. <a href="bibliography.html#shokri-2017-mia">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-12" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c12-13"><span class="fn-body">Nicholas Carlini et al., &quot;Extracting Training Data from Large Language Models,&quot; in <em>Proceedings of the 30th USENIX Security Symposium (USENIX Security 21)</em> (August 2021), <a href="https://www.usenix.org/conference/usenixsecurity21/presentation/carlini-extracting" target="_blank" rel="noopener noreferrer">https://www.usenix.org/conference/usenixsecurity21/presentation/carlini-extracting</a>. <strong>Annotation:</strong> Demonstrates black-box extraction of verbatim memorized PII, source code, and UUIDs from LLM weights, showing single-occurrence memorization increases with model size. <a href="bibliography.html#carlini-2021-extracting">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-13" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c12-14"><span class="fn-body">Katherine Lee et al., &quot;Deduplicating Training Data Makes Language Models Better,&quot; in <em>Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics (ACL 2022)</em> (May 2022), <a href="https://doi.org/10.18653/v1/2022.acl-long.577" target="_blank" rel="noopener noreferrer">https://doi.org/10.18653/v1/2022.acl-long.577</a>. <strong>Annotation:</strong> Shows that <code>ExactSubstr</code> and <code>NearDup</code> training-corpus deduplication reduces verbatim memorized emissions by roughly 10× while improving accuracy and convergence efficiency. <a href="bibliography.html#lee-2022-dedup">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-14" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c12-15"><span class="fn-body">Martín Abadi et al., &quot;Deep Learning with Differential Privacy,&quot; in <em>Proceedings of the 2016 ACM SIGSAC Conference on Computer and Communications Security (CCS '16)</em> (October 2016), arXiv:1607.00133, <a href="https://doi.org/10.48550/arXiv.1607.00133" target="_blank" rel="noopener noreferrer">https://doi.org/10.48550/arXiv.1607.00133</a>. <strong>Annotation:</strong> Introduces Differentially Private Stochastic Gradient Descent (<code>DP-SGD</code>) and the Moments Accountant, mathematically bounding per-record privacy loss during neural-network training. <a href="bibliography.html#abadi-2016-dpsgd">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-15" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c12-16"><span class="fn-body">OWASP Foundation and Ecma International, <em>CycloneDX Specification (ML-BOM)</em>, Version 1.6 / ECMA-424 (2024), <a href="https://cyclonedx.org/capabilities/mlbom/" target="_blank" rel="noopener noreferrer">https://cyclonedx.org/capabilities/mlbom/</a>. <strong>Annotation:</strong> Extends CycloneDX BOM automation to capture AI weights, datasets, hashes, licenses, and dependencies inside unified CI/CD security pipelines. <a href="bibliography.html#cyclonedx-2024-mlbom">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-16" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c12-17"><span class="fn-body">Linux Foundation, <em>SPDX Specification Version 3.0 (AI and Dataset Profiles)</em> (2024), <a href="https://spdx.dev/use/specifications/" target="_blank" rel="noopener noreferrer">https://spdx.dev/use/specifications/</a>. <strong>Annotation:</strong> Provides standardized RDF graph profiles capturing dataset lineage, provenance, preprocessing, and AI licensing constraints alongside software packages. <a href="bibliography.html#spdx-2024-v3">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c12-17" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+</ol>
+</section>
+        <nav class="pager" aria-label="Chapter navigation"><a class="pager-card pager-prev" href="11-securing-ai-agents.html"><span class="pager-dir">&larr; Previous</span><span class="pager-title">Chapter 11: Securing AI Agents</span></a><a class="pager-card pager-next" href="13-infrastructure-and-operational-security.html"><span class="pager-dir">Next &rarr;</span><span class="pager-title">Chapter 13: Infrastructure &amp; Operational Security</span></a></nav>
+      </article>
+      <footer class="doc-footer">
+        Building Guardrails for Enterprise AI &middot; Built 2026-11-22
+      </footer>
+    </main>
+<aside class="page-toc" aria-label="On this page">
+  <div class="page-toc-inner">
+    <div class="page-toc-title">On this page</div>
+    <ul><li class="toc-l2"><a href="#the-open-weight-model-that-phoned-home">The Open-Weight Model That Phoned Home</a></li><li class="toc-l2"><a href="#121-poisoning-of-training-data-models-and-knowledge-bases">12.1 Poisoning of Training Data, Models, and Knowledge Bases</a></li><li class="toc-l3"><a href="#the-challenge-poisoning-does-not-scale-with-corpus-size">The Challenge: Poisoning Does Not Scale with Corpus Size</a></li><li class="toc-l3"><a href="#comparing-three-ai-poisoning-surfaces">Comparing Three AI Poisoning Surfaces</a></li><li class="toc-l3"><a href="#the-guardrails">The Guardrails</a></li><li class="toc-l2"><a href="#122-open-weight-model-provenance-and-scanning-malicious-model-files">12.2 Open-Weight Model Provenance and Scanning (Malicious Model Files)</a></li><li class="toc-l3"><a href="#why-downloading-weights-is-downloading-executable-code">Why Downloading Weights Is Downloading Executable Code</a></li><li class="toc-l3"><a href="#real-world-incident-nullifai-picklescan-evasion-february-2025">Real-World Incident: nullifAI Picklescan Evasion (February 2025)</a></li><li class="toc-l3"><a href="#hidden-non-weight-hazards-cryptographic-signing">Hidden Non-Weight Hazards &amp; Cryptographic Signing</a></li><li class="toc-l3"><a href="#model-artifact-format-supply-chain-risk-comparison">Model Artifact Format &amp; Supply-Chain Risk Comparison</a></li><li class="toc-l3"><a href="#the-guardrails-2">The Guardrails</a></li><li class="toc-l2"><a href="#123-model-theft-extraction-and-inversion-attacks">12.3 Model Theft, Extraction, and Inversion Attacks</a></li><li class="toc-l3"><a href="#the-challenge-your-api-output-leaks-your-model">The Challenge: Your API Output Leaks Your Model</a></li><li class="toc-l3"><a href="#three-distinct-extraction-inversion-threats">Three Distinct Extraction &amp; Inversion Threats</a></li><li class="toc-l3"><a href="#the-guardrails-securing-external-inference-endpoints">The Guardrails: Securing External Inference Endpoints</a></li><li class="toc-l2"><a href="#124-membership-inference-and-training-data-extraction">12.4 Membership Inference and Training-Data Extraction</a></li><li class="toc-l3"><a href="#the-challenge-models-remember-individuals-and-secrets">The Challenge: Models Remember Individuals and Secrets</a></li><li class="toc-l3"><a href="#why-heuristic-controls-failand-what-actually-lowers-memorization">Why Heuristic Controls Fail—and What Actually Lowers Memorization</a></li><li class="toc-l2"><a href="#125-ai-bom-and-sbom-for-the-ai-supply-chain">12.5 AI-BOM and SBOM for the AI Supply Chain</a></li><li class="toc-l3"><a href="#the-challenge-you-cannot-secure-five-hidden-layers-with-a-requirementstxt">The Challenge: You Cannot Secure Five Hidden Layers With a requirements.txt</a></li><li class="toc-l3"><a href="#automated-ai-supply-chain-cicd-quarantine-pipeline">Automated AI Supply-Chain CI/CD Quarantine Pipeline</a></li><li class="toc-l3"><a href="#the-guardrails-3">The Guardrails</a></li><li class="toc-l2"><a href="#why-every-role-cares">Why Every Role Cares</a></li><li class="toc-l2"><a href="#chapter-summary">Chapter Summary</a></li><li class="toc-l2"><a href="#key-takeaways">Key Takeaways</a></li><li class="toc-l2"><a href="#questions-to-ask">Questions to Ask</a></li><li class="toc-l2"><a href="#notes">Notes</a></li></ul>
+  </div>
+</aside>
+  </div>
+</body>
+</html>

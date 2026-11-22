@@ -17,7 +17,7 @@
 
 ## The Minutes That Were Never Written
 
-*This composite scenario is illustrative; it is not drawn from a specific organization.*
+*This composite scenario is illustrative; it is not drawn from a specific organization or incident.*
 
 A listed consumer lender rolls out an AI system that pre-screens loan applications and drafts approval or rejection letters. The project is championed by the Chief Digital Officer, praised in an earnings call as "AI-driven underwriting," and celebrated internally for cutting decision times from days to minutes. Eighteen months later, a regulator opens an investigation into a pattern of rejections affecting applicants from particular postal codes. A journalist publishes internal emails in which data scientists had warned about the problem. Shareholders file a derivative suit.
 
@@ -52,6 +52,15 @@ Board oversight of AI does not require directors to understand transformer archi
 3. **A named executive owner.** One executive is accountable to the board for the AI governance program, even though many functions contribute (Chapter 4).
 4. **Documented engagement.** Minutes record what was presented, what directors asked, and what follow-up was required. If it is not in the minutes, a court may conclude it did not happen.
 5. **Responsiveness to red flags.** When reports reveal incidents, failed evaluations, regulatory inquiries, or whistleblower concerns, the board follows up and documents its response.
+
+```mermaid
+flowchart LR
+    B["Board & Risk Committee<br/>Charter & AI Risk Appetite"] --> E["Named Executive Owner<br/>& AI Governance Council"]
+    E --> C["Three Lines Controls,<br/>Central Registry & Intake"]
+    C --> D["Quarterly Board Packet:<br/>KRIs, Incidents & Coverage"]
+    D --> M["Documented Challenge,<br/>Red-Flag Action & Minutes"]
+    M --> B
+```
 
 ### Why Every Role Cares
 
@@ -275,7 +284,7 @@ For AI, that assumption is increasingly unsafe. Insurers face the same uncertain
 
 ---
 
-## Notes
+## References
 
 [^c03-01]: *In re Caremark International Inc. Derivative Litigation*, 698 A.2d 959 (Del. Ch. 1996). **Annotation:** The foundational Delaware decision establishing that directors must make a good-faith effort to ensure an adequate corporate information and reporting system exists. The starting point for any discussion of board oversight liability. [↗ Bibliography](../bibliography.md#caremark-1996)
 

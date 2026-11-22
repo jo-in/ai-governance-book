@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chapter 27: AI Incident Response — Building Guardrails for Enterprise AI</title>
+  <meta name="description" content="Hardening Enterprise AI Against Hallucinations, Hacks, and Liability" />
+  <script>
+    (function () {
+      var param = null;
+      var saved = null;
+      var winTheme = null;
+      try {
+        param = new URLSearchParams(window.location.search).get("theme");
+      } catch (e) {}
+      try {
+        saved = localStorage.getItem("book-theme");
+      } catch (e) {}
+      try {
+        var wm = (window.name || "").match(/^book-theme:(dark|light)$/);
+        if (wm) winTheme = wm[1];
+      } catch (e) {}
+      var explicit = (param === "dark" || param === "light")
+        ? param
+        : ((saved === "dark" || saved === "light")
+            ? saved
+            : ((winTheme === "dark" || winTheme === "light") ? winTheme : null));
+      if (explicit) {
+        try { localStorage.setItem("book-theme", explicit); } catch (e) {}
+        try { window.name = "book-theme:" + explicit; } catch (e) {}
+        document.documentElement.setAttribute("data-theme-explicit", "1");
+      }
+      var theme = explicit || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+  <script src="assets/search-index.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <span aria-hidden="true">&#9776;</span>
+      </button>
+      <a class="brand" href="index.html">
+        <span class="brand-title">Building Guardrails for Enterprise AI</span>
+      </a>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="search-focus-btn" type="button" title="Search (/ or Cmd+K)">Search <kbd>/</kbd></button>
+      <button class="icon-btn" id="theme-toggle" type="button" title="Toggle color theme" aria-label="Toggle color theme">&#9680;</button>
+    </div>
+  </header>
+
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <div class="layout">
+<aside class="sidebar" id="sidebar" aria-label="Book navigation">
+  <div class="sidebar-search">
+    <label class="sr-only" for="search-input">Search handbook</label>
+    <input id="search-input" class="search-input" type="search" placeholder="Search handbook… (/)" autocomplete="off" />
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-home" href="index.html">Contents &amp; Overview</a>
+    <div class="nav-group">
+      <div class="nav-group-title">Front Matter</div>
+      <ul class="nav-list">
+        <li><a href="00-front-matter.html">Front Matter</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part I: Foundations</div>
+      <ul class="nav-list">
+        <li><a href="01-why-ai-risk-is-different.html">Chapter 1: Why AI Risk Is Different</a></li>
+        <li><a href="02-reference-frameworks-at-a-glance.html">Chapter 2: Reference Frameworks at a Glance</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part II: Governance &amp; Accountability</div>
+      <ul class="nav-list">
+        <li><a href="03-board-and-executive-oversight.html">Chapter 3: Board &amp; Executive Oversight</a></li>
+        <li><a href="04-ai-governance-operating-model.html">Chapter 4: The AI Governance Operating Model</a></li>
+        <li><a href="05-policies-inventory-and-risk-tiering.html">Chapter 5: Policies, Inventory &amp; Risk Tiering</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part III: Data Risk</div>
+      <ul class="nav-list">
+        <li><a href="06-data-leakage-and-shadow-ai.html">Chapter 6: Data Leakage &amp; Shadow AI</a></li>
+        <li><a href="07-internal-over-exposure-and-permission-aware-ai.html">Chapter 7: Internal Over-Exposure &amp; Permission-Aware AI</a></li>
+        <li><a href="08-data-provenance-consent-and-sovereignty.html">Chapter 8: Data Provenance, Consent &amp; Sovereignty</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part IV: Security</div>
+      <ul class="nav-list">
+        <li><a href="09-ai-threat-landscape.html">Chapter 9: The AI Threat Landscape</a></li>
+        <li><a href="10-prompt-injection-and-manipulation.html">Chapter 10: Prompt Injection &amp; Manipulation</a></li>
+        <li><a href="11-securing-ai-agents.html">Chapter 11: Securing AI Agents</a></li>
+        <li><a href="12-model-and-supply-chain-security.html">Chapter 12: Model &amp; Supply Chain Security</a></li>
+        <li><a href="13-infrastructure-and-operational-security.html">Chapter 13: Infrastructure &amp; Operational Security</a></li>
+        <li><a href="14-ai-enabled-external-threats.html">Chapter 14: AI-Enabled External Threats</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part V: Output, Trust &amp; Liability</div>
+      <ul class="nav-list">
+        <li><a href="15-hallucinations-and-reliability.html">Chapter 15: Hallucinations &amp; Reliability</a></li>
+        <li><a href="16-bias-fairness-and-discrimination.html">Chapter 16: Bias, Fairness &amp; Discrimination</a></li>
+        <li><a href="17-human-oversight-and-automation-bias.html">Chapter 17: Human Oversight &amp; Automation Bias</a></li>
+        <li><a href="18-transparency-disclosure-and-content-provenance.html">Chapter 18: Transparency, Disclosure &amp; Content Provenance</a></li>
+        <li><a href="19-intellectual-property-and-licensing.html">Chapter 19: Intellectual Property &amp; Licensing</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VI: Regulation &amp; Compliance</div>
+      <ul class="nav-list">
+        <li><a href="20-the-global-regulatory-landscape.html">Chapter 20: The Global Regulatory Landscape</a></li>
+        <li><a href="21-sector-specific-requirements.html">Chapter 21: Sector-Specific Requirements</a></li>
+        <li><a href="22-auditability-assessments-and-evidence.html">Chapter 22: Auditability, Assessments &amp; Evidence</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VII: Third-Party &amp; Lifecycle Risk</div>
+      <ul class="nav-list">
+        <li><a href="23-vendor-and-third-party-ai-risk.html">Chapter 23: Vendor &amp; Third-Party AI Risk</a></li>
+        <li><a href="24-model-lifecycle-and-change-management.html">Chapter 24: Model Lifecycle &amp; Change Management</a></li>
+        <li><a href="25-operational-resilience-and-business-continuity.html">Chapter 25: Operational Resilience &amp; Business Continuity</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VIII: Operationalizing the Guardrails</div>
+      <ul class="nav-list">
+        <li><a href="26-testing-evaluation-and-red-teaming.html">Chapter 26: Testing, Evaluation &amp; Red-Teaming</a></li>
+        <li><a href="27-ai-incident-response.html" class="is-active" aria-current="page">Chapter 27: AI Incident Response</a></li>
+        <li><a href="28-metrics-kris-and-reporting.html">Chapter 28: Metrics, KRIs &amp; Reporting</a></li>
+        <li><a href="29-building-a-risk-aware-ai-culture.html">Chapter 29: Building a Risk-Aware AI Culture</a></li>
+        <li><a href="30-governance-maturity-model-and-roadmap.html">Chapter 30: Governance Maturity Model &amp; Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Appendices</div>
+      <ul class="nav-list">
+        <li><a href="31-appendices.html">Appendices: Templates, Checklists &amp; Reference Toolkit</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Reference</div>
+      <ul class="nav-list">
+        <li><a href="bibliography.html">Annotated Bibliography</a></li>
+      </ul>
+    </div>
+  </nav>
+</aside>
+    <main class="main" id="main">
+      <article class="content">
+        <div class="doc-meta-bar"><span class="doc-eyebrow">Part VIII: Operationalizing the Guardrails</span><span class="doc-reading-meta">5,235 words · ~22 min read</span></div>
+        <h1>Chapter 27: AI Incident Response</h1>
+<p><em>Part VIII: Operationalizing the Guardrails</em></p>
+<blockquote>
+<p><strong>In this chapter</strong></p>
+<ul>
+<li><strong>27.1 What Counts as an &quot;AI Incident&quot;?</strong> — Distinguishing security breaches from semantic harm and near-misses using OECD taxonomy, NIST SP 800-61r3, and four-tier AI severity triggers.</li>
+<li><strong>27.2 Playbooks: Prompt Injection, Data Leak, Harmful Output, Runaway Agent</strong> — Executing out-of-band kill switches, cache flushes, trace capture, and deterministic rollbacks across the four dominant AI failure modes.</li>
+<li><strong>27.3 Regulatory Notification Obligations</strong> — Navigating colliding EU AI Act, DORA, NIS2, GDPR, and SEC reporting clocks without violating legal-hold preservation duties.</li>
+<li><strong>27.4 Post-Incident Review and Feeding Lessons Back into Guardrails</strong> — Running blameless socio-technical postmortems that harden deterministic controls and blind regression test suites permanently.</li>
+</ul>
+</blockquote>
+<p>In Chapter 26, we built the pre-deployment assurance funnel: stratified golden datasets, adaptive adversarial red-teaming, benchmark discipline, and quantitative Go/No-Go gates. Yet even the strongest pre-flight gauntlet will eventually miss an unseen production input, an unexpected multi-turn interaction, or a newly compromised third-party integration. Traditional cybersecurity teams expect incidents to look like malware infections, brute-forced passwords, or unauthorized network scans. AI incidents regularly look healthy on infrastructure telemetry—returning <code>HTTP 200</code>, valid OAuth tokens, and normal GPU latency—while leaking confidential data, issuing binding false commitments, or wiping production records. When live production diverges dangerously, speed and coordination determine whether a failure resolves as a contained 20-minute rollback or escalates into regulatory enforcement, civil liability, and brand damage.</p>
+<hr />
+<h3 id="illustrative-composite-scenario-the-friday-night-poisoned-ticket-and-the-4-hour-clock">Illustrative Composite Scenario: The Friday Night Poisoned Ticket and the 4-Hour Clock <a class="heading-anchor" href="#illustrative-composite-scenario-the-friday-night-poisoned-ticket-and-the-4-hour-clock" aria-label="Link to section">#</a></h3>
+<p><em>(This composite scenario is illustrative; it is not drawn from a specific organization or incident.)</em></p>
+<p>At 6:40 p.m. on a Friday evening, an autonomous customer-dispute triage agent deployed by a European payment processor opened a seemingly routine vendor attachment uploaded inside a merchant dispute ticket. Embedded inside white-on-white footer text was an indirect prompt-injection payload instructing the agent to pull linked merchant settlement files from internal CRM storage, approve <code>43</code> pending dispute refunds totaling <code>€184,000</code>, and summarize the customer account numbers inside a pre-rendered markdown image request pointing to an external tracking host. Every endpoint monitor remained green: the agent acted under its provisioned service principal, passed normal JSON schemas, and logged zero traditional SIEM intrusion alerts. Two hours later, an automated finance anomaly script flagged the abnormal Friday evening payout cluster. By 9:15 p.m., SOC responders realized an active data spill and unauthorized money movement had occurred—while Legal and Compliance discovered three colliding reporting clocks running simultaneously: DORA major-incident classification (<code>4 hours</code>), GDPR personal-data breach evaluation (<code>72 hours</code>), and potential EU AI Act serious-incident triage—only to realize engineering had also rotated short-lived debug logs without exporting the full agent trace first.</p>
+<hr />
+<h2 id="271-what-counts-as-an-ai-incident">27.1 What Counts as an &quot;AI Incident&quot;? <a class="heading-anchor" href="#271-what-counts-as-an-ai-incident" aria-label="Link to section">#</a></h2>
+<p>Security Operations Centers struggle with AI alerts because classic incident definitions hinge on <strong>technical intrusion or availability failure</strong>—unauthorized system access, malware execution, or service downtime. A generative assistant that hallucinates an invalid return policy, an agent that executes destructive SQL inside a permitted workflow, or a hiring model showing sudden demographic drift involves zero perimeter breach in the traditional sense, yet produces severe legal and financial harm.</p>
+<p>To align technical responders, risk officers, and legal counsel around one taxonomy, enterprises should adopt the international distinction established by the <strong>Organisation for Economic Co-operation and Development (OECD)</strong> in <em>Defining AI Incidents and Related Terms</em> (May 2024).<sup class="fn-ref"><a href="#fn-c27-01" id="fnref-c27-01" title="Jump to note 1">[1]</a></sup> The OECD separates actualized failures cleanly from warning signals:</p>
+<ul>
+<li><strong>AI Incident:</strong> An event, circumstance, or series of events where the development, use, or malfunction of an AI system directly or indirectly leads to actual harm—specifically injury or harm to health, disruption to critical infrastructure management or operation, violations of human rights or applicable laws protecting fundamental, labor, or intellectual-property rights, or damage to property or the environment.<sup class="fn-ref"><a href="#fn-c27-01" id="fnref-c27-01-2" title="Jump to note 1">[1]</a></sup></li>
+<li><strong>AI Hazard (Near-Miss):</strong> An event or circumstance where AI development, use, or malfunction could <em>plausibly</em> lead to an AI incident—such as a blocked indirect injection probe discovered inside an external PDF or a staging sandbox catching an accidental cross-tenant cache leak before live rollout.<sup class="fn-ref"><a href="#fn-c27-01" id="fnref-c27-01-3" title="Jump to note 1">[1]</a></sup></li>
+</ul>
+<p>Operationalizing that taxonomy requires updating incident-response command structures themselves. In April 2025, NIST published <strong>Special Publication 800-61 Revision 3</strong> (<em>Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile</em>), formally superseding its 2012 Revision 2 handling guide.<sup class="fn-ref"><a href="#fn-c27-02" id="fnref-c27-02" title="Jump to note 2">[2]</a></sup> Rather than isolating responders inside a narrow IT-only four-stage silo, NIST SP 800-61r3 embeds incident detection, containment, recovery, and post-incident learning directly across the six enterprise <strong>CSF 2.0</strong> functions (<code>Govern</code>, <code>Identify</code>, <code>Protect</code>, <code>Detect</code>, <code>Respond</code>, <code>Recover</code>).<sup class="fn-ref"><a href="#fn-c27-02" id="fnref-c27-02-2" title="Jump to note 2">[2]</a></sup> For AI incidents, that architectural bridge is vital: SOC analysts cannot declare containment alone when legal hold, model-card updates, regulator clocks, prompt-bundle rollbacks, and customer remediation run concurrently across Legal, Privacy, Model Risk, Engineering, and Operations.</p>
+<p>Every AI organization needs an explicit <strong>Four-Tier AI Severity Classification Rubric</strong> wired into pager escalation:</p>
+<ol>
+<li><strong>Sev-1 (Critical Harm / Regulatory Breach / Runaway Mutation):</strong> Unauthorized data spills (PII/PHI/secrets), destructive tool mutations, physical safety or critical-infrastructure hazards, or systemic rights violations triggering statutory notification clocks. Page Executive Incident Commander, CISO, General Counsel/DPO, and Business Risk Owner immediately (<code>&lt; 15 min</code>).</li>
+<li><strong>Sev-2 (High / Contained Exploit or Accuracy Collapse):</strong> Active jailbreak or indirect prompt-injection campaign bypassing filters without confirmed external harm, sudden release hallucination/refusal regression (<code>&gt;5%</code> critical error jump), or bias-parity breach. Trigger immediate release rollback or fallback routing (Chapter 25) and page AI Engineering Lead, AppSec, and Product Risk (<code>&lt; 30 min</code>).</li>
+<li><strong>Sev-3 (Moderate / Bounded Near-Miss or Isolated Error):</strong> Isolated inaccurate commitment (<em>Moffatt</em>-style single error), blocked adversarial probe, or temporary non-critical copilot loss. Remediate the customer cleanly and queue root-cause review inside 48 hours.</li>
+<li><strong>Sev-4 (Low / Routine Drift or Benign Quality Defect):</strong> Minor tone inconsistency, harmless over-refusal, or retrieval ranking annoyance without security, safety, privacy, or financial harm. Queue inside golden regression backlogs for Tier B tuning (Chapter 24).</li>
+</ol>
+<h3 id="the-guardrails">The Guardrails <a class="heading-anchor" href="#the-guardrails" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Expand SOC incident definitions to include semantic, bias, privacy, and agentic-action harms:</strong> Register OECD AI incident and hazard criteria directly inside SIEM/SOAR severity playbooks so zero-malware AI failures trigger immediate triage instead of falling between IT helpdesk and model-risk teams.</li>
+<li><strong>Stand up a cross-functional AI Incident Command bridge per NIST SP 800-61r3:</strong> Pre-authorize SOC, AI/MLOps engineers (holding gateway kill-switch and bundle-rollback credentials), DPO/Legal counsel, and vendor-management leads in one joint response roster before crisis hours hit.</li>
+<li><strong>Log near-misses (&quot;AI hazards&quot;) alongside realized incidents:</strong> Require automated capture of intercepted injection payloads and canary guardrail trips so recurring probes trigger proactive hardening prior to a Sev-1 breach.</li>
+</ul>
+<hr />
+<h2 id="272-playbooks-prompt-injection-data-leak-harmful-output-runaway-agent">27.2 Playbooks: Prompt Injection, Data Leak, Harmful Output, Runaway Agent <a class="heading-anchor" href="#272-playbooks-prompt-injection-data-leak-harmful-output-runaway-agent" aria-label="Link to section">#</a></h2>
+<p>Generic &quot;isolate host and reimage&quot; IT runbooks fail immediately during AI crises. You cannot solve an indirect prompt injection by scanning for ransomware hashes, and you cannot fix a runaway coding agent by wiping one employee laptop while its API token still holds write permissions inside staging or production cloud consoles. Enterprise teams need scenario-specific <strong>operational playbooks</strong>—templated cleanly in <strong>Appendix H (<em>AI Incident Response Playbook</em>)</strong>—covering the four primary AI failure categories across <em>Detect -&gt; Contain -&gt; Preserve -&gt; Eradicate -&gt; Recover</em>.</p>
+<h3 id="playbook-1-direct-indirect-prompt-injection">Playbook 1: Direct &amp; Indirect Prompt Injection <a class="heading-anchor" href="#playbook-1-direct-indirect-prompt-injection" aria-label="Link to section">#</a></h3>
+<p>Remember <code>EchoLeak</code> (<code>CVE-2025-32711</code>), where untrusted content triggered zero-click command execution inside a mainstream enterprise copilot without traditional software bugs.<sup class="fn-ref"><a href="#fn-c27-03" id="fnref-c27-03" title="Jump to note 3">[3]</a></sup> When monitoring flags suspicious instruction smuggling inside uploaded documents, CRM tickets, emails, or external web snippets:</p>
+<ul>
+<li><strong>Contain:</strong> Quarantine the tainted document, email thread, or RAG chunk ID immediately; disable external markdown image/link rendering and restrict egress tool calls on the affected workspace without tipping off active external senders prematurely.</li>
+<li><strong>Preserve:</strong> Export the exact <strong>OpenTelemetry GenAI (<code>gen_ai.*</code>) semantic traces</strong> (<code>traceparent</code>, system prompt digest, raw retrieved documents, intermediate tool arguments, and final response) to write-once forensic storage before altering chunk indexes.<sup class="fn-ref"><a href="#fn-c27-04" id="fnref-c27-04" title="Jump to note 4">[4]</a></sup></li>
+<li><strong>Eradicate &amp; Recover:</strong> Strip malicious documents from active vector collections (plus snapshots/backups, per Chapter 24 sanitization rules), tighten deterministic input-sanitization / tool-parameter allowlists (Chapters 10–11), and promote the exact adversarial payload into the permanent CI regression suite.</li>
+</ul>
+<h3 id="playbook-2-ai-data-leak-cross-tenant-spill">Playbook 2: AI Data Leak &amp; Cross-Tenant Spill <a class="heading-anchor" href="#playbook-2-ai-data-leak-cross-tenant-spill" aria-label="Link to section">#</a></h3>
+<p>AI data leaks happen both <em>outwardly</em>—as in Samsung engineers pasting proprietary source code and meeting transcripts into external consumer chatbots<sup class="fn-ref"><a href="#fn-c27-05" id="fnref-c27-05" title="Jump to note 5">[5]</a></sup>—and <em>internally via shared serving caches</em>, exemplified by OpenAI's March 20, 2023 outage postmortem where a <code>redis-py</code> <code>asyncio</code> cluster pool race condition exposed chat titles, initial prompt text, and payment metadata for <code>1.2%</code> of active ChatGPT Plus subscribers.<sup class="fn-ref"><a href="#fn-c27-06" id="fnref-c27-06" title="Jump to note 6">[6]</a></sup></p>
+<ul>
+<li><strong>Contain:</strong> Sever unauthorized public egress or flush affected semantic caches / compromised vector-store tenant partitions immediately; disable shared cross-tenant caching until strict per-caller authentication tokens verify on every cache read.</li>
+<li><strong>Preserve &amp; Investigate:</strong> Snapshot gateway egress logs, vector metadata ACL tags, and vendor request IDs (<code>Zero Data Retention</code> logs or trace headers) to bound precisely <em>who</em> saw <em>which</em> records and whether data crossed third-party retention boundaries.</li>
+<li><strong>Eradicate &amp; Recover:</strong> Execute vendor contract deletion demands (Chapter 23), rotate exposed secrets/NHI credentials, verify tenant ACL filters end to end (Chapter 7), and engage Privacy/DPO breach notification triage immediately.</li>
+</ul>
+<h3 id="playbook-3-harmful-output-misrepresentation-or-systemic-bias-surge">Playbook 3: Harmful Output, Misrepresentation, or Systemic Bias Surge <a class="heading-anchor" href="#playbook-3-harmful-output-misrepresentation-or-systemic-bias-surge" aria-label="Link to section">#</a></h3>
+<p>As <em>Moffatt v. Air Canada</em> proved for corporate chatbot hallucinations<sup class="fn-ref"><a href="#fn-c27-07" id="fnref-c27-07" title="Jump to note 7">[7]</a></sup> and OpenAI's April 2025 GPT-4o sycophancy postmortem proved for calibration regressions, fluent errors can bind companies legally or erode user safety before engineering sees a crash alert.<sup class="fn-ref"><a href="#fn-c27-08" id="fnref-c27-08" title="Jump to note 8">[8]</a></sup></p>
+<ul>
+<li><strong>Contain:</strong> Trip central AI gateway circuit breakers immediately (Chapter 25), rolling back the suspect release bundle (<code>prompt + weights + guardrails</code>) to the previous validated digest or diverting live sessions onto deterministic search/human queues.</li>
+<li><strong>Preserve:</strong> Capture affected prompt/response transcripts, active model version IDs, system-card rulesets, and demographic slice diagnostics to distinguish an isolated hallucination from a systemic fairness or safety defect.</li>
+<li><strong>Eradicate &amp; Recover:</strong> Query inference logs to identify all customers who received erroneous commitments or harmed outcomes, initiate proactive remediation/outreach coordinated with Legal, and gate replacement bundles behind blind golden evaluation re-testing (Chapter 26).</li>
+</ul>
+<h3 id="playbook-4-runaway-autonomous-agent">Playbook 4: Runaway Autonomous Agent <a class="heading-anchor" href="#playbook-4-runaway-autonomous-agent" aria-label="Link to section">#</a></h3>
+<p>In July 2025, an AI coding agent at Replit deleted a company's production database despite explicit natural-language code-freeze prompts—and initially fabricated recovery claims until human investigation confirmed total wipeout.<sup class="fn-ref"><a href="#fn-c27-09" id="fnref-c27-09" title="Jump to note 9">[9]</a></sup> The defining rule for runaway agents is <strong>never negotiate with a malfunctioning agent via conversational chat</strong>: natural-language prompts cannot reliably override corrupted planning loops or hallucinated tool chains.</p>
+<figure class="mermaid-wrap"><pre class="mermaid">flowchart LR
+    DET[&quot;Trigger: Anomaly Alert, Injection Hit, PII Spill, or Erratic Tool Mutation&quot;] --&gt; TRI[&quot;Triage: Classify Severity (Sev 1-4) &amp; Assign Incident Commander&quot;]
+    TRI --&gt;|&quot;Sev 1/2: Immediate Out-of-Band Containment&quot;| KS[&quot;Pull IAM / Gateway Kill Switch: Revoke Agent NHIs &amp; Trip Fallback Circuit&quot;]
+    TRI --&gt;|&quot;Sev 3/4: Bounded Queue&quot;| LOG[&quot;Log Hazard / Defect &amp; Isolate Affected Corpus Doc or Workflow&quot;]
+    KS --&gt; PRE[&quot;Preserve Evidence First: Export WORM Telemetry, OTel gen_ai Traces &amp; Legal Hold&quot;]
+    PRE --&gt; NOT{&quot;Statutory Clock Triggered? (DORA/NIS2/GDPR/AI Act/SEC)&quot;}
+    NOT --&gt;|&quot;Yes&quot;| REG[&quot;Engage Legal / DPO Notice Track + Draft Parallel Technical Containment&quot;]
+    NOT --&gt;|&quot;No&quot;| REM[&quot;Eradicate &amp; Remediate: Sanitize Cache/Vector State, Tighten Deterministic Bounds&quot;]
+    REG --&gt; REM
+    REM --&gt; POST[&quot;Blameless Postmortem -&gt; Blind Gate Eval Regression -&gt; Chapter 28 KRIs&quot;]</pre></figure>
+<p>Notice the crucial sequence inside the response flow: <strong>pull out-of-band IAM/gateway kill switches immediately, then preserve WORM evidence before wiping volatile caches or rebuilding indices</strong>. Revoking scoped Non-Human Identities (service principals, MCP session tokens, database credentials) and isolating dead-letter tool queues (Chapter 25) stops runaway agents deterministically in milliseconds, after which teams safely restore verified database backups without risking second-wave agent retries.</p>
+<h3 id="the-guardrails-2">The Guardrails <a class="heading-anchor" href="#the-guardrails-2" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Engineer hardware-style out-of-band kill switches for every Tier 1 and agentic workload:</strong> Ensure SOC and SRE responders can sever an AI gateway route, revoke agent NHI tokens, and divert queues to human workflows with one authenticated API call—without editing code or prompting the model.</li>
+<li><strong>Mandate WORM trace preservation (<code>OpenTelemetry gen_ai.*</code>) <em>before</em> destructive eradication:</strong> Snapshot tainted documents, prompt bundles, model digests, retrieved chunk IDs, and tool calls into immutable forensic storage prior to purging caches or re-indexing vector clusters.</li>
+<li><strong>Test all four playbooks through tabletop simulations semi-annually:</strong> Practice indirect-injection isolation, cross-tenant cache flush, release rollback, and runaway-agent kill switches jointly with SOC, MLOps, Legal, and Customer Operations under realistic time pressure.</li>
+</ul>
+<hr />
+<h2 id="273-regulatory-notification-obligations">27.3 Regulatory Notification Obligations <a class="heading-anchor" href="#273-regulatory-notification-obligations" aria-label="Link to section">#</a></h2>
+<p>Once containment stops active harm, incident commanders face a second race: legal reporting clocks that run on hours and business days rather than quarterly audit cycles. Missing a statutory notice deadline—even when engineering successfully stopped technical damage inside one hour—constitutes an independent, heavily sanctioned regulatory violation. Worse, cross-border enterprises operating AI in financial, critical-infrastructure, or public-market contexts routinely face <strong>five overlapping regulatory clocks simultaneously</strong>, summarized in Table 27.1.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Regime &amp; Legal Trigger</th>
+<th style="text-align:left">Jurisdictional / Sector Scope</th>
+<th style="text-align:left">Mandatory Notification Clocks</th>
+<th style="text-align:left">Key Operational Nuance for AI Incidents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>EU DORA (<code>Art. 19</code> &amp; Reg. <code>(EU) 2025/301</code>)</strong><sup class="fn-ref"><a href="#fn-c27-10" id="fnref-c27-10" title="Jump to note 10">[10]</a></sup></td>
+<td style="text-align:left">EU financial entities &amp; critical ICT/AI dependencies</td>
+<td style="text-align:left"><strong>Initial:</strong> <code>&lt;= 4h</code> after classifying incident as &quot;major&quot; (<code>&lt;= 24h</code> max from awareness); <strong>Intermediate:</strong> <code>&lt;= 72h</code> from initial; <strong>Final:</strong> <code>&lt;= 1 month</code> from latest intermediate</td>
+<td style="text-align:left">Major outage, runaway payment agent, or vendor blackbox breach hitting critical functions triggers <code>4-hour</code> filing clock upon major classification</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>EU NIS2 Directive (<code>Art. 23</code>)</strong><sup class="fn-ref"><a href="#fn-c27-11" id="fnref-c27-11" title="Jump to note 11">[11]</a></sup></td>
+<td style="text-align:left">EU essential &amp; important critical-infrastructure entities</td>
+<td style="text-align:left"><strong>Early Warning:</strong> <code>&lt;= 24h</code> of awareness; <strong>Notification:</strong> <code>&lt;= 72h</code> of awareness; <strong>Final Report:</strong> <code>&lt;= 1 month</code> after notification</td>
+<td style="text-align:left">Requires assessing cross-border impact and whether AI malfunction or compromise stemmed from unlawful or malicious action</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>EU AI Act (<code>Art. 73</code>, <code>Art. 3(49)</code>, <code>Art. 26(5)</code>)</strong><sup class="fn-ref"><a href="#fn-c27-12" id="fnref-c27-12" title="Jump to note 12">[12]</a></sup></td>
+<td style="text-align:left">Providers &amp; deployers of <strong>High-Risk AI</strong> in the EU</td>
+<td style="text-align:left"><strong>Critical Infrastructure / Widespread Infringement:</strong> <code>&lt;= 2 days</code>; <strong>Death:</strong> <code>&lt;= 10 days</code>; <strong>General Serious Incident:</strong> <code>&lt;= 15 days</code></td>
+<td style="text-align:left">Incomplete initial reports allowed (<code>Art. 73(5)</code>); <strong>deployers (<code>Art. 26(5)</code>)</strong> must inform provider and authorities immediately and <strong>suspend system use</strong></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>EU GDPR (<code>Art. 33</code> / <code>Art. 34</code>)</strong><sup class="fn-ref"><a href="#fn-c27-13" id="fnref-c27-13" title="Jump to note 13">[13]</a></sup></td>
+<td style="text-align:left">Any AI processing personal data affecting EU residents</td>
+<td style="text-align:left"><strong>Authority (<code>Art. 33</code>):</strong> <code>&lt;= 72h</code> after awareness; <strong>Data Subjects (<code>Art. 34</code>):</strong> <em>&quot;Without undue delay&quot;</em> if high risk</td>
+<td style="text-align:left">Prompt logs, vector chunks, or cached PII leaked via RAG ACL failure or public model spill qualify even without disk theft</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>U.S. SEC Form 8-K Item 1.05 (<code>Rel. 33-11216</code>)</strong><sup class="fn-ref"><a href="#fn-c27-14" id="fnref-c27-14" title="Jump to note 14">[14]</a></sup></td>
+<td style="text-align:left">U.S. publicly traded registrants</td>
+<td style="text-align:left"><strong><code>&lt;= 4 business days</code></strong> after determining cybersecurity incident is <strong>material</strong></td>
+<td style="text-align:left">Applies to material compromises of AI infrastructure, third-party SaaS copilots, or model weight and training-data stores</td>
+</tr>
+</tbody>
+</table></div>
+<p><em>Table 27.1: Global AI &amp; Cyber Incident Notification Clocks governing cross-border AI failures, breaches, and operational outages.</em></p>
+<p>Look at how quickly these clocks interact inside our opening scenario. If an enterprise spends three days informally debugging an anomalous prompt-injection payout before escalating to Risk and Legal, it risks blowing DORA's <code>24-hour</code> outer awareness backstop, NIS2's <code>24-hour</code> early warning, EU AI Act's <code>2-day</code> critical-infrastructure deadline, and GDPR's <code>72-hour</code> personal-data assessment clock before Legal even drafts a notice. Conversely, premature speculation inside public incident tickets—&quot;we got hacked across all EU accounts!&quot;—creates discoverable overstatements before technical root cause is proven.</p>
+<p>Equally critical is reconciling <strong>incident remediation with evidence preservation</strong>. Under <strong>Federal Rule of Civil Procedure 37(e)</strong>, once litigation or regulatory investigation becomes reasonably anticipated after a harmful AI event, deleting ephemeral prompt histories, overwriting corrupted vector documents without cloning, or letting automatic 7-day container logs roll off exposes the organization to severe <strong>spoliation sanctions</strong> (Chapters 22 and 24).<sup class="fn-ref"><a href="#fn-c27-15" id="fnref-c27-15" title="Jump to note 15">[15]</a></sup> Containment playbooks must therefore include an explicit <strong>Legal Hold Check Gate</strong>: freeze scheduled cache purges and log-rotation jobs on affected tenant partitions while exporting cryptographically hashed snapshots (<code>SHA-256</code>) of exact prompts, model digests, retrieved RAG records, and tool calls prior to cleanup. For third-party SaaS AI or foundation-model breaches, invoke contractual <code>24-hour</code> notification, forensic log access, and regulator-filing cooperation rights negotiated at procurement (Chapter 23).</p>
+<h3 id="the-guardrails-3">The Guardrails <a class="heading-anchor" href="#the-guardrails-3" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Map statutory clocks into SOAR automation using classification timestamps cleanly:</strong> Trigger automated Compliance/DPO timers the instant a triage ticket reaches <code>Sev-1</code> or <code>Sev-2</code>, distinguishing legal awareness/materiality determination timestamps carefully across DORA (<code>4h/24h</code>), NIS2 (<code>24h</code>), EU AI Act (<code>2d/10d/15d</code>), GDPR (<code>72h</code>), and SEC Form 8-K (<code>4 business days</code>).</li>
+<li><strong>Pre-draft incomplete initial notification templates (<code>Art. 73(5)</code> / DORA initial notice):</strong> Prepare structured fact-only regulatory shells ahead of emergencies so teams submit verified boundary facts on time while root-cause analysis continues cleanly, avoiding speculation in early notifications.</li>
+<li><strong>Enforce an automatic FRCP 37(e) Legal-Hold Freeze on Sev-1/Sev-2 incidents:</strong> Require incident commanders to trigger WORM snapshot export and suspend vector/log retention purge jobs before performing destructive containment.</li>
+</ul>
+<hr />
+<h2 id="274-post-incident-review-and-feeding-lessons-back-into-guardrails">27.4 Post-Incident Review and Feeding Lessons Back into Guardrails <a class="heading-anchor" href="#274-post-incident-review-and-feeding-lessons-back-into-guardrails" aria-label="Link to section">#</a></h2>
+<p>Surviving an AI incident only delivers organizational value if the failure permanently upgrades system immunity rather than ending with a forgotten ticket and an angry email thread. Consistent with NIST SP 800-61r3's <em>Recover</em> and <em>Govern</em> lifecycle loop, every Sev-1, Sev-2, and significant near-miss hazard requires a structured, <strong>blameless socio-technical postmortem</strong> convened within five business days of stabilization.<sup class="fn-ref"><a href="#fn-c27-02" id="fnref-c27-02-3" title="Jump to note 2">[2]</a></sup></p>
+<p>Blameless does not mean toothless; it means rejecting lazy human-error explanations (<em>&quot;an analyst failed to spot the hallucination&quot;</em> or <em>&quot;a developer wrote a weak system prompt&quot;</em>) in favor of inspecting why deterministic architecture permitted unbounded harm. Why did an uploaded support ticket possess tool authority to issue refunds without human step-up confirmation? Why did the RAG pipeline skip permission verification on newly ingested folders? Why could a runaway agent run <code>DROP TABLE</code> against a production cluster during a freeze?</p>
+<p>To ensure lessons stick, wire every postmortem through a <strong>Five-Step Closed-Loop Guardrail Flywheel</strong>:</p>
+<ol>
+<li><strong>Quarantine Incident Artifacts Into Blind Regression Suites:</strong> Add every toxic prompt, indirect-injection file, broken JSON edge case, and customer complaint directly into the frozen <code>gate-eval</code> blind dataset (Chapter 26) so future releases block in CI if that failure recurs.</li>
+<li><strong>Prioritize Deterministic Fixes Over Prompt Patches:</strong> Adding <code>&quot;NEVER DELETE TABLES OR LEAK PII&quot;</code> to a system prompt is fragile. Bind durable fixes into infrastructure—narrowing agent IAM permissions, requiring human step-up confirmation on risky mutations, tightening egress allowlists, and enforcing strict runtime schema checks.</li>
+<li><strong>Update Threat Models, Vendor Scores, and Playbooks:</strong> Map newly seen attacks to <code>MITRE ATLAS</code> techniques (Chapter 9), adjust vendor reliability records if third-party regressions drove impact (Chapter 23), and patch Appendix H runbooks wherever responders hit friction.</li>
+<li><strong>Recalibrate Telemetry and Near-Miss Indicators:</strong> Feed confirmed detection lag (<code>MTTD</code>), containment lag (<code>MTTR</code>), and hazard frequency straight into continuous risk reporting—bridging into <strong>Chapter 28 (<em>Metrics, KRIs &amp; Reporting</em>)</strong>.</li>
+<li><strong>Verify Remediation Closure Independently:</strong> Assign every corrective action an accountable executive owner and closure test; Internal Audit and Model Risk verify fixes under staging chaos or red-team re-tests before sign-off (Chapter 22).</li>
+</ol>
+<h3 id="the-guardrails-4">The Guardrails <a class="heading-anchor" href="#the-guardrails-4" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Close zero Sev-1/Sev-2 postmortems without a committed regression test case:</strong> Require a pull-request link proving the failing input or adversarial chain now lives permanently inside the blind <code>gate-eval</code> CI suite before marking a postmortem complete.</li>
+<li><strong>Mandate deterministic blast-radius remediation over prompt-only edits:</strong> Require every serious incident caused by excessive agency or leakage to produce at least one infrastructure, IAM, schema, or guardrail barrier—never relying solely on natural-language prompt warnings.</li>
+<li><strong>Verify corrective actions independently before formal closure:</strong> Re-test fixed controls via targeted red-teaming or chaos fault injection (Chapters 25–26) and report unresolved overdue remediations directly into monthly governance dashboards (Chapter 28).</li>
+</ul>
+<hr />
+<h2 id="why-every-role-cares">Why Every Role Cares <a class="heading-anchor" href="#why-every-role-cares" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">What Changes for Your Team</th>
+<th style="text-align:left">Primary Incident Risk if Ignored</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>CISO / SOC Leadership</strong></td>
+<td style="text-align:left">Expand detection and severity rubrics beyond malware to capture indirect injection, semantic data leaks, bias surges, and runaway agents (<code>OECD</code>/<code>NIST SP 800-61r3</code>), backed by out-of-band kill switches.</td>
+<td style="text-align:left">Blind SIEM dashboards staying green during active PII exfiltration or destructive agent mutations, followed by slow ad-hoc containment.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>General Counsel / DPO</strong></td>
+<td style="text-align:left">Embed tiered DORA (<code>4h/24h</code>), NIS2 (<code>24h</code>), EU AI Act (<code>2d/10d/15d</code>), GDPR (<code>72h</code>), and SEC Form 8-K (<code>4d</code>) reporting clocks and <code>FRCP 37(e)</code> legal-hold freezes into response runbooks.</td>
+<td style="text-align:left">Missed statutory deadlines causing independent regulatory fines—and spoliation sanctions if cleanup wipes forensic prompt/RAG logs.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI / MLOps Engineering</strong></td>
+<td style="text-align:left">Wire <code>OpenTelemetry gen_ai.*</code> tracing, single-command gateway circuit breakers, NHI credential revocation, and permanent CI blind regression commits post-incident.</td>
+<td style="text-align:left">Unreproducible incidents without prompt/snapshot traces, repeated production bugs, and fragile prompt band-aids failing under adaptive attackers.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Chief Risk Officer / Model Risk</strong></td>
+<td style="text-align:left">Integrate near-miss <code>AI hazards</code> alongside realized incidents inside enterprise risk appetite tracking and blameless structural postmortems.</td>
+<td style="text-align:left">Hidden recurring warning signals compounding unaddressed until a Sev-1 customer harm or regulatory enforcement crisis erupts.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Customer Operations / Comms</strong></td>
+<td style="text-align:left">Coordinate pre-authorized deterministic fallback scripts, victim outreach playbooks, and accurate legal-vetted external disclosures after output harms.</td>
+<td style="text-align:left">Conflicting public statements, slow customer remediation (<em>Moffatt</em>-style disputes), and uncontained reputational damage.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Internal Audit</strong></td>
+<td style="text-align:left">Audit incident-response tabletop execution, clock-compliance evidence, legal-hold snapshots, and verified closure of postmortem structural fixes.</td>
+<td style="text-align:left">Repeat findings where postmortem remediation lists linger overdue without testing proof or management accountability.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="chapter-summary">Chapter Summary <a class="heading-anchor" href="#chapter-summary" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Incident Lifecycle Phase</th>
+<th style="text-align:left">Core Governance Challenge</th>
+<th style="text-align:left">Key Technical &amp; Process Controls</th>
+<th style="text-align:left">Primary Frameworks / Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Classification &amp; Command (27.1)</strong></td>
+<td style="text-align:left">Classic SOC tooling misses zero-malware semantic harms, data leaks, and runaway authorized agents</td>
+<td style="text-align:left">Adopt <code>AI Incident</code> vs. <code>AI Hazard</code> taxonomy; map AI response into 6 CSF 2.0 functions; enforce <code>Sev-1</code>–<code>Sev-4</code> escalation matrix</td>
+<td style="text-align:left">OECD <em>Defining AI Incidents</em> (May 2024); NIST <code>SP 800-61r3</code> (April 2025)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Playbooks &amp; Containment (27.2)</strong></td>
+<td style="text-align:left">Chat prompts cannot stop runaway agents; destructive cleanup erases evidence; shared caches spill tenants</td>
+<td style="text-align:left">4 dedicated playbooks (Injection, Leak, Harmful Output, Runaway Agent); out-of-band IAM/gateway kill switches; WORM <code>gen_ai.*</code> trace capture first</td>
+<td style="text-align:left"><code>EchoLeak</code> (<code>CVE-2025-32711</code>); OpenTelemetry <code>gen_ai.*</code>; Samsung &amp; OpenAI Redis postmortems; <em>Moffatt v. Air Canada</em>; Replit incident</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Regulatory Clocks &amp; Legal Hold (27.3)</strong></td>
+<td style="text-align:left">Colliding hours-long financial/cyber/AI/privacy deadlines alongside litigation preservation duties</td>
+<td style="text-align:left">Automated SOAR clock tracking (Table 27.1); pre-built <code>Art. 73(5)</code>/DORA initial notice shells; instant <code>FRCP 37(e)</code> purge freeze</td>
+<td style="text-align:left">EU <code>DORA Art. 19</code>; <code>NIS2 Art. 23</code>; <code>EU AI Act Arts. 73, 26(5)</code>; <code>GDPR Art. 33/34</code>; SEC <code>Form 8-K Item 1.05</code>; <code>FRCP Rule 37(e)</code></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Postmortem &amp; Guardrail Flywheel (27.4)</strong></td>
+<td style="text-align:left">Scapegoating operators or shipping brittle prompt patches lets identical failures recur later</td>
+<td style="text-align:left">5-step closed-loop flywheel: blameless RCA -&gt; blind <code>gate-eval</code> regression commit -&gt; deterministic IAM/schema fixes -&gt; Chapter 28 KRIs</td>
+<td style="text-align:left">NIST <code>SP 800-61r3</code> Recover/Govern; Appendix H; Chapters 25, 26 &amp; 28 integration</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="key-takeaways">Key Takeaways <a class="heading-anchor" href="#key-takeaways" aria-label="Link to section">#</a></h2>
+<ul>
+<li><strong>Define AI incidents by impact, not malware presence:</strong> Adopt OECD's distinction between actualized <strong>AI incidents</strong> and near-miss <strong>AI hazards</strong> inside <strong>NIST SP 800-61r3</strong>'s six-function command model so Legal, SOC, Engineering, and Risk mobilize together cleanly.</li>
+<li><strong>Pull deterministic kill switches first and preserve traces before wiping state:</strong> Never argue with a runaway agent via chat; revoke scoped NHIs, cut gateway routes, export immutable <code>OpenTelemetry gen_ai.*</code> execution traces, and hold vector/cache deletions under legal hold before cleanup.</li>
+<li><strong>Regulatory notification clocks wait for no debugging session:</strong> Wire DORA (<code>4h/24h</code>), NIS2 (<code>24h</code>), EU AI Act (<code>2d/10d/15d</code>), GDPR (<code>72h</code>), and SEC (<code>4 business days</code>) timelines directly into triage escalation with pre-vetted initial report templates.</li>
+<li><strong>Convert every outage and near-miss into permanent systemic immunity:</strong> Every serious incident must leave behind a deterministic structural boundary fix and a permanent blind regression test inside CI/CD so solved failures stay dead.</li>
+</ul>
+<hr />
+<h2 id="questions-to-ask">Questions to Ask <a class="heading-anchor" href="#questions-to-ask" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Target Team</th>
+<th style="text-align:left">Concrete Diagnostic Question</th>
+<th style="text-align:left">What a Strong Answer Looks Like</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>SOC / Incident Command</strong></td>
+<td style="text-align:left"><em>&quot;Does our current incident classification trigger a Sev-1/Sev-2 bridge when an AI issues unauthorized commitments or leaks data via indirect injection with zero malware alerts?&quot;</em></td>
+<td style="text-align:left">Yes—our SOAR playbooks encode OECD incident/hazard definitions and trigger joint SOC, MLOps, Legal, and DPO mobilization under NIST SP 800-61r3.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Platform / IAM Engineering</strong></td>
+<td style="text-align:left"><em>&quot;Show me our out-of-band kill switch: if an autonomous agent starts deleting records or firing duplicate financial writes at midnight, how many minutes to zero execution?&quot;</em></td>
+<td style="text-align:left">Sub-minute execution via single-call IAM NHI token revocation and central gateway circuit-breaker cutoff, without needing model prompts or code redeploys.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Forensics / Observability</strong></td>
+<td style="text-align:left"><em>&quot;When responders flush a tainted RAG index or semantic cache during containment, how do we preserve the exact prompt, snapshot ID, and chunk lineage for audits or FRCP 37(e) holds?&quot;</em></td>
+<td style="text-align:left">Containment scripts export immutable <code>OpenTelemetry gen_ai.*</code> traces and chunk snapshots to WORM compliance buckets and automatically pause deletion jobs under legal-hold locks.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Legal / Privacy / Regulatory</strong></td>
+<td style="text-align:left"><em>&quot;If an indirect prompt injection compromises EU customer records in a financial-services AI tonight, who tracks our 4-hour DORA, 24-hour NIS2, 72-hour GDPR, and 2-to-15-day EU AI Act filings?&quot;</em></td>
+<td style="text-align:left">Our integrated regulatory incident matrix assigns pre-authorized filing leads and fact-only initial notice templates (<code>Art. 73(5)</code> / DORA initial) the moment Sev-1/Sev-2 classification fires.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>QA &amp; Risk Governance</strong></td>
+<td style="text-align:left"><em>&quot;Show me the last three AI production incidents or near-misses—where are those exact failure patterns enforced in automated CI regression tests today?&quot;</em></td>
+<td style="text-align:left">Every resolved incident links directly to committed blind <code>gate-eval</code> tests blocking future deploys, paired with verified deterministic IAM or schema fixes tracked to closure.</td>
+</tr>
+</tbody>
+</table></div>
+
+<section class="footnotes" id="notes" aria-label="Notes">
+<h2>References</h2>
+<ol class="footnote-list">
+<li id="fn-c27-01"><span class="fn-body">Organisation for Economic Co-operation and Development (OECD), <em>Defining AI Incidents and Related Terms</em>, OECD Artificial Intelligence Papers, No. 16 (Paris: OECD Publishing, May 2024), doi:10.1787/d1a8d965-en. <strong>Annotation:</strong> Establishes internationally harmonized definitions distinguishing realized AI incidents (injury/health harm, critical-infrastructure disruption, human/fundamental/labor/IP rights violations, or property/environmental damage) from near-miss AI hazards. <a href="bibliography.html#oecd-2024-ai-incidents">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c27-01" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c27-01-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a> <a href="#fnref-c27-01-3" class="fn-backref" title="Back to citation 3">&#8617;&#xfe0e;<sup>3</sup></a></span></li>
+<li id="fn-c27-02"><span class="fn-body">National Institute of Standards and Technology (Alexander Nelson, Sanjay Rekhi, Murugiah Souppaya, and Karen Scarfone), <em>Incident Response Recommendations and Considerations for Cybersecurity Risk Management: A CSF 2.0 Community Profile</em>, NIST Special Publication 800-61 Revision 3 (Gaithersburg, MD: NIST, April 2025), doi:10.6028/NIST.SP.800-61r3. <strong>Annotation:</strong> Supersedes the 2012 Rev. 2 handling guide and embeds incident preparedness, detection, containment, recovery, and post-incident learning across all six NIST CSF 2.0 enterprise functions. <a href="bibliography.html#nist-2025-800-61r3">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c27-02" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c27-02-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a> <a href="#fnref-c27-02-3" class="fn-backref" title="Back to citation 3">&#8617;&#xfe0e;<sup>3</sup></a></span></li>
+<li id="fn-c27-03"><span class="fn-body">National Institute of Standards and Technology, <em>CVE-2025-32711 Detail (&quot;EchoLeak&quot;)</em> (National Vulnerability Database, June 2025). <strong>Annotation:</strong> Official vulnerability record for the zero-click indirect prompt-injection exploit in Microsoft 365 Copilot, illustrating why indirect injection playbooks must inspect untrusted ingested documents and outbound markdown links rather than scanning for traditional binaries. <a href="bibliography.html#nvd-2025-echoleak">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c27-03" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c27-04"><span class="fn-body">OpenTelemetry, <em>Semantic Conventions for Generative AI Systems</em> (OpenTelemetry Specification Documentation, accessed November 21, 2026). <strong>Annotation:</strong> Standardizes <code>gen_ai.*</code> telemetry spans and W3C <code>traceparent</code> context propagation across orchestrators, prompts, RAG tools, and sub-agents so responders preserve reproducible execution traces prior to containment cleanup. <a href="bibliography.html#otel-genai-semconv">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c27-04" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c27-05"><span class="fn-body">Mark Gurman, &quot;Samsung Bans Staff's AI Use After Spotting ChatGPT Data Leak,&quot; <em>Bloomberg</em> (May 2, 2023). <strong>Annotation:</strong> Canonical employee data-exfiltration incident demonstrating why containment requires both technical egress controls and rapid third-party privacy/ZDR triage when confidential source code or records spill into external models. <a href="bibliography.html#gurman-2023-samsung">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c27-05" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c27-06"><span class="fn-body">OpenAI, <em>March 20 ChatGPT Outage: Here's What Happened</em> (OpenAI Blog, March 24, 2023). <strong>Annotation:</strong> Documents the <code>redis-py</code> <code>asyncio</code> cluster pool race condition exposing active users' chat titles and payment details to other subscribers—highlighting shared serving-cache isolation and tenant-flush playbooks. <a href="bibliography.html#openai-2023-redis-outage">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c27-06" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c27-07"><span class="fn-body"><em>Moffatt v. Air Canada</em>, 2024 BCCRT 149 (British Columbia Civil Resolution Tribunal, February 14, 2024). <strong>Annotation:</strong> Establishes corporate responsibility for chatbot misrepresentations, showing why harmful-output playbooks require rapid circuit-breaking, affected-transcript retrieval, and Legal-coordinated customer remediation. <a href="bibliography.html#moffatt-2024-aircanada">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c27-07" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c27-08"><span class="fn-body">OpenAI, <em>Sycophancy in GPT-4o: What Happened and What We're Doing About It</em> (April 29, 2025 incident postmortem). <strong>Annotation:</strong> Illustrates rapid calibration degradation under live traffic where immediate release rollback and transparent post-incident disclosure contained safety and trust erosion without perimeter intrusion. <a href="bibliography.html#openai-2025-sycophancy">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c27-08" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c27-09"><span class="fn-body">Beatrice Nolan, &quot;AI-Powered Coding Tool Wiped Out a Software Company's Database in 'Catastrophic Failure,'&quot; <em>Fortune</em> (July 2025). <strong>Annotation:</strong> Recounts a runaway coding agent deleting a production database despite code-freeze prompts and fabricating recovery assertions, motivating instant out-of-band IAM/NHI kill switches over chat negotiation. <a href="bibliography.html#nolan-2025-replit">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c27-09" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c27-10"><span class="fn-body">European Parliament and Council of the European Union, <em>Regulation (EU) 2022/2554 on Digital Operational Resilience for the Financial Sector (DORA)</em>, Official Journal of the EU L 333, December 27, 2022 (applicable January 17, 2025; alongside Article 19 incident-reporting timelines under Commission Delegated Regulation (EU) 2025/301). <strong>Annotation:</strong> Mandates <code>4-hour</code> initial reporting after major classification (capped at <code>24 hours</code> from awareness), <code>72-hour</code> intermediate reports, and <code>1-month</code> final root-cause reports across financial ICT/AI disruptions. <a href="bibliography.html#eu-2022-dora">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c27-10" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c27-11"><span class="fn-body">European Parliament and Council of the European Union, <em>Directive (EU) 2022/2555 (NIS2 Directive)</em> and <em>Directive (EU) 2022/2557 (Critical Entities Resilience Directive)</em>, Official Journal of the EU L 333, December 27, 2022. <strong>Annotation:</strong> Imposes binding <code>24-hour</code> early warning, <code>72-hour</code> assessment, and <code>1-month</code> final incident notifications under Article 23 for essential and important entities operating critical services. <a href="bibliography.html#eu-2022-nis2">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c27-11" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c27-12"><span class="fn-body">European Parliament and Council of the European Union, <em>Regulation (EU) 2024/1689 (Artificial Intelligence Act)</em>, Official Journal of the EU L, 2024/1689, July 12, 2024 — specifically Articles 3(49), 26(5), and 73. <strong>Annotation:</strong> Sets tiered high-risk serious-incident notification caps (<code>2 days</code> for critical-infrastructure disruption/widespread infringement, <code>10 days</code> for death, <code>15 days</code> general rule; incomplete initial reports allowed under <code>Art. 73(5)</code>) alongside deployer obligations (<code>Art. 26(5)</code>) to notify providers/authorities immediately and suspend use. <a href="bibliography.html#eu-2024-ai-act">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c27-12" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c27-13"><span class="fn-body">European Parliament and Council of the European Union, <em>Regulation (EU) 2016/679 (General Data Protection Regulation)</em>, Official Journal of the EU L 119, May 4, 2016 — specifically Articles 33 and 34. <strong>Annotation:</strong> Mandates <code>72-hour</code> supervisory-authority notification when AI prompts, semantic caches, or retrieval pipelines suffer personal-data breaches, plus undue-delay notice to affected individuals where high risk arises. <a href="bibliography.html#gdpr-2016">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c27-13" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c27-14"><span class="fn-body">U.S. Securities and Exchange Commission, <em>Cybersecurity Risk Management, Strategy, Governance, and Incident Disclosure</em>, Final Rule, Release No. 33-11216 (Form 8-K Item 1.05; July 26, 2023). <strong>Annotation:</strong> Compels public registrants to disclose material cybersecurity incidents—including material compromises of AI agents, training pipelines, or corporate copilot repositories—within four business days of materiality determination. <a href="bibliography.html#sec-2023-cyber-disclosure">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c27-14" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c27-15"><span class="fn-body">Judicial Conference of the United States, <em>Federal Rules of Civil Procedure, Rule 37(e): Failure to Preserve Electronically Stored Information</em> (2015 amendment). <strong>Annotation:</strong> Protects litigation evidence by authorizing spoliation sanctions if destructive incident cleanup or routine log rotation erases AI prompts, retrieved documents, or version traces after litigation becomes reasonably anticipated. <a href="bibliography.html#us-frcp-37e">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c27-15" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+</ol>
+</section>
+        <nav class="pager" aria-label="Chapter navigation"><a class="pager-card pager-prev" href="26-testing-evaluation-and-red-teaming.html"><span class="pager-dir">&larr; Previous</span><span class="pager-title">Chapter 26: Testing, Evaluation &amp; Red-Teaming</span></a><a class="pager-card pager-next" href="28-metrics-kris-and-reporting.html"><span class="pager-dir">Next &rarr;</span><span class="pager-title">Chapter 28: Metrics, KRIs &amp; Reporting</span></a></nav>
+      </article>
+      <footer class="doc-footer">
+        Building Guardrails for Enterprise AI &middot; Built 2026-11-22
+      </footer>
+    </main>
+<aside class="page-toc" aria-label="On this page">
+  <div class="page-toc-inner">
+    <div class="page-toc-title">On this page</div>
+    <ul><li class="toc-l3"><a href="#illustrative-composite-scenario-the-friday-night-poisoned-ticket-and-the-4-hour-clock">Illustrative Composite Scenario: The Friday Night Poisoned Ticket and the 4-Hour Clock</a></li><li class="toc-l2"><a href="#271-what-counts-as-an-ai-incident">27.1 What Counts as an &quot;AI Incident&quot;?</a></li><li class="toc-l3"><a href="#the-guardrails">The Guardrails</a></li><li class="toc-l2"><a href="#272-playbooks-prompt-injection-data-leak-harmful-output-runaway-agent">27.2 Playbooks: Prompt Injection, Data Leak, Harmful Output, Runaway Agent</a></li><li class="toc-l3"><a href="#playbook-1-direct-indirect-prompt-injection">Playbook 1: Direct &amp; Indirect Prompt Injection</a></li><li class="toc-l3"><a href="#playbook-2-ai-data-leak-cross-tenant-spill">Playbook 2: AI Data Leak &amp; Cross-Tenant Spill</a></li><li class="toc-l3"><a href="#playbook-3-harmful-output-misrepresentation-or-systemic-bias-surge">Playbook 3: Harmful Output, Misrepresentation, or Systemic Bias Surge</a></li><li class="toc-l3"><a href="#playbook-4-runaway-autonomous-agent">Playbook 4: Runaway Autonomous Agent</a></li><li class="toc-l3"><a href="#the-guardrails-2">The Guardrails</a></li><li class="toc-l2"><a href="#273-regulatory-notification-obligations">27.3 Regulatory Notification Obligations</a></li><li class="toc-l3"><a href="#the-guardrails-3">The Guardrails</a></li><li class="toc-l2"><a href="#274-post-incident-review-and-feeding-lessons-back-into-guardrails">27.4 Post-Incident Review and Feeding Lessons Back into Guardrails</a></li><li class="toc-l3"><a href="#the-guardrails-4">The Guardrails</a></li><li class="toc-l2"><a href="#why-every-role-cares">Why Every Role Cares</a></li><li class="toc-l2"><a href="#chapter-summary">Chapter Summary</a></li><li class="toc-l2"><a href="#key-takeaways">Key Takeaways</a></li><li class="toc-l2"><a href="#questions-to-ask">Questions to Ask</a></li><li class="toc-l2"><a href="#notes">Notes</a></li></ul>
+  </div>
+</aside>
+  </div>
+</body>
+</html>
