@@ -15,7 +15,7 @@
 
 ## Everybody's Problem, Nobody's Decision
 
-*This composite scenario is illustrative; it is not drawn from a specific organization.*
+*This composite scenario is illustrative; it is not drawn from a specific organization or incident.*
 
 A global logistics company launches an internal AI assistant that drafts customs declarations and answers queries related to shipping documentation and procedures by querying internal pricing tables and historical shipment records. Before launch, the project lead dutifully books review meetings.
 
@@ -274,7 +274,7 @@ Operating models should not stay frozen:
 
 ---
 
-## Notes
+## References
 
 [^c04-01]: Office of Management and Budget, *Accelerating Federal Use of AI through Innovation, Governance, and Public Trust*, Memorandum M-25-21 (Washington, DC: Executive Office of the President, April 3, 2025), https://www.whitehouse.gov/wp-content/uploads/2025/02/M-25-21-Accelerating-Federal-Use-of-AI-through-Innovation-Governance-and-Public-Trust.pdf. **Annotation:** Replaces OMB M-24-10 and formalizes the Chief AI Officer role and cross-functional agency AI Governance Boards. A concrete institutional blueprint for structuring executive AI councils in large organizations. [↗ Bibliography](../bibliography.md#omb-2025-m25-21)
 

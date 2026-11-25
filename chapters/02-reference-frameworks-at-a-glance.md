@@ -15,7 +15,7 @@
 
 ## Framework Sprawl: The Problem Before the Problem
 
-*This composite scenario is illustrative; it is not drawn from a specific organization.*
+*This composite scenario is illustrative; it is not drawn from a specific organization or incident.*
 
 A mid-sized insurance company (TBD: OICL for example) decides to "get serious" about AI governance. Within a quarter, four teams have each picked a framework. The risk function adopts the NIST AI Risk Management Framework and starts mapping use cases to its subcategories. The compliance team, under pressure from a large European customer, commissions an ISO/IEC 42001 gap assessment. The application security team adds the OWASP Top 10 for LLM Applications to its design-review checklist. The security operations centre starts tagging detections with MITRE ATLAS technique IDs.
 
@@ -320,7 +320,7 @@ No organization needs to implement every framework on day one. The right startin
 
 ---
 
-## Notes
+## References
 
 [^c02-01]: National Institute of Standards and Technology, *Artificial Intelligence Risk Management Framework (AI RMF 1.0)*, NIST AI 100-1 (Gaithersburg, MD: NIST, January 2023), https://doi.org/10.6028/NIST.AI.100-1. **Annotation:** The core voluntary U.S. framework for AI risk, organized into the Govern, Map, Measure, and Manage functions with 19 categories and 72 subcategories. The recommended "spine" for organizations that do not need certification. [↗ Bibliography](../bibliography.md#nist-2023-ai-rmf)
 

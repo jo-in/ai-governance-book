@@ -21,8 +21,8 @@ FRONT = BOOK / "front-matter.md"
 BIB = BOOK / "bibliography.md"
 OUT = BOOK / "manuscript.md"
 
-TITLE = "AI Risk, Security, Governance & Compliance"
-SUBTITLE = "The Enterprise Guardrails Handbook"
+TITLE = "Building Guardrails for Enterprise AI"
+SUBTITLE = "Hardening Enterprise AI Against Hallucinations, Hacks, and Liability"
 
 
 def chapter_anchor(n: int) -> str:
