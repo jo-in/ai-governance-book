@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chapter 3: Board &amp; Executive Oversight — Building Guardrails for Enterprise AI</title>
+  <meta name="description" content="Hardening Enterprise AI Against Hallucinations, Hacks, and Liability" />
+  <script>
+    (function () {
+      var param = null;
+      var saved = null;
+      var winTheme = null;
+      try {
+        param = new URLSearchParams(window.location.search).get("theme");
+      } catch (e) {}
+      try {
+        saved = localStorage.getItem("book-theme");
+      } catch (e) {}
+      try {
+        var wm = (window.name || "").match(/^book-theme:(dark|light)$/);
+        if (wm) winTheme = wm[1];
+      } catch (e) {}
+      var explicit = (param === "dark" || param === "light")
+        ? param
+        : ((saved === "dark" || saved === "light")
+            ? saved
+            : ((winTheme === "dark" || winTheme === "light") ? winTheme : null));
+      if (explicit) {
+        try { localStorage.setItem("book-theme", explicit); } catch (e) {}
+        try { window.name = "book-theme:" + explicit; } catch (e) {}
+        document.documentElement.setAttribute("data-theme-explicit", "1");
+      }
+      var theme = explicit || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+  <script src="assets/search-index.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <span aria-hidden="true">&#9776;</span>
+      </button>
+      <a class="brand" href="index.html">
+        <span class="brand-title">Building Guardrails for Enterprise AI</span>
+      </a>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="search-focus-btn" type="button" title="Search (/ or Cmd+K)">Search <kbd>/</kbd></button>
+      <button class="icon-btn" id="theme-toggle" type="button" title="Toggle color theme" aria-label="Toggle color theme">&#9680;</button>
+    </div>
+  </header>
+
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <div class="layout">
+<aside class="sidebar" id="sidebar" aria-label="Book navigation">
+  <div class="sidebar-search">
+    <label class="sr-only" for="search-input">Search handbook</label>
+    <input id="search-input" class="search-input" type="search" placeholder="Search handbook… (/)" autocomplete="off" />
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-home" href="index.html">Contents &amp; Overview</a>
+    <div class="nav-group">
+      <div class="nav-group-title">Front Matter</div>
+      <ul class="nav-list">
+        <li><a href="00-front-matter.html">Front Matter</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part I: Foundations</div>
+      <ul class="nav-list">
+        <li><a href="01-why-ai-risk-is-different.html">Chapter 1: Why AI Risk Is Different</a></li>
+        <li><a href="02-reference-frameworks-at-a-glance.html">Chapter 2: Reference Frameworks at a Glance</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part II: Governance &amp; Accountability</div>
+      <ul class="nav-list">
+        <li><a href="03-board-and-executive-oversight.html" class="is-active" aria-current="page">Chapter 3: Board &amp; Executive Oversight</a></li>
+        <li><a href="04-ai-governance-operating-model.html">Chapter 4: The AI Governance Operating Model</a></li>
+        <li><a href="05-policies-inventory-and-risk-tiering.html">Chapter 5: Policies, Inventory &amp; Risk Tiering</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part III: Data Risk</div>
+      <ul class="nav-list">
+        <li><a href="06-data-leakage-and-shadow-ai.html">Chapter 6: Data Leakage &amp; Shadow AI</a></li>
+        <li><a href="07-internal-over-exposure-and-permission-aware-ai.html">Chapter 7: Internal Over-Exposure &amp; Permission-Aware AI</a></li>
+        <li><a href="08-data-provenance-consent-and-sovereignty.html">Chapter 8: Data Provenance, Consent &amp; Sovereignty</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part IV: Security</div>
+      <ul class="nav-list">
+        <li><a href="09-ai-threat-landscape.html">Chapter 9: The AI Threat Landscape</a></li>
+        <li><a href="10-prompt-injection-and-manipulation.html">Chapter 10: Prompt Injection &amp; Manipulation</a></li>
+        <li><a href="11-securing-ai-agents.html">Chapter 11: Securing AI Agents</a></li>
+        <li><a href="12-model-and-supply-chain-security.html">Chapter 12: Model &amp; Supply Chain Security</a></li>
+        <li><a href="13-infrastructure-and-operational-security.html">Chapter 13: Infrastructure &amp; Operational Security</a></li>
+        <li><a href="14-ai-enabled-external-threats.html">Chapter 14: AI-Enabled External Threats</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part V: Output, Trust &amp; Liability</div>
+      <ul class="nav-list">
+        <li><a href="15-hallucinations-and-reliability.html">Chapter 15: Hallucinations &amp; Reliability</a></li>
+        <li><a href="16-bias-fairness-and-discrimination.html">Chapter 16: Bias, Fairness &amp; Discrimination</a></li>
+        <li><a href="17-human-oversight-and-automation-bias.html">Chapter 17: Human Oversight &amp; Automation Bias</a></li>
+        <li><a href="18-transparency-disclosure-and-content-provenance.html">Chapter 18: Transparency, Disclosure &amp; Content Provenance</a></li>
+        <li><a href="19-intellectual-property-and-licensing.html">Chapter 19: Intellectual Property &amp; Licensing</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VI: Regulation &amp; Compliance</div>
+      <ul class="nav-list">
+        <li><a href="20-the-global-regulatory-landscape.html">Chapter 20: The Global Regulatory Landscape</a></li>
+        <li><a href="21-sector-specific-requirements.html">Chapter 21: Sector-Specific Requirements</a></li>
+        <li><a href="22-auditability-assessments-and-evidence.html">Chapter 22: Auditability, Assessments &amp; Evidence</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VII: Third-Party &amp; Lifecycle Risk</div>
+      <ul class="nav-list">
+        <li><a href="23-vendor-and-third-party-ai-risk.html">Chapter 23: Vendor &amp; Third-Party AI Risk</a></li>
+        <li><a href="24-model-lifecycle-and-change-management.html">Chapter 24: Model Lifecycle &amp; Change Management</a></li>
+        <li><a href="25-operational-resilience-and-business-continuity.html">Chapter 25: Operational Resilience &amp; Business Continuity</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VIII: Operationalizing the Guardrails</div>
+      <ul class="nav-list">
+        <li><a href="26-testing-evaluation-and-red-teaming.html">Chapter 26: Testing, Evaluation &amp; Red-Teaming</a></li>
+        <li><a href="27-ai-incident-response.html">Chapter 27: AI Incident Response</a></li>
+        <li><a href="28-metrics-kris-and-reporting.html">Chapter 28: Metrics, KRIs &amp; Reporting</a></li>
+        <li><a href="29-building-a-risk-aware-ai-culture.html">Chapter 29: Building a Risk-Aware AI Culture</a></li>
+        <li><a href="30-governance-maturity-model-and-roadmap.html">Chapter 30: Governance Maturity Model &amp; Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Appendices</div>
+      <ul class="nav-list">
+        <li><a href="31-appendices.html">Appendices: Templates, Checklists &amp; Reference Toolkit</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Reference</div>
+      <ul class="nav-list">
+        <li><a href="bibliography.html">Annotated Bibliography</a></li>
+      </ul>
+    </div>
+  </nav>
+</aside>
+    <main class="main" id="main">
+      <article class="content">
+        <div class="doc-meta-bar"><span class="doc-eyebrow">Part II: Governance &amp; Accountability</span><span class="doc-reading-meta">4,887 words · ~20 min read</span></div>
+        <h1>Chapter 3: Board &amp; Executive Oversight</h1>
+<p><em>Part II: Governance &amp; Accountability</em></p>
+<blockquote>
+<p><strong>In this chapter</strong></p>
+<ul>
+<li>Why AI oversight is now part of the board's legal duty of oversight</li>
+<li>How to set an enterprise AI risk appetite with clear red lines and autonomy thresholds</li>
+<li>What directors need to understand about AI, and what they can safely leave to management</li>
+<li>What a useful board AI risk report contains, and which &quot;vanity metrics&quot; to reject</li>
+<li>How AI-washing in investor communications creates securities-law exposure</li>
+<li>Why AI risk may already be falling out of your insurance coverage, and what to do about it</li>
+</ul>
+<p><strong>Essential for:</strong> Board members, CEO, General Counsel, CRO, CFO · <strong>Reading time:</strong> about 30 minutes</p>
+</blockquote>
+<hr />
+<h2 id="the-minutes-that-were-never-written">The Minutes That Were Never Written <a class="heading-anchor" href="#the-minutes-that-were-never-written" aria-label="Link to section">#</a></h2>
+<p><em>This composite scenario is illustrative; it is not drawn from a specific organization or incident.</em></p>
+<p>A listed consumer lender rolls out an AI system that pre-screens loan applications and drafts approval or rejection letters. The project is championed by the Chief Digital Officer, praised in an earnings call as &quot;AI-driven underwriting,&quot; and celebrated internally for cutting decision times from days to minutes. Eighteen months later, a regulator opens an investigation into a pattern of rejections affecting applicants from particular postal codes. A journalist publishes internal emails in which data scientists had warned about the problem. Shareholders file a derivative suit.</p>
+<p>The plaintiffs' first move is a request for the board's books and records. Their lawyers are not looking for proof that the model was biased; the regulator will handle that. They are looking for evidence that the board <em>knew it had an AI system making credit decisions at all</em>. What they find is a single slide in a strategy deck, a line in the CEO's report calling the rollout &quot;on track,&quot; and no record that directors ever asked who was accountable for the model, how it was tested, or what would happen if it went wrong.</p>
+<p>The model's flaws were a management failure. The silence in the minutes is a board failure. This chapter is about preventing the second.</p>
+<hr />
+<h2 id="31-the-boards-duty-of-oversight-for-ai">3.1 The Board's Duty of Oversight for AI <a class="heading-anchor" href="#31-the-boards-duty-of-oversight-for-ai" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge">The Challenge <a class="heading-anchor" href="#the-challenge" aria-label="Link to section">#</a></h3>
+<p>Boards do not run companies; management does. But in most corporate-law systems, directors carry a duty to make sure that the company has systems to identify and report material risks, and to act when those systems raise warning signs. AI is quickly becoming one of those risks.</p>
+<p>In the United States, the reference point is Delaware law, which governs a majority of large U.S. public companies. In <em>In re Caremark</em> (1996), the Delaware Court of Chancery held that directors must make a good-faith effort to ensure that an adequate corporate information and reporting system exists.<sup class="fn-ref"><a href="#fn-c03-01" id="fnref-c03-01" title="Jump to note 1">[1]</a></sup> For two decades, such &quot;<em>Caremark</em> claims&quot; were famously hard to win, because nearly every company had some form of compliance program.</p>
+<p>That changed with <em>Marchand v. Barnhill</em> (2019). Blue Bell Creameries, a company that sold essentially one product (ice cream), suffered a listeria outbreak that killed three people. The Delaware Supreme Court allowed shareholders' oversight claims to proceed because the board had no committee, no regular reporting, and no board-level process for monitoring food safety, which was the company's <strong>mission-critical</strong> risk.<sup class="fn-ref"><a href="#fn-c03-02" id="fnref-c03-02" title="Jump to note 2">[2]</a></sup> Generic compliance structures were not enough. The board had to show it was paying attention to the specific risk that could sink the business.</p>
+<p>The implication for AI is direct. For a growing number of enterprises, AI is no longer a side project. It underwrites loans, prices insurance, screens job applicants, answers customers, writes code, and increasingly takes actions on the company's behalf. Where AI is central to how the company makes money or serves customers, a court may come to view it as mission-critical. The question a plaintiff will ask is the one from <em>Marchand</em>: <strong>did the board have a reporting system for this risk, and did it use it?</strong></p>
+<p>Other jurisdictions reach a similar destination by different routes. In India, for example, the Securities and Exchange Board of India requires the top 1,000 listed entities by market capitalization to constitute a board-level Risk Management Committee whose remit explicitly includes cyber security.<sup class="fn-ref"><a href="#fn-c03-03" id="fnref-c03-03" title="Jump to note 3">[3]</a></sup> Many other jurisdictions impose comparable duties of care on directors, require board-level risk committees for listed or regulated entities, or demand formal statements on the effectiveness of internal controls. Where AI risk is material, these structures are the natural home for its oversight.</p>
+<p>The standards world points the same way. The NIST AI Risk Management Framework places &quot;Govern,&quot; including accountability structures and senior leadership responsibility, at the centre of its model.<sup class="fn-ref"><a href="#fn-c03-04" id="fnref-c03-04" title="Jump to note 4">[4]</a></sup> ISO/IEC 42001 requires top management to demonstrate leadership and commitment to the AI management system, establish an AI policy, and assign responsibilities and authorities.<sup class="fn-ref"><a href="#fn-c03-05" id="fnref-c03-05" title="Jump to note 5">[5]</a></sup></p>
+<h3 id="what-good-oversight-looks-like">What Good Oversight Looks Like <a class="heading-anchor" href="#what-good-oversight-looks-like" aria-label="Link to section">#</a></h3>
+<p>Board oversight of AI does not require directors to understand transformer architectures. It requires the same disciplines boards already apply to financial, cyber, and safety risk:</p>
+<ol>
+<li><strong>A clear home on the board.</strong> Decide which committee owns AI risk oversight: audit, risk, technology, or the full board. Write it into the committee charter.</li>
+<li><strong>A regular reporting cadence.</strong> AI risk appears on the agenda at a defined frequency (at least quarterly for most enterprises with material AI use), not only when something goes wrong.</li>
+<li><strong>A named executive owner.</strong> One executive is accountable to the board for the AI governance program, even though many functions contribute (Chapter 4).</li>
+<li><strong>Documented engagement.</strong> Minutes record what was presented, what directors asked, and what follow-up was required. If it is not in the minutes, a court may conclude it did not happen.</li>
+<li><strong>Responsiveness to red flags.</strong> When reports reveal incidents, failed evaluations, regulatory inquiries, or whistleblower concerns, the board follows up and documents its response.</li>
+</ol>
+<figure class="mermaid-wrap"><pre class="mermaid">flowchart LR
+    B[&quot;Board &amp; Risk Committee&lt;br/&gt;Charter &amp; AI Risk Appetite&quot;] --&gt; E[&quot;Named Executive Owner&lt;br/&gt;&amp; AI Governance Council&quot;]
+    E --&gt; C[&quot;Three Lines Controls,&lt;br/&gt;Central Registry &amp; Intake&quot;]
+    C --&gt; D[&quot;Quarterly Board Packet:&lt;br/&gt;KRIs, Incidents &amp; Coverage&quot;]
+    D --&gt; M[&quot;Documented Challenge,&lt;br/&gt;Red-Flag Action &amp; Minutes&quot;]
+    M --&gt; B</pre></figure>
+<h3 id="why-every-role-cares">Why Every Role Cares <a class="heading-anchor" href="#why-every-role-cares" aria-label="Link to section">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">What this means for you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board</strong></td>
+<td style="text-align:left">AI oversight is becoming part of your fiduciary duty. Make sure there is a committee, a cadence, and a paper trail.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CEO</strong></td>
+<td style="text-align:left">You are the bridge between management's AI ambitions and the board's oversight duty. Bring risk, not just opportunity, to the boardroom.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>General Counsel / Company Secretary</strong></td>
+<td style="text-align:left">Advise on committee charters and minute-taking. Board records are the first thing plaintiffs request.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CRO</strong></td>
+<td style="text-align:left">Integrate AI into the enterprise risk register and board risk reporting, rather than treating it as a separate technology topic.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO / CISO / CDO</strong></td>
+<td style="text-align:left">Expect to present to the board. Translate technical status into risk, control, and incident language directors can act on.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="32-setting-the-enterprise-ai-risk-appetite">3.2 Setting the Enterprise AI Risk Appetite <a class="heading-anchor" href="#32-setting-the-enterprise-ai-risk-appetite" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-2">The Challenge <a class="heading-anchor" href="#the-challenge-2" aria-label="Link to section">#</a></h3>
+<p>Most boards have approved a risk appetite statement covering credit, market, operational, and reputational risk. Few have extended it to AI. Without one, every AI decision is made case by case, and the people making those decisions (often enthusiastic project teams under delivery pressure) are not the ones who will answer for the consequences.</p>
+<p>An AI risk appetite statement answers three questions:</p>
+<ol>
+<li><strong>What will we never do with AI?</strong> (red lines)</li>
+<li><strong>What will we do only with heightened controls and senior sign-off?</strong> (high-risk tier)</li>
+<li><strong>How much autonomy will we grant AI systems, and where?</strong> (autonomy thresholds)</li>
+</ol>
+<h3 id="red-lines">Red Lines <a class="heading-anchor" href="#red-lines" aria-label="Link to section">#</a></h3>
+<p>Red lines are uses the organization prohibits outright, regardless of business case. Some come from law: the EU AI Act, for instance, bans certain manipulative practices, social scoring, and specific forms of biometric categorization and emotion recognition in workplaces and schools.<sup class="fn-ref"><a href="#fn-c03-06" id="fnref-c03-06" title="Jump to note 6">[6]</a></sup> Others reflect the organization's values and brand. Typical enterprise red lines include:</p>
+<ul>
+<li>Fully automated decisions with legal or similarly significant effects on individuals (credit denial, dismissal, benefit refusal) with no meaningful human review</li>
+<li>Entering confidential, regulated, or customer data into AI tools that are not covered by approved contracts and controls</li>
+<li>AI-generated content presented to customers or the public as human-written where disclosure is required or expected</li>
+<li>AI agents with authority to move money, sign contracts, or delete production data without human approval</li>
+</ul>
+<h3 id="autonomy-thresholds">Autonomy Thresholds <a class="heading-anchor" href="#autonomy-thresholds" aria-label="Link to section">#</a></h3>
+<p>Chapter 1 introduced a five-level autonomy ladder, from AI that only assists humans to multi-agent systems that act on their own. The board's job is to decide how far up that ladder the organization is willing to go, and under what conditions. The Replit incident, in which a coding agent deleted a production database during an explicit &quot;code freeze,&quot; shows why this is a governance decision and not just an engineering one.<sup class="fn-ref"><a href="#fn-c03-07" id="fnref-c03-07" title="Jump to note 7">[7]</a></sup> Once AI can act, the question &quot;what is it allowed to do without asking?&quot; is a question about the organization's tolerance for loss.</p>
+<p>A practical approach is to express autonomy thresholds in business terms:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Autonomy level</th>
+<th style="text-align:left">Example appetite statement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Assist</strong></td>
+<td style="text-align:left">Permitted across the enterprise using approved tools.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Retrieve &amp; answer</strong></td>
+<td style="text-align:left">Permitted for internal use; customer-facing use requires grounding, citations, and evaluation against approved test sets.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Act with approval</strong></td>
+<td style="text-align:left">Permitted where a trained human approves every action; approval rates and override rates are monitored.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Act autonomously</strong></td>
+<td style="text-align:left">Permitted only for reversible, low-value actions within hard technical limits (for example, refunds below a set amount); requires executive sign-off.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Multi-agent / high-value autonomy</strong></td>
+<td style="text-align:left">Not permitted without a specific board-approved exception.</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="quantitative-tolerances">Quantitative Tolerances <a class="heading-anchor" href="#quantitative-tolerances" aria-label="Link to section">#</a></h3>
+<p>Where possible, translate appetite into measurable tolerances that management must report against: for example, a maximum acceptable error rate for a customer-facing assistant on a defined test set, a maximum number of high-severity AI incidents per quarter, or a ceiling on the share of AI systems operating without a completed risk assessment. These tolerances become the backbone of the board report described in Section 3.4.</p>
+<h3 id="why-every-role-cares-2">Why Every Role Cares <a class="heading-anchor" href="#why-every-role-cares-2" aria-label="Link to section">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">What this means for you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board</strong></td>
+<td style="text-align:left">Approve the AI risk appetite and red lines. They signal to the whole organization where the boundaries are.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CEO / Executive Team</strong></td>
+<td style="text-align:left">Propose an appetite that reflects strategy. An appetite that is too restrictive pushes usage into shadow AI.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CRO</strong></td>
+<td style="text-align:left">Integrate AI appetite into the existing enterprise risk appetite framework and monitor tolerances.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Business Owners</strong></td>
+<td style="text-align:left">Know which tier your use case falls into before you build, not after.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Engineers</strong></td>
+<td style="text-align:left">Implement autonomy thresholds as technical limits (permissions, spending caps, approval gates), not as prompt instructions.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="33-board-ai-literacy-what-directors-need-to-understand">3.3 Board AI Literacy: What Directors Need to Understand <a class="heading-anchor" href="#33-board-ai-literacy-what-directors-need-to-understand" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-3">The Challenge <a class="heading-anchor" href="#the-challenge-3" aria-label="Link to section">#</a></h3>
+<p>Directors cannot oversee what they do not understand. Deloitte's global survey of board members and executives, <em>Governance of AI: A Critical Imperative for Today's Boards</em>, found that 66 percent of respondents described their boards as having limited to no knowledge or experience of AI, and 31 percent said AI was not yet on the board agenda. Both figures had improved since Deloitte's previous survey (79 percent and 45 percent respectively), but they still describe a significant literacy gap.<sup class="fn-ref"><a href="#fn-c03-08" id="fnref-c03-08" title="Jump to note 8">[8]</a></sup></p>
+<p>The EU AI Act adds a legal dimension. Article 4 requires providers and deployers of AI systems to take measures to ensure a sufficient level of AI literacy among their staff and others dealing with AI systems on their behalf.<sup class="fn-ref"><a href="#fn-c03-09" id="fnref-c03-09" title="Jump to note 9">[9]</a></sup> While the obligation is framed around operational staff, it is hard to argue that the people overseeing the organization's AI strategy should be exempt from the same standard.</p>
+<h3 id="what-directors-need-to-know">What Directors Need to Know <a class="heading-anchor" href="#what-directors-need-to-know" aria-label="Link to section">#</a></h3>
+<p>Board AI literacy is not about technical depth. It is about knowing enough to ask good questions and recognize evasive answers. Every director should be able to explain, in plain terms:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Concept</th>
+<th style="text-align:left">Why directors need it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>AI is probabilistic, not deterministic</strong></td>
+<td style="text-align:left">Errors are a statistical certainty, not a bug that will be fixed. Ask what the error rate is and who catches the errors.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Hallucination and the liability it creates</strong></td>
+<td style="text-align:left">Courts and tribunals hold organizations accountable for what their AI says (<em>Moffatt v. Air Canada</em>).<sup class="fn-ref"><a href="#fn-c03-10" id="fnref-c03-10" title="Jump to note 10">[10]</a></sup></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Prompt injection</strong></td>
+<td style="text-align:left">Anything the AI reads can steer it. This is a new class of cyber risk without a complete fix.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Agents and autonomy</strong></td>
+<td style="text-align:left">AI that acts carries a different risk profile from AI that advises.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Shadow AI and embedded AI</strong></td>
+<td style="text-align:left">Much AI risk enters through tools nobody formally approved.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Vendor dependence</strong></td>
+<td style="text-align:left">Most enterprise AI is bought. Model changes, outages, and contract terms are board-relevant risks.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>The regulatory landscape</strong></td>
+<td style="text-align:left">Which major laws apply, what the penalties are, and which deadlines matter.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Deepfakes and AI-enabled fraud</strong></td>
+<td style="text-align:left">Directors and executives are prime impersonation targets (the Arup case).<sup class="fn-ref"><a href="#fn-c03-11" id="fnref-c03-11" title="Jump to note 11">[11]</a></sup></td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="building-literacy">Building Literacy <a class="heading-anchor" href="#building-literacy" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Structured briefings.</strong> A short, recurring session (for example, annually, with updates as needed) delivered by internal experts or independent advisers, covering the concepts above and the organization's own AI landscape.</li>
+<li><strong>Hands-on exposure.</strong> Directors who have personally used an AI assistant, and seen it confidently produce a wrong answer, ask sharper questions.</li>
+<li><strong>Access to independent expertise.</strong> Boards can retain external advisers, as they do for audit and compensation, to provide a view independent of management.</li>
+<li><strong>Board composition.</strong> In Deloitte's survey, 40 percent of respondents said AI had caused them to rethink board composition.<sup class="fn-ref"><a href="#fn-c03-08" id="fnref-c03-08-2" title="Jump to note 8">[8]</a></sup> Adding a director with technology or AI governance experience can help, but it does not relieve the rest of the board of its duty to understand the basics.</li>
+<li><strong>Rules for the board's own AI use.</strong> Directors increasingly use AI to summarize board packs. Board materials are among the most sensitive documents a company holds; the board should follow the same acceptable-use rules it imposes on employees (Chapter 5).</li>
+</ul>
+<hr />
+<h2 id="34-what-the-board-should-receive-ai-risk-reporting-and-dashboards">3.4 What the Board Should Receive: AI Risk Reporting and Dashboards <a class="heading-anchor" href="#34-what-the-board-should-receive-ai-risk-reporting-and-dashboards" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-4">The Challenge <a class="heading-anchor" href="#the-challenge-4" aria-label="Link to section">#</a></h3>
+<p>Many boards today receive AI updates that look like marketing: the number of pilots launched, employees trained, hours saved, and logos of new partners. These are <strong>vanity metrics</strong>. They describe activity, not risk. A board that receives only adoption statistics cannot fulfil the oversight duty described in Section 3.1.</p>
+<h3 id="what-a-useful-board-ai-report-contains">What a Useful Board AI Report Contains <a class="heading-anchor" href="#what-a-useful-board-ai-report-contains" aria-label="Link to section">#</a></h3>
+<p>A board AI risk report should fit on one or two pages, be produced at a fixed cadence, and track the same measures over time so trends are visible. A practical structure:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Section</th>
+<th style="text-align:left">Example measures</th>
+<th style="text-align:left">Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Inventory and coverage</strong></td>
+<td style="text-align:left">Number of AI systems in the registry; share with a named owner; share with a completed risk assessment; number of high-risk systems</td>
+<td style="text-align:left">You cannot govern what you have not counted.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Appetite and tolerances</strong></td>
+<td style="text-align:left">Systems operating outside appetite; tolerance breaches; exceptions approved</td>
+<td style="text-align:left">Shows whether the board's decisions are being followed.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Incidents and near misses</strong></td>
+<td style="text-align:left">Number and severity of AI incidents; time to contain; root causes; regulatory notifications</td>
+<td style="text-align:left">Red flags the board must respond to.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Testing and assurance</strong></td>
+<td style="text-align:left">Share of production systems with current evaluations; red-team findings open and closed; internal audit results</td>
+<td style="text-align:left">Evidence that controls work, not just exist.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Shadow and embedded AI</strong></td>
+<td style="text-align:left">Unapproved AI tools detected; SaaS vendors that enabled AI features; actions taken</td>
+<td style="text-align:left">Captures risk entering outside formal channels.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Third-party exposure</strong></td>
+<td style="text-align:left">Critical AI vendors; model deprecations ahead; concentration on a single provider</td>
+<td style="text-align:left">Vendor risk is often the largest blind spot.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Regulatory horizon</strong></td>
+<td style="text-align:left">Upcoming obligations and deadlines; readiness status</td>
+<td style="text-align:left">Prevents surprises.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Governance speed</strong></td>
+<td style="text-align:left">Median time to approve a low-risk use case</td>
+<td style="text-align:left">Shows whether governance is enabling or blocking the business.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Chapter 28 provides a detailed dashboard template and key risk indicators.</p>
+<h3 id="questions-directors-should-ask-when-reading-the-report">Questions Directors Should Ask When Reading the Report <a class="heading-anchor" href="#questions-directors-should-ask-when-reading-the-report" aria-label="Link to section">#</a></h3>
+<ul>
+<li>What is <em>not</em> in this report that should be?</li>
+<li>Which AI system, if it failed tomorrow, would cause us the most harm, and how is it controlled?</li>
+<li>What red flags have been raised by staff, auditors, regulators, or customers since the last report?</li>
+<li>Where are we accepting risk outside our stated appetite, and who approved that?</li>
+</ul>
+<hr />
+<h2 id="35-investor-disclosures-and-the-risk-of-ai-washing">3.5 Investor Disclosures and the Risk of &quot;AI-Washing&quot; <a class="heading-anchor" href="#35-investor-disclosures-and-the-risk-of-ai-washing" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-5">The Challenge <a class="heading-anchor" href="#the-challenge-5" aria-label="Link to section">#</a></h3>
+<p>AI is a powerful story for investors. That creates a temptation to describe the company's AI capabilities more impressively than reality supports, a practice regulators now call <strong>AI-washing</strong>. The board, through its audit committee and disclosure oversight, carries responsibility for the accuracy of what the company tells the market.</p>
+<h3 id="real-world-scenario-when-the-ai-was-not-what-it-seemed">Real-World Scenario: When the AI Was Not What It Seemed <a class="heading-anchor" href="#real-world-scenario-when-the-ai-was-not-what-it-seemed" aria-label="Link to section">#</a></h3>
+<p>In March 2024, the U.S. Securities and Exchange Commission brought its first enforcement actions for AI-washing, settling charges against two investment advisers, Delphia (USA) Inc. and Global Predictions Inc. The SEC found that both firms had made false and misleading claims about their use of artificial intelligence. Delphia had claimed to use client data in AI-driven predictive models it had not in fact built; Global Predictions had marketed itself as the &quot;first regulated AI financial advisor.&quot; The firms paid combined civil penalties of $400,000.<sup class="fn-ref"><a href="#fn-c03-12" id="fnref-c03-12" title="Jump to note 12">[12]</a></sup></p>
+<p>In January 2025, the SEC brought its first AI-washing case against a public company, Presto Automation, a restaurant-technology firm. The SEC found that Presto had described its drive-thru voice ordering product as proprietary AI that largely eliminated the need for human order-taking. In fact, for a period the speech-recognition technology was owned and operated by a third party, and the vast majority of orders required human intervention. Presto settled without a civil penalty, citing its financial condition and cooperation, but the case put every listed company on notice.<sup class="fn-ref"><a href="#fn-c03-13" id="fnref-c03-13" title="Jump to note 13">[13]</a></sup></p>
+<p>The pattern in both cases is the same. The problem was not that the companies used AI badly. It was that <strong>what they said about their AI did not match what their AI actually did</strong>.</p>
+<h3 id="the-guardrails">The Guardrails <a class="heading-anchor" href="#the-guardrails" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Treat AI claims like financial claims.</strong> Statements about AI capabilities in filings, earnings calls, investor presentations, and marketing should be substantiated with evidence that would survive scrutiny.</li>
+<li><strong>Disclosure controls.</strong> Include AI claims in the scope of disclosure committee review, with sign-off from people who actually know how the systems work.</li>
+<li><strong>Balanced risk factors.</strong> Where AI is material, risk-factor disclosures should describe real, company-specific risks (dependence on third-party models, regulatory exposure, error rates), not boilerplate.</li>
+<li><strong>Consistency across channels.</strong> What the CEO says on an earnings call, what marketing publishes, and what engineering knows to be true should match.</li>
+<li><strong>Vendor claims are your claims.</strong> If you describe a vendor's AI as your own, or overstate what it does, the misstatement is yours.</li>
+</ul>
+<hr />
+<h2 id="36-risk-transfer-and-ai-insurance-auditing-coverage-for-silent-ai-exclusions">3.6 Risk Transfer and AI Insurance: Auditing Coverage for Silent AI Exclusions <a class="heading-anchor" href="#36-risk-transfer-and-ai-insurance-auditing-coverage-for-silent-ai-exclusions" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-6">The Challenge <a class="heading-anchor" href="#the-challenge-6" aria-label="Link to section">#</a></h3>
+<p>Risk management has four classic responses: avoid, mitigate, accept, and <strong>transfer</strong>. For most enterprise risks, insurance is a key transfer mechanism, and boards often assume that existing Cyber, Errors and Omissions (E&amp;O), Commercial General Liability (CGL), and Directors and Officers (D&amp;O) policies will respond if something goes wrong.</p>
+<p>For AI, that assumption is increasingly unsafe. Insurers face the same uncertainty as everyone else about how AI losses will arise and how large they could be. Many policies were written before generative AI existed and neither clearly include nor exclude it, a condition the industry calls <strong>&quot;silent AI.&quot;</strong> Insurers are now closing that ambiguity, generally in their own favour.</p>
+<h3 id="what-is-changing">What Is Changing <a class="heading-anchor" href="#what-is-changing" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Standard exclusion forms.</strong> Verisk's Insurance Services Office (ISO), which publishes standard policy wording used widely in the U.S. market, introduced optional generative AI exclusion endorsements for commercial general liability coverage, effective January 2026. These include a broad exclusion (CG 40 47) removing coverage for bodily injury, property damage, and personal and advertising injury arising out of generative AI, and a narrower version (CG 40 48) limited to personal and advertising injury, such as defamation or copyright claims linked to AI-generated content.<sup class="fn-ref"><a href="#fn-c03-14" id="fnref-c03-14" title="Jump to note 14">[14]</a></sup> Because the forms are optional, they often appear quietly in renewal schedules rather than as headline changes.</li>
+<li><strong>Proprietary exclusions and sublimits.</strong> Individual insurers are drafting their own AI exclusions or reduced sublimits across E&amp;O, professional liability, cyber, and management liability lines. Wording varies widely.</li>
+<li><strong>Affirmative AI coverage.</strong> At the same time, a specialist market is emerging that offers coverage explicitly designed for AI risks, such as AI performance failures or liability for AI outputs, often conditioned on evidence of strong governance.</li>
+</ul>
+<h3 id="where-the-gaps-typically-appear">Where the Gaps Typically Appear <a class="heading-anchor" href="#where-the-gaps-typically-appear" aria-label="Link to section">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Policy</th>
+<th style="text-align:left">Example AI-related loss</th>
+<th style="text-align:left">Potential gap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Commercial General Liability</strong></td>
+<td style="text-align:left">AI-generated marketing content defames a competitor or infringes copyright</td>
+<td style="text-align:left">Generative AI exclusion on personal and advertising injury</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Professional / Tech E&amp;O</strong></td>
+<td style="text-align:left">Customer-facing assistant gives wrong advice that causes financial loss (<em>Moffatt</em>-style claim)</td>
+<td style="text-align:left">AI-assisted services carved out, or &quot;professional services&quot; definition excludes automated advice</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Cyber</strong></td>
+<td style="text-align:left">Prompt injection leads to data exfiltration through an AI assistant</td>
+<td style="text-align:left">AI-specific sublimits, or ambiguity over whether model manipulation is a &quot;security failure&quot;</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Crime / Social Engineering</strong></td>
+<td style="text-align:left">Deepfake video call induces a fraudulent transfer (Arup-style)</td>
+<td style="text-align:left">Low social-engineering sublimits; conditions requiring verification procedures</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>D&amp;O</strong></td>
+<td style="text-align:left">Shareholder suit alleging failure to oversee AI, or AI-washing disclosures</td>
+<td style="text-align:left">Emerging exclusions for AI-related management liability or regulatory actions</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="the-guardrails-2">The Guardrails <a class="heading-anchor" href="#the-guardrails-2" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Commission an AI coverage review before every renewal.</strong> Ask brokers and coverage counsel to identify every AI-related exclusion, sublimit, and definition across the insurance program.</li>
+<li><strong>Map coverage to your top AI risks.</strong> Using the risk register, check which of your most significant AI loss scenarios are insured, partially insured, or uninsured.</li>
+<li><strong>Use governance as leverage.</strong> Underwriters increasingly ask about AI inventories, policies, human oversight, and testing. A mature program (Chapters 4, 5, and 26) can improve terms or unlock affirmative coverage.</li>
+<li><strong>Align contracts with insurance.</strong> Vendor indemnities (Chapter 19) and customer liability caps should be consistent with what insurance will and will not cover.</li>
+<li><strong>Report uninsured exposure to the board.</strong> Material uninsured AI risk is part of the risk the board is accepting, and it should be accepted deliberately.</li>
+</ul>
+<hr />
+<h2 id="chapter-summary">Chapter Summary <a class="heading-anchor" href="#chapter-summary" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Section</th>
+<th style="text-align:left">Core message</th>
+<th style="text-align:left">Board action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">3.1 Duty of oversight</td>
+<td style="text-align:left">Where AI is mission-critical, oversight is a fiduciary duty</td>
+<td style="text-align:left">Assign committee ownership, set a reporting cadence, document engagement</td>
+</tr>
+<tr>
+<td style="text-align:left">3.2 Risk appetite</td>
+<td style="text-align:left">Without red lines and autonomy thresholds, project teams set the appetite by default</td>
+<td style="text-align:left">Approve an AI risk appetite with measurable tolerances</td>
+</tr>
+<tr>
+<td style="text-align:left">3.3 Board literacy</td>
+<td style="text-align:left">Directors need enough understanding to ask good questions</td>
+<td style="text-align:left">Schedule recurring briefings; consider independent expertise</td>
+</tr>
+<tr>
+<td style="text-align:left">3.4 Reporting</td>
+<td style="text-align:left">Adoption statistics are not risk reporting</td>
+<td style="text-align:left">Demand a consistent, risk-focused dashboard</td>
+</tr>
+<tr>
+<td style="text-align:left">3.5 AI-washing</td>
+<td style="text-align:left">What you say about AI must match what it does</td>
+<td style="text-align:left">Bring AI claims into disclosure controls</td>
+</tr>
+<tr>
+<td style="text-align:left">3.6 Insurance</td>
+<td style="text-align:left">AI risk may already be falling outside your coverage</td>
+<td style="text-align:left">Commission an AI coverage review at each renewal</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="key-takeaways">Key Takeaways <a class="heading-anchor" href="#key-takeaways" aria-label="Link to section">#</a></h2>
+<ul>
+<li><strong>The board's oversight duty extends to AI.</strong> Courts have shown, in <em>Marchand</em>, that generic compliance is not enough when a risk is mission-critical. For many enterprises, AI is becoming exactly that.</li>
+<li><strong>Risk appetite must be set at the top.</strong> Red lines and autonomy thresholds approved by the board give the whole organization clear boundaries, and give engineers clear limits to enforce.</li>
+<li><strong>Literacy is a prerequisite for oversight.</strong> Directors do not need technical depth, but they do need to understand probabilistic errors, prompt injection, agents, and vendor dependence.</li>
+<li><strong>Report risk, not activity.</strong> A useful board report tracks inventory coverage, tolerance breaches, incidents, assurance, and uninsured exposure over time.</li>
+<li><strong>AI-washing is a securities risk.</strong> Regulators have penalized companies whose AI claims did not match reality.</li>
+<li><strong>Do not assume you are insured.</strong> Silent AI is being replaced by explicit exclusions; review coverage before every renewal.</li>
+</ul>
+<h2 id="questions-to-ask">Questions to Ask <a class="heading-anchor" href="#questions-to-ask" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">Question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board</strong></td>
+<td style="text-align:left">Which committee owns AI risk, how often does it receive a report, and would our minutes show meaningful engagement?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CEO</strong></td>
+<td style="text-align:left">Which of our AI systems would a court consider mission-critical, and does the board know about each of them?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CRO</strong></td>
+<td style="text-align:left">Is AI in our enterprise risk appetite, and which tolerances are we currently breaching?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CFO / Audit Committee</strong></td>
+<td style="text-align:left">Are statements about our AI capabilities in filings and investor materials reviewed and substantiated like financial claims?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>General Counsel</strong></td>
+<td style="text-align:left">What AI-related exclusions, sublimits, or definitions have appeared in our insurance policies at the last renewal?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO / CISO</strong></td>
+<td style="text-align:left">Can we produce, today, a one-page report of our AI inventory, high-risk systems, and open incidents for the board?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Business Owners</strong></td>
+<td style="text-align:left">Does my AI use case fall within the board's approved appetite, and if not, who has approved the exception?</td>
+</tr>
+</tbody>
+</table></div>
+
+<section class="footnotes" id="notes" aria-label="Notes">
+<h2>References</h2>
+<ol class="footnote-list">
+<li id="fn-c03-01"><span class="fn-body"><em>In re Caremark International Inc. Derivative Litigation</em>, 698 A.2d 959 (Del. Ch. 1996). <strong>Annotation:</strong> The foundational Delaware decision establishing that directors must make a good-faith effort to ensure an adequate corporate information and reporting system exists. The starting point for any discussion of board oversight liability. <a href="bibliography.html#caremark-1996">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c03-01" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c03-02"><span class="fn-body"><em>Marchand v. Barnhill</em>, 212 A.3d 805 (Del. 2019). <strong>Annotation:</strong> The Delaware Supreme Court allowed oversight claims to proceed against the Blue Bell Creameries board because it had no board-level system for monitoring food safety, the company's mission-critical risk. The key precedent for arguing that boards must specifically oversee risks central to the business, which increasingly includes AI. <a href="bibliography.html#marchand-2019">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c03-02" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c03-03"><span class="fn-body">Securities and Exchange Board of India, Securities and Exchange Board of India (Listing Obligations and Disclosure Requirements) Regulations, 2015, reg. 21 and sched. II, pt. D, as amended. <strong>Annotation:</strong> Requires the top 1,000 listed entities by market capitalization to constitute a board-level Risk Management Committee whose role includes cyber security. A natural home for AI risk oversight in Indian listed companies. <a href="bibliography.html#sebi-2015-lodr">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c03-03" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c03-04"><span class="fn-body">National Institute of Standards and Technology, <em>Artificial Intelligence Risk Management Framework (AI RMF 1.0)</em>, NIST AI 100-1 (Gaithersburg, MD: NIST, January 2023), <a href="https://doi.org/10.6028/NIST.AI.100-1" target="_blank" rel="noopener noreferrer">https://doi.org/10.6028/NIST.AI.100-1</a>. <strong>Annotation:</strong> The &quot;Govern&quot; function addresses accountability structures, senior leadership responsibility, and organizational risk culture, providing a framework vocabulary for board oversight. <a href="bibliography.html#nist-2023-ai-rmf">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c03-04" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c03-05"><span class="fn-body">ISO/IEC 42001:2023, <em>Information Technology — Artificial Intelligence — Management System</em> (Geneva: ISO, December 2023), <a href="https://www.iso.org/standard/81230.html" target="_blank" rel="noopener noreferrer">https://www.iso.org/standard/81230.html</a>. <strong>Annotation:</strong> Requires top management to demonstrate leadership and commitment, establish an AI policy, and assign roles and responsibilities for the AI management system. <a href="bibliography.html#iso-2023-42001">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c03-05" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c03-06"><span class="fn-body">Regulation (EU) 2024/1689 (Artificial Intelligence Act), <em>Official Journal of the European Union</em> L, 2024/1689, July 12, 2024, art. 5, <a href="http://data.europa.eu/eli/reg/2024/1689/oj" target="_blank" rel="noopener noreferrer">http://data.europa.eu/eli/reg/2024/1689/oj</a>. <strong>Annotation:</strong> Article 5 lists prohibited AI practices, providing a legal baseline for enterprise red lines. <a href="bibliography.html#eu-2024-ai-act">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c03-06" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c03-07"><span class="fn-body">Beatrice Nolan, &quot;AI-Powered Coding Tool Wiped Out a Software Company's Database in 'Catastrophic Failure,'&quot; <em>Fortune</em>, July 2025, <a href="https://fortune.com/2025/07/23/ai-coding-tool-replit-wiped-database-called-it-a-catastrophic-failure/" target="_blank" rel="noopener noreferrer">https://fortune.com/2025/07/23/ai-coding-tool-replit-wiped-database-called-it-a-catastrophic-failure/</a>. <strong>Annotation:</strong> Shows why autonomy thresholds are a risk-appetite decision: an agent acted destructively despite explicit instructions not to. <a href="bibliography.html#nolan-2025-replit">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c03-07" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c03-08"><span class="fn-body">Deloitte Global Boardroom Program, <em>Governance of AI: A Critical Imperative for Today's Boards</em>, 2nd ed. (Deloitte, 2025), <a href="https://www.deloitte.com/global/en/issues/trust/progress-on-ai-in-the-boardroom-but-room-to-accelerate.html" target="_blank" rel="noopener noreferrer">https://www.deloitte.com/global/en/issues/trust/progress-on-ai-in-the-boardroom-but-room-to-accelerate.html</a>. <strong>Annotation:</strong> A global survey of around 700 board members and executives across 56 countries. Useful benchmarks on board AI knowledge, agenda time, and composition. <a href="bibliography.html#deloitte-2025-board-ai">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c03-08" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c03-08-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c03-09"><span class="fn-body">Regulation (EU) 2024/1689, art. 4. <strong>Annotation:</strong> The AI literacy obligation for providers and deployers, applicable since February 2025. <a href="bibliography.html#eu-2024-ai-act">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c03-09" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c03-10"><span class="fn-body"><em>Moffatt v. Air Canada</em>, 2024 BCCRT 149 (British Columbia Civil Resolution Tribunal, February 14, 2024). <strong>Annotation:</strong> The leading example of an organization held responsible for what its chatbot told a customer. <a href="bibliography.html#moffatt-2024-aircanada">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c03-10" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c03-11"><span class="fn-body">Kathleen Magramo, &quot;British Engineering Giant Arup Revealed as $25 Million Deepfake Scam Victim,&quot; CNN, May 17, 2024, <a href="https://edition.cnn.com/2024/05/16/tech/arup-deepfake-scam-loss-hong-kong-intl-hnk/index.html" target="_blank" rel="noopener noreferrer">https://edition.cnn.com/2024/05/16/tech/arup-deepfake-scam-loss-hong-kong-intl-hnk/index.html</a>. <strong>Annotation:</strong> Demonstrates that senior executives are prime targets for deepfake impersonation, a risk directors should understand personally. <a href="bibliography.html#magramo-2024-arup">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c03-11" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c03-12"><span class="fn-body">U.S. Securities and Exchange Commission, &quot;SEC Charges Two Investment Advisers with Making False and Misleading Statements About Their Use of Artificial Intelligence,&quot; press release 2024-36, March 18, 2024, <a href="https://www.sec.gov/newsroom/press-releases/2024-36" target="_blank" rel="noopener noreferrer">https://www.sec.gov/newsroom/press-releases/2024-36</a>. <strong>Annotation:</strong> The SEC's first AI-washing enforcement actions, against Delphia (USA) Inc. and Global Predictions Inc., with combined civil penalties of $400,000. The reference case for treating AI claims with the same rigour as financial claims. <a href="bibliography.html#sec-2024-ai-washing">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c03-12" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c03-13"><span class="fn-body">U.S. Securities and Exchange Commission, <em>In the Matter of Presto Automation Inc.</em>, administrative proceeding, January 14, 2025, <a href="https://www.sec.gov/" target="_blank" rel="noopener noreferrer">https://www.sec.gov/</a>. <strong>Annotation:</strong> The SEC's first AI-washing action against a public company, concerning undisclosed third-party technology and overstated automation. No penalty was imposed because of the company's financial condition and cooperation. <a href="bibliography.html#sec-2025-presto">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c03-13" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c03-14"><span class="fn-body">Insurance Services Office, Inc. (Verisk), Commercial General Liability endorsements CG 40 47, <em>Exclusion — Generative Artificial Intelligence</em>, and CG 40 48, <em>Exclusion — Generative Artificial Intelligence (Coverage B Only)</em>, effective January 1, 2026. <strong>Annotation:</strong> Optional standard exclusions that remove generative AI exposures from CGL coverage, defining generative AI broadly as a machine-based system trained on data that can create content including text, images, audio, video, or code. A concrete signal that &quot;silent AI&quot; coverage is ending. <a href="bibliography.html#verisk-2026-genai-exclusions">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c03-14" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+</ol>
+</section>
+        <nav class="pager" aria-label="Chapter navigation"><a class="pager-card pager-prev" href="02-reference-frameworks-at-a-glance.html"><span class="pager-dir">&larr; Previous</span><span class="pager-title">Chapter 2: Reference Frameworks at a Glance</span></a><a class="pager-card pager-next" href="04-ai-governance-operating-model.html"><span class="pager-dir">Next &rarr;</span><span class="pager-title">Chapter 4: The AI Governance Operating Model</span></a></nav>
+      </article>
+      <footer class="doc-footer">
+        Building Guardrails for Enterprise AI &middot; Built 2026-11-22
+      </footer>
+    </main>
+<aside class="page-toc" aria-label="On this page">
+  <div class="page-toc-inner">
+    <div class="page-toc-title">On this page</div>
+    <ul><li class="toc-l2"><a href="#the-minutes-that-were-never-written">The Minutes That Were Never Written</a></li><li class="toc-l2"><a href="#31-the-boards-duty-of-oversight-for-ai">3.1 The Board&#x27;s Duty of Oversight for AI</a></li><li class="toc-l3"><a href="#the-challenge">The Challenge</a></li><li class="toc-l3"><a href="#what-good-oversight-looks-like">What Good Oversight Looks Like</a></li><li class="toc-l3"><a href="#why-every-role-cares">Why Every Role Cares</a></li><li class="toc-l2"><a href="#32-setting-the-enterprise-ai-risk-appetite">3.2 Setting the Enterprise AI Risk Appetite</a></li><li class="toc-l3"><a href="#the-challenge-2">The Challenge</a></li><li class="toc-l3"><a href="#red-lines">Red Lines</a></li><li class="toc-l3"><a href="#autonomy-thresholds">Autonomy Thresholds</a></li><li class="toc-l3"><a href="#quantitative-tolerances">Quantitative Tolerances</a></li><li class="toc-l3"><a href="#why-every-role-cares-2">Why Every Role Cares</a></li><li class="toc-l2"><a href="#33-board-ai-literacy-what-directors-need-to-understand">3.3 Board AI Literacy: What Directors Need to Understand</a></li><li class="toc-l3"><a href="#the-challenge-3">The Challenge</a></li><li class="toc-l3"><a href="#what-directors-need-to-know">What Directors Need to Know</a></li><li class="toc-l3"><a href="#building-literacy">Building Literacy</a></li><li class="toc-l2"><a href="#34-what-the-board-should-receive-ai-risk-reporting-and-dashboards">3.4 What the Board Should Receive: AI Risk Reporting and Dashboards</a></li><li class="toc-l3"><a href="#the-challenge-4">The Challenge</a></li><li class="toc-l3"><a href="#what-a-useful-board-ai-report-contains">What a Useful Board AI Report Contains</a></li><li class="toc-l3"><a href="#questions-directors-should-ask-when-reading-the-report">Questions Directors Should Ask When Reading the Report</a></li><li class="toc-l2"><a href="#35-investor-disclosures-and-the-risk-of-ai-washing">3.5 Investor Disclosures and the Risk of &quot;AI-Washing&quot;</a></li><li class="toc-l3"><a href="#the-challenge-5">The Challenge</a></li><li class="toc-l3"><a href="#real-world-scenario-when-the-ai-was-not-what-it-seemed">Real-World Scenario: When the AI Was Not What It Seemed</a></li><li class="toc-l3"><a href="#the-guardrails">The Guardrails</a></li><li class="toc-l2"><a href="#36-risk-transfer-and-ai-insurance-auditing-coverage-for-silent-ai-exclusions">3.6 Risk Transfer and AI Insurance: Auditing Coverage for Silent AI Exclusions</a></li><li class="toc-l3"><a href="#the-challenge-6">The Challenge</a></li><li class="toc-l3"><a href="#what-is-changing">What Is Changing</a></li><li class="toc-l3"><a href="#where-the-gaps-typically-appear">Where the Gaps Typically Appear</a></li><li class="toc-l3"><a href="#the-guardrails-2">The Guardrails</a></li><li class="toc-l2"><a href="#chapter-summary">Chapter Summary</a></li><li class="toc-l2"><a href="#key-takeaways">Key Takeaways</a></li><li class="toc-l2"><a href="#questions-to-ask">Questions to Ask</a></li><li class="toc-l2"><a href="#notes">Notes</a></li></ul>
+  </div>
+</aside>
+  </div>
+</body>
+</html>

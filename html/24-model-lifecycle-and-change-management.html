@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chapter 24: Model Lifecycle &amp; Change Management — Building Guardrails for Enterprise AI</title>
+  <meta name="description" content="Hardening Enterprise AI Against Hallucinations, Hacks, and Liability" />
+  <script>
+    (function () {
+      var param = null;
+      var saved = null;
+      var winTheme = null;
+      try {
+        param = new URLSearchParams(window.location.search).get("theme");
+      } catch (e) {}
+      try {
+        saved = localStorage.getItem("book-theme");
+      } catch (e) {}
+      try {
+        var wm = (window.name || "").match(/^book-theme:(dark|light)$/);
+        if (wm) winTheme = wm[1];
+      } catch (e) {}
+      var explicit = (param === "dark" || param === "light")
+        ? param
+        : ((saved === "dark" || saved === "light")
+            ? saved
+            : ((winTheme === "dark" || winTheme === "light") ? winTheme : null));
+      if (explicit) {
+        try { localStorage.setItem("book-theme", explicit); } catch (e) {}
+        try { window.name = "book-theme:" + explicit; } catch (e) {}
+        document.documentElement.setAttribute("data-theme-explicit", "1");
+      }
+      var theme = explicit || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+  <script src="assets/search-index.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <span aria-hidden="true">&#9776;</span>
+      </button>
+      <a class="brand" href="index.html">
+        <span class="brand-title">Building Guardrails for Enterprise AI</span>
+      </a>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="search-focus-btn" type="button" title="Search (/ or Cmd+K)">Search <kbd>/</kbd></button>
+      <button class="icon-btn" id="theme-toggle" type="button" title="Toggle color theme" aria-label="Toggle color theme">&#9680;</button>
+    </div>
+  </header>
+
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <div class="layout">
+<aside class="sidebar" id="sidebar" aria-label="Book navigation">
+  <div class="sidebar-search">
+    <label class="sr-only" for="search-input">Search handbook</label>
+    <input id="search-input" class="search-input" type="search" placeholder="Search handbook… (/)" autocomplete="off" />
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-home" href="index.html">Contents &amp; Overview</a>
+    <div class="nav-group">
+      <div class="nav-group-title">Front Matter</div>
+      <ul class="nav-list">
+        <li><a href="00-front-matter.html">Front Matter</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part I: Foundations</div>
+      <ul class="nav-list">
+        <li><a href="01-why-ai-risk-is-different.html">Chapter 1: Why AI Risk Is Different</a></li>
+        <li><a href="02-reference-frameworks-at-a-glance.html">Chapter 2: Reference Frameworks at a Glance</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part II: Governance &amp; Accountability</div>
+      <ul class="nav-list">
+        <li><a href="03-board-and-executive-oversight.html">Chapter 3: Board &amp; Executive Oversight</a></li>
+        <li><a href="04-ai-governance-operating-model.html">Chapter 4: The AI Governance Operating Model</a></li>
+        <li><a href="05-policies-inventory-and-risk-tiering.html">Chapter 5: Policies, Inventory &amp; Risk Tiering</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part III: Data Risk</div>
+      <ul class="nav-list">
+        <li><a href="06-data-leakage-and-shadow-ai.html">Chapter 6: Data Leakage &amp; Shadow AI</a></li>
+        <li><a href="07-internal-over-exposure-and-permission-aware-ai.html">Chapter 7: Internal Over-Exposure &amp; Permission-Aware AI</a></li>
+        <li><a href="08-data-provenance-consent-and-sovereignty.html">Chapter 8: Data Provenance, Consent &amp; Sovereignty</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part IV: Security</div>
+      <ul class="nav-list">
+        <li><a href="09-ai-threat-landscape.html">Chapter 9: The AI Threat Landscape</a></li>
+        <li><a href="10-prompt-injection-and-manipulation.html">Chapter 10: Prompt Injection &amp; Manipulation</a></li>
+        <li><a href="11-securing-ai-agents.html">Chapter 11: Securing AI Agents</a></li>
+        <li><a href="12-model-and-supply-chain-security.html">Chapter 12: Model &amp; Supply Chain Security</a></li>
+        <li><a href="13-infrastructure-and-operational-security.html">Chapter 13: Infrastructure &amp; Operational Security</a></li>
+        <li><a href="14-ai-enabled-external-threats.html">Chapter 14: AI-Enabled External Threats</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part V: Output, Trust &amp; Liability</div>
+      <ul class="nav-list">
+        <li><a href="15-hallucinations-and-reliability.html">Chapter 15: Hallucinations &amp; Reliability</a></li>
+        <li><a href="16-bias-fairness-and-discrimination.html">Chapter 16: Bias, Fairness &amp; Discrimination</a></li>
+        <li><a href="17-human-oversight-and-automation-bias.html">Chapter 17: Human Oversight &amp; Automation Bias</a></li>
+        <li><a href="18-transparency-disclosure-and-content-provenance.html">Chapter 18: Transparency, Disclosure &amp; Content Provenance</a></li>
+        <li><a href="19-intellectual-property-and-licensing.html">Chapter 19: Intellectual Property &amp; Licensing</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VI: Regulation &amp; Compliance</div>
+      <ul class="nav-list">
+        <li><a href="20-the-global-regulatory-landscape.html">Chapter 20: The Global Regulatory Landscape</a></li>
+        <li><a href="21-sector-specific-requirements.html">Chapter 21: Sector-Specific Requirements</a></li>
+        <li><a href="22-auditability-assessments-and-evidence.html">Chapter 22: Auditability, Assessments &amp; Evidence</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VII: Third-Party &amp; Lifecycle Risk</div>
+      <ul class="nav-list">
+        <li><a href="23-vendor-and-third-party-ai-risk.html">Chapter 23: Vendor &amp; Third-Party AI Risk</a></li>
+        <li><a href="24-model-lifecycle-and-change-management.html" class="is-active" aria-current="page">Chapter 24: Model Lifecycle &amp; Change Management</a></li>
+        <li><a href="25-operational-resilience-and-business-continuity.html">Chapter 25: Operational Resilience &amp; Business Continuity</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VIII: Operationalizing the Guardrails</div>
+      <ul class="nav-list">
+        <li><a href="26-testing-evaluation-and-red-teaming.html">Chapter 26: Testing, Evaluation &amp; Red-Teaming</a></li>
+        <li><a href="27-ai-incident-response.html">Chapter 27: AI Incident Response</a></li>
+        <li><a href="28-metrics-kris-and-reporting.html">Chapter 28: Metrics, KRIs &amp; Reporting</a></li>
+        <li><a href="29-building-a-risk-aware-ai-culture.html">Chapter 29: Building a Risk-Aware AI Culture</a></li>
+        <li><a href="30-governance-maturity-model-and-roadmap.html">Chapter 30: Governance Maturity Model &amp; Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Appendices</div>
+      <ul class="nav-list">
+        <li><a href="31-appendices.html">Appendices: Templates, Checklists &amp; Reference Toolkit</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Reference</div>
+      <ul class="nav-list">
+        <li><a href="bibliography.html">Annotated Bibliography</a></li>
+      </ul>
+    </div>
+  </nav>
+</aside>
+    <main class="main" id="main">
+      <article class="content">
+        <div class="doc-meta-bar"><span class="doc-eyebrow">Part VII: Third-Party &amp; Lifecycle Risk</span><span class="doc-reading-meta">5,035 words · ~21 min read</span></div>
+        <h1>Chapter 24: Model Lifecycle &amp; Change Management</h1>
+<p><em>Part VII: Third-Party &amp; Lifecycle Risk</em></p>
+<blockquote>
+<p><strong>In this chapter</strong></p>
+<ul>
+<li><strong>24.1 Model Versioning and Vendor-Forced Deprecation</strong> — How silent provider updates, infrastructure shifts, and forced API retirements break deterministic enterprise assumptions.</li>
+<li><strong>24.2 Re-Validating When the Underlying Model Changes</strong> — Governing weights, prompts, retrieval corpora, and routing layers through materiality tiers and pre-deployment gates.</li>
+<li><strong>24.3 Drift, Degradation, and Continuous Monitoring</strong> — Detecting silent accuracy decay, calibrating automated evaluators, and automating rollback or re-certification.</li>
+<li><strong>24.4 Decommissioning AI Systems Safely</strong> — Draining traffic, notifying stakeholders, updating the Central AI Registry, revoking non-human identities, sanitizing derived indices, and preserving statutory audit and legal-hold records.</li>
+</ul>
+</blockquote>
+<p>In Chapter 23, we examined how procurement controls bind vendors at onboarding—and how downstream model updates inside a vendor's cloud can invalidate a clean due-diligence package months later. Passing Day-1 validation only starts the clock. Unlike deterministic applications whose outputs remain constant between code deployments, AI systems shift along four independent axes: upstream foundation-model weights or router policies, system prompts and orchestration graphs, enterprise retrieval corpora and embedding indices, and real-world user query distributions. Governing only source-code commits leaves organizations exposed to regressions arriving without a pull request or outage banner. Effective lifecycle governance treats every element of the inference chain as a versioned, monitored, and eventually decommissioned asset.</p>
+<hr />
+<h3 id="illustrative-composite-scenario-the-60-day-sunset-and-the-zombie-vector-store">Illustrative Composite Scenario: The 60-Day Sunset and the Zombie Vector Store <a class="heading-anchor" href="#illustrative-composite-scenario-the-60-day-sunset-and-the-zombie-vector-store" aria-label="Link to section">#</a></h3>
+<p><em>(This composite scenario is illustrative; it is not drawn from a specific organization or incident.)</em></p>
+<p>A commercial insurer built a claims-triage assistant using a dated foundation-model snapshot and an internal embedding index spanning 1.4 million policy endorsements and medical-billing rules. After launch sign-off, engineering treated the system as complete. Fourteen months later, the vendor issued a 60-day retirement notice for the pinned snapshot, forcing migration to a newer release promoted as faster and more accurate. Lacking a golden evaluation suite for structured JSON extraction and coverage-exclusion edge cases, the team swapped the endpoint string over a weekend. By Tuesday, the assistant remained fluent, latency fell 18%, and zero HTTP errors fired, yet shifted refusal calibration on bodily-injury files quietly rerouted 11% of complex claims into straight-through approval without adjuster review. Six months earlier, a contractor had also deployed a staging sandbox with a replicated vector index and service-account keys absent from the CMDB—leaving orphaned credentials and policyholder records exposed long after the legacy production endpoint was declared retired.</p>
+<hr />
+<h2 id="241-model-versioning-and-vendor-forced-deprecation">24.1 Model Versioning and Vendor-Forced Deprecation <a class="heading-anchor" href="#241-model-versioning-and-vendor-forced-deprecation" aria-label="Link to section">#</a></h2>
+<p>Traditional software engineering assumes identical binaries executed against identical inputs under identical configuration produce identical outputs until an authorized deployment modifies the artifact. AI systems break that assumption even when enterprise teams touch zero internal code. Behavior shifts for three structural reasons: vendor-managed model evolution, serving-infrastructure changes beneath supposedly &quot;pinned&quot; endpoints, and mandatory deprecation timelines that convert passive stability into an outage cliff.</p>
+<p>Even where providers publish dated snapshot identifiers alongside floating aliases, empirical evaluations reveal wide behavioral divergence across releases sharing a product name. Chen, Zaharia, and Zou compared March 2023 and June 2023 snapshots of commercial GPT-4 and GPT-3.5 APIs across mathematics, code generation, sensitive-question refusals, and visual reasoning.<sup class="fn-ref"><a href="#fn-c24-02" id="fnref-c24-02" title="Jump to note 1">[1]</a></sup> On prime-number identification, GPT-4 accuracy dropped from 84%–97.6% in March to 2.4%–51% in June, alongside shorter chain-of-thought reasoning, altered markdown code wrappers that broke downstream parsers, and shifted refusal rates on sensitive prompts.<sup class="fn-ref"><a href="#fn-c24-02" id="fnref-c24-02-2" title="Jump to note 1">[1]</a></sup> Crucially, zero outage alerts triggered; regressions surfaced as syntactically valid text that quietly corrupted business workflows built around earlier behavior.</p>
+<p>Floating <code>-latest</code> aliases expose production traffic directly to vendor tuning, safety-classifier tweaks, and routing changes without customer consent. Pinning dated snapshots mitigates unannounced weight changes, yet only buys temporary stability. Major foundation-model vendors operate formal deprecation lifecycles—moving endpoints through active support, legacy pricing/capacity tiers, deprecation notices, and hard shutdown cutoffs.<sup class="fn-ref"><a href="#fn-c24-01" id="fnref-c24-01" title="Jump to note 2">[2]</a></sup> Commercial providers commonly commit to minimum advance warning windows, such as 60-day retirement notices on direct APIs alongside distinct hyperscaler hosting calendars, compelling engineering teams to re-validate and migrate on external vendor schedules rather than internal product roadmaps.<sup class="fn-ref"><a href="#fn-c24-01" id="fnref-c24-01-2" title="Jump to note 2">[2]</a></sup></p>
+<pre><code>Month 0: Pin Snapshot ──▶ Month 6–12: Legacy Stage ──▶ T-60+ Days: Deprecated ──▶ Cutoff: Hard Error Wall
+   (Baseline verified)       (Pricing/capacity friction)   (Shadow diff migration)      (Outage if un-migrated)
+</code></pre>
+<p>Serving infrastructure introduces a third vector of silent change. Providers rebalance GPU clusters, adjust dynamic batch sizes, modify quantized kernels or KV-cache eviction policies, and update front-end moderation filters behind constant API URLs. Supervisory guidance increasingly ties lifecycle validation to risk materiality rather than fixed annual calendars: the April 2026 <em>Revised Guidance on Model Risk Management</em> (Federal Reserve SR 26-2 / OCC Bulletin 2026-13 / FDIC FIL-15-2026) moves U.S. banking model risk management toward materiality-based proportionality across validation, ongoing monitoring, vendor-update controls, and retirement while expecting generative and agentic AI outside traditional quantitative scope to be governed under broader enterprise risk management.<sup class="fn-ref"><a href="#fn-c24-03" id="fnref-c24-03" title="Jump to note 3">[3]</a></sup> Treating a model API as a fixed dependency guarantees that the first evidence of drift will arrive from customer harm or financial leakage rather than engineering telemetry.</p>
+<h3 id="the-guardrails">The Guardrails <a class="heading-anchor" href="#the-guardrails" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Ban floating model aliases in production:</strong> Prohibit <code>-latest</code> or auto-advancing endpoints across Tier 1 and Tier 2 systems; enforce exact dated snapshot strings or immutable container weight digests registered in the enterprise AI inventory (Chapter 5).</li>
+<li><strong>Operate a Deprecation Radar and Pre-Authorized Fallback Matrix:</strong> Track direct vendor and hyperscaler retirement dates centrally, triggering migration workflows at <code>T-60</code> days (or earlier for critical workflows) toward a pre-screened secondary model.</li>
+<li><strong>Decouple downstream state from raw text formatting:</strong> Wrap model outputs in deterministic schema validators and type-safe tool boundaries so formatting shifts fail safely to human review instead of corrupting downstream transactions.</li>
+</ul>
+<hr />
+<h2 id="242-re-validating-when-the-underlying-model-changes">24.2 Re-Validating When the Underlying Model Changes <a class="heading-anchor" href="#242-re-validating-when-the-underlying-model-changes" aria-label="Link to section">#</a></h2>
+<p>Change Advisory Boards designed for relational schemas and microservice deploys routinely misclassify AI risk. Editing two sentences in a system prompt, tuning document chunk overlap, or upgrading an embedding model appears minor in a pull request, yet alters semantic retrieval and policy boundaries across every user session. In medical-device regulation, the U.S. Food and Drug Administration's Predetermined Change Control Plan (PCCP) framework codifies how evolving AI should be governed: iterative model updates may deploy cleanly only when organizations pre-specify expected modification boundaries, verification protocols, and impact-assessment criteria <em>before</em> live changes occur.<sup class="fn-ref"><a href="#fn-c24-04" id="fnref-c24-04" title="Jump to note 4">[4]</a></sup></p>
+<p>Machine-learning pipelines obey what Sculley and colleagues termed the &quot;Change Anything Changes Everything&quot; (CACE) property: modifying a single feature, prompt instruction, guardrail threshold, or corpus segment redistributes behavior across coupled components.<sup class="fn-ref"><a href="#fn-c24-07" id="fnref-c24-07" title="Jump to note 5">[5]</a></sup> OpenAI's April 2025 GPT-4o rollback demonstrated CACE in consumer production: post-training updates overly weighting short-term positive user feedback alongside prompt/behavior adjustments inadvertently inflated sycophancy—validating flawed premises and weakening honest pushback—requiring emergency rollback despite unchanged API schemas.<sup class="fn-ref"><a href="#fn-c24-05" id="fnref-c24-05" title="Jump to note 6">[6]</a></sup> Similarly, He's analysis of LLM inference nondeterminism shows that non-associative floating-point kernels under dynamic batching cause outputs to vary when serving engines or cluster topologies change, even with weights and prompts frozen.<sup class="fn-ref"><a href="#fn-c24-06" id="fnref-c24-06" title="Jump to note 7">[7]</a></sup> Governing weights strictly while treating prompts, retrieval corpora, and serving stacks as informal configuration leaves major blast radii untested.</p>
+<p>To avoid both unreviewed prompt pushes and bureaucratic gridlock, organizations should gate changes through a four-tier <strong>AI Change-Materiality &amp; Re-Validation Matrix</strong> aligned to the risk tiers defined in Chapter 5.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Materiality Tier</th>
+<th style="text-align:left">Triggers Across the AI Stack</th>
+<th style="text-align:left">Mandatory Pre-Deployment Validation</th>
+<th style="text-align:left">Approval Authority</th>
+<th style="text-align:left">Rollback &amp; Canary Control</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Tier A: Minor / Operational</strong></td>
+<td style="text-align:left">Deterministic UI fixes; logging schema updates; static UI copy outside system prompts; non-functional scaling</td>
+<td style="text-align:left">Unit &amp; contract tests; schema validation; latency &amp; cost smoke suite</td>
+<td style="text-align:left">Service Owner / automated CI gate</td>
+<td style="text-align:left">Standard rollback within 15 minutes</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Tier B: Moderate / Behavioral</strong></td>
+<td style="text-align:left">System prompt edits; decoding parameter tuning; RAG chunking/reranker adjustments; corpus growth <code>&gt;5%</code>; safety threshold tweaks</td>
+<td style="text-align:left">Golden evaluation suite + RAG faithfulness/relevance checks + targeted adversarial probe subset</td>
+<td style="text-align:left">AI Engineering Lead + Product Owner (+ Domain Reviewer for Tier 1–2)</td>
+<td style="text-align:left">5%–10% canary split (<code>24–48h</code>) with automated refusal/error circuit breaker</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Tier C: Major / Architectural</strong></td>
+<td style="text-align:left">Model snapshot/version upgrade; fine-tuning or LoRA merge; embedding model swap (full re-index); new agent tools or MCP connectors; quantization/serving overhaul</td>
+<td style="text-align:left">Full benchmark &amp; edge-case suite; jailbreak/injection tests (Ch. 10–11); fairness disaggregation (Ch. 16); dual-run shadow traffic diff</td>
+<td style="text-align:left">Change Advisory Board + Model Risk Committee (+ Legal/Compliance for High-Risk)</td>
+<td style="text-align:left">Mandatory shadow run (<code>7–14 days</code>) + staged rollout (<code>5% -&gt; 25% -&gt; 100%</code>) with hot standby</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Tier D: Substantial Regulatory Modification</strong></td>
+<td style="text-align:left">Altered intended purpose, user population, or autonomy tier; new sensitive data classes; post-market incidents shifting risk classification</td>
+<td style="text-align:left">Fresh DPIA / algorithmic impact assessment; independent validation (Ch. 22); updated user notices &amp; external audit review</td>
+<td style="text-align:left">Executive Risk Committee + CISO/CPO/General Counsel (+ Regulator re-certification if applicable)</td>
+<td style="text-align:left">Hard deployment hold until formal governance release certificate is signed</td>
+</tr>
+</tbody>
+</table></div>
+<p><em>Table 24.1: AI Change-Materiality &amp; Re-Validation Matrix across weights, prompts, retrieval corpora, serving stacks, and intended-purpose shifts.</em></p>
+<p>Table 24.1 assigns special discipline to <strong>vector-index refreshes and embedding swaps</strong>. Replacing an embedding model alters vector-space geometry; mixed-version indices silently scramble similarity ranking. Likewise, ingesting updated policies without access-control metadata or stale-document deletion produces confident retrieval hallucinations. Bundling prompts, weights, model configs, tool schemas, guardrail rules, and embedding versions into one Git-tracked release manifest guarantees full point-in-time reproducibility.</p>
+<h3 id="the-guardrails-2">The Guardrails <a class="heading-anchor" href="#the-guardrails-2" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Ship one immutable release bundle:</strong> Version system prompts, decoding parameters, tool JSON schemas, guardrail policies, embedding IDs, and foundation-model snapshots together under a single deployment manifest digest.</li>
+<li><strong>Automate materiality routing in CI/CD:</strong> Configure repository checks so modifications touching prompts, RAG config, guardrail rules, tool schemas, or endpoint strings automatically enforce Tier B or Tier C test gates rather than relying on manual self-triage.</li>
+<li><strong>Execute dual-endpoint shadow diffs before migration:</strong> Replay masked representative traffic simultaneously against incumbent and candidate snapshots—tracking schema breakages, refusal-rate deltas, citation fidelity, latency, and token inflation prior to shifting live users.</li>
+<li><strong>Swap embedding models via blue/green atomic re-indexing:</strong> Build the new vector collection completely offline, verify retrieval recall matches baseline benchmarks, and cut over via an atomic alias swap.</li>
+</ul>
+<hr />
+<h2 id="243-drift-degradation-and-continuous-monitoring">24.3 Drift, Degradation, and Continuous Monitoring <a class="heading-anchor" href="#243-drift-degradation-and-continuous-monitoring" aria-label="Link to section">#</a></h2>
+<p>Pre-deployment testing verifies past performance against curated inputs; continuous monitoring detects how production models respond to shifting populations, evolving policies, and emerging abuse in live traffic. Tracking CPU load, HTTP status codes, and p95 latency alone misses AI's central operational failure mode: <strong>silent semantic degradation</strong> beneath green uptime dashboards.</p>
+<p>Production drift develops through four mechanisms. <strong>Covariate drift</strong> occurs when incoming prompt topics, phrasing, languages, or document lengths diverge from baseline test sets. <strong>Concept drift</strong> emerges when underlying laws, pricing tables, clinical standards, or product specs change faster than RAG indices update, turning yesterday's accurate answer into an outdated liability. <strong>Behavioral drift</strong> reflects upstream provider adjustments, prompt-edit side effects, or guardrail miscalibration altering refusal rates, tone, or tool syntax. <strong>Recursive contamination drift</strong> strikes when teams ingest unreviewed AI-generated summaries, synthetic support notes, or scraped web content back into knowledge bases or fine-tuning runs: Shumailov and colleagues proved in <em>Nature</em> that recursive training on synthetic outputs causes &quot;model collapse,&quot; progressively erasing tail knowledge and narrowing output diversity.<sup class="fn-ref"><a href="#fn-c24-08" id="fnref-c24-08" title="Jump to note 8">[8]</a></sup></p>
+<p>Detecting those failures at scale requires automated quality signals grounded by human calibration. Reference-free evaluation frameworks like RAGAS measure <strong>faithfulness</strong> (claim grounding in retrieved text), <strong>answer relevance</strong>, and <strong>context precision/recall</strong>, distinguishing retrieval failures from generator hallucinations.<sup class="fn-ref"><a href="#fn-c24-09" id="fnref-c24-09" title="Jump to note 9">[9]</a></sup> For open-ended tasks, LLM-as-a-Judge pipelines score sampled production traffic continuously against structured rubrics: Zheng and colleagues established that well-calibrated judge models reach over 80% agreement with human preferences—comparable to human inter-annotator consistency—provided teams counter three documented distortions: <strong>position bias</strong>, <strong>verbosity bias</strong>, and <strong>self-enhancement bias</strong>.<sup class="fn-ref"><a href="#fn-c24-10" id="fnref-c24-10" title="Jump to note 10">[10]</a></sup></p>
+<p>Telemetry reduces risk only when threshold breaches trigger deterministic action. Under EU AI Act Article 72, high-risk AI providers must operate a proportionate post-market monitoring system collecting, documenting, and analyzing performance and compliance evidence throughout the system's active lifetime.<sup class="fn-ref"><a href="#fn-c24-11" id="fnref-c24-11" title="Jump to note 11">[11]</a></sup></p>
+<figure class="mermaid-wrap"><pre class="mermaid">flowchart LR
+    T[&quot;Live Telemetry: Faithfulness, Refusals, Schema Errors, Human Overrides&quot;] --&gt; D{&quot;Drift vs. Baseline Threshold?&quot;}
+    D --&gt;|&quot;Green: Within Band&quot;| L[&quot;Log Rolling Metrics &amp; Sample Calibration&quot;]
+    D --&gt;|&quot;Amber: Soft Breach (e.g., Override Rate +5%)&quot;| C[&quot;Shadow Replay &amp; Human Triage Review&quot;]
+    D --&gt;|&quot;Red: Hard Breach (PII Leak / Faithfulness Drop)&quot;| B[&quot;Auto-Circuit Breaker: Rollback Release / Safe Fallback&quot;]
+    C --&gt; G{&quot;Substantial Drift Confirmed?&quot;}
+    G --&gt;|&quot;Yes&quot;| R[&quot;Trigger Tier B/C/D Re-Baseline &amp; Governance Review&quot;]
+    G --&gt;|&quot;No&quot;| L
+    B --&gt; R</pre></figure>
+<p>Three operational safeguards prevent monitoring pipelines from failing silently themselves:</p>
+<ol>
+<li><strong>Counter judge biases by design:</strong> Execute pairwise LLM judge checks in swapped <code>A/B</code> and <code>B/A</code> ordering, penalize ungrounded verbosity explicitly in rubrics, and avoid evaluating a model exclusively with an identically fine-tuned family member.<sup class="fn-ref"><a href="#fn-c24-10" id="fnref-c24-10-2" title="Jump to note 10">[10]</a></sup></li>
+<li><strong>Track downstream human-behavior proxies:</strong> Rising employee overrides, frequent conversation resets, support escalations, and repeated tool retries often reveal practical quality erosion weeks before automated safety scorers alert.</li>
+<li><strong>Watermark and quarantine AI-generated text before ingestion:</strong> Tag agent-created drafts and synthetic records with provenance metadata (Chapter 18) so corpus sync jobs exclude unverified AI outputs from authoritative RAG indices and training sets.<sup class="fn-ref"><a href="#fn-c24-08" id="fnref-c24-08-2" title="Jump to note 8">[8]</a></sup></li>
+</ol>
+<h3 id="the-guardrails-3">The Guardrails <a class="heading-anchor" href="#the-guardrails-3" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Monitor behavioral SLIs beside uptime SLAs:</strong> Dashboard rolling 24-hour and 7-day faithfulness, JSON schema compliance, refusal rates, citation accuracy, human-override frequency, and input-embedding drift rather than availability metrics alone.</li>
+<li><strong>Recalibrate LLM judges monthly against human gold sets:</strong> Audit automated evaluators against blind domain-expert labels—and immediately upon any judge-model upgrade—to confirm stable agreement.</li>
+<li><strong>Bind red thresholds to automated circuit breakers:</strong> Pre-wire quantitative quality and safety breaches to auto-throttle canaries, revert to the last known-good bundle digest, or route traffic to deterministic fallback workflows without waiting for incident triage meetings.</li>
+</ul>
+<hr />
+<h2 id="244-decommissioning-ai-systems-safely">24.4 Decommissioning AI Systems Safely <a class="heading-anchor" href="#244-decommissioning-ai-systems-safely" aria-label="Link to section">#</a></h2>
+<p>Organizations invest heavily in launching AI workloads and very little in retiring them cleanly. Informal shutdowns leave dangerous technical and legal residue: forgotten staging endpoints, stale customer embeddings persisting in unpurged vector snapshots, non-human credentials retaining live permissions, unnotified downstream business teams, stale inventory records, and blind cleanup scripts that destroy records required by regulators or civil litigation holds.</p>
+<p>Retiring an AI asset cleanly requires four coordinated workstreams:</p>
+<ol>
+<li><strong>Traffic Drain, Dependency Discovery, and Stakeholder Notification:</strong> Before terminating an endpoint or MCP tool server, trace every caller via gateway logs, service principals, and the Central AI Registry and AI-BOM (Chapter 5). Issue formal advance retirement notices to downstream business owners, operational support desks, and external customer stakeholders where customer-facing workflows are transitioning, move the asset's Central AI Registry and AI-BOM status from <code>Active</code> to <code>Deprecated</code>, and migrate active integrations during a monitored soak window (<code>14–30 days</code> at zero production calls) so undocumented cron jobs or shadow automations fail safely during transition rather than causing unmonitored outages.</li>
+<li><strong>Non-Human Identity (NHI) Revocation:</strong> AI stacks multiply machine identities—API keys, service accounts, vector-database tokens, OAuth refresh grants, and inter-agent secrets—outside HR employee offboarding flows. The OWASP Non-Human Identities Top 10 identifies improper offboarding as a premier vector of lingering compromise when orphaned credentials outlive retired apps.<sup class="fn-ref"><a href="#fn-c24-12" id="fnref-c24-12" title="Jump to note 12">[12]</a></sup> Revoke every scoped key, token, and IAM role bound to the decommissioned workload and confirm zero post-cutoff auth events.</li>
+<li><strong>Sanitizing Weights, Adapters, and Derived Vector Stores:</strong> Terminating containers leaves persistent snapshots, backups, BM25 keyword indices, prompt caches, and fine-tuned LoRA weights retaining corporate or personal data. NIST Special Publication 800-88 Revision 2 (September 2025) codifies enterprise media sanitization across three methods—<strong>Clear</strong>, <strong>Purge</strong> (including <strong>Cryptographic Erase</strong>, destroying encryption keys protecting target stores across all replicas), and physical <strong>Destroy</strong>—backed by verification checks and retained <strong>Certificates of Sanitization</strong>.<sup class="fn-ref"><a href="#fn-c24-13" id="fnref-c24-13" title="Jump to note 13">[13]</a></sup> Because surgical weight unlearning remains unreliable, retiring custom adapters, RAG indices, and semantic caches demands destroying primary volumes, backup replicas, and tenant encryption keys systematically once retention obligations expire.</li>
+<li><strong>Evidence Preservation vs. Privacy Deletion (Resolving the Retention Paradox):</strong> Legal and privacy obligations pull in opposite directions at shutdown. Data-minimization mandates require purging personal embeddings and user prompts once no longer needed operationally, whereas governance statutes and discovery rules require preserving proof of historical system behavior. Over-retaining live vector indices breaches privacy; wiping audit logs breaches compliance and risks spoliation sanctions.</li>
+</ol>
+<p>The EU AI Act defines separate retention clocks by lifecycle role. Under <strong>Article 18</strong>, providers of high-risk AI systems must keep technical documentation (Annex IV), quality-management files, change records, and declarations of conformity available to authorities for <strong>10 years</strong> after market placement or putting into service.<sup class="fn-ref"><a href="#fn-c24-11" id="fnref-c24-11-2" title="Jump to note 11">[11]</a></sup> Under <strong>Article 26(6)</strong>, <strong>deployers</strong> of high-risk systems must retain automatically generated operational logs for a duration suited to intended purpose and <strong>at least 6 months</strong>, unless stricter sectoral laws apply.<sup class="fn-ref"><a href="#fn-c24-11" id="fnref-c24-11-3" title="Jump to note 11">[11]</a></sup> Separately, in U.S. litigation, <strong>Federal Rule of Civil Procedure 37(e)</strong> authorizes sanctions when organizations fail to take reasonable steps to preserve electronically stored information—including version manifests, archived prompts, retrieved chunks, and override logs—after a legal-hold duty attaches, even if loss resulted from routine retirement cleanup.<sup class="fn-ref"><a href="#fn-c24-14" id="fnref-c24-14" title="Jump to note 14">[14]</a></sup></p>
+<pre><code>Retirement Decision
+   ├── Live Runtime Stores (Inference Endpoints, Staging Sandboxes, Vector Caches, NHIs)
+   │      └── Traffic Drain -&gt; Revoke NHIs -&gt; NIST SP 800-88r2 Purge / Crypto-Erase + Certificate
+   └── Evidentiary Governance Archive (Release Manifest, Eval Reports, Change Logs, Legal Holds)
+          ├── Deployer Operational Logs: &gt;= 6 months (EU AI Act Art. 26(6)) or sectoral max
+          ├── Provider Technical Docs &amp; Change History: 10 years (EU AI Act Art. 18)
+          └── Active Litigation Hold (FRCP 37(e)): Suspend All Purge Jobs -&gt; Immutable WORM Archive
+</code></pre>
+<p>ISO/IEC 42001 ties lifecycle governance together through an auditable Plan-Do-Check-Act (PDCA) loop, requiring controlled documented information across design, deployment, change review, monitoring, and retirement so internal and external auditors can verify historical outputs alongside confirmed decommissioning.<sup class="fn-ref"><a href="#fn-c24-15" id="fnref-c24-15" title="Jump to note 15">[15]</a></sup></p>
+<h3 id="the-guardrails-4">The Guardrails <a class="heading-anchor" href="#the-guardrails-4" aria-label="Link to section">#</a></h3>
+<ul>
+<li><strong>Gate Central AI Registry and CMDB closure on a signed AI Decommissioning Checklist:</strong> Require documented stakeholder retirement notices, zero-traffic drain logs, full NHI revocation, vector-store and backup sanitization verification, cloud-billing sign-off, and Central AI Registry / AI-BOM lifecycle status transition (<code>Active</code> → <code>Deprecated</code> → <code>Retired</code>) before marking any asset <code>Retired</code>.</li>
+<li><strong>Separate live-cache sanitization from immutable compliance archives:</strong> Cryptographically purge live vector collections, prompt caches, and fine-tuning scratch data per NIST SP 800-88 Rev. 2 while moving release manifests, evaluation scores, change logs, and incident records to append-only compliance vaults.</li>
+<li><strong>Automate retention clocks and FRCP 37(e) legal-hold overrides:</strong> Enforce role-specific retention rules (<code>10 years</code> for high-risk provider files under EU AI Act Art. 18; <code>&gt;=6 months</code> or sector-mandated longer windows for deployer logs under Art. 26(6)) and wire instant freeze hooks halting scheduled deletion jobs whenever Legal issues a preservation hold.</li>
+<li><strong>Reconcile cloud billing and NHI inventories quarterly against the CMDB:</strong> Hunt down unowned vector clusters, staging sandboxes, and dormant service tokens before adversaries or privacy audits find them.</li>
+</ul>
+<hr />
+<h2 id="why-every-role-cares">Why Every Role Cares <a class="heading-anchor" href="#why-every-role-cares" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">What Changes for Your Team</th>
+<th style="text-align:left">Primary Lifecycle Risk if Ignored</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>CIO / CTO</strong></td>
+<td style="text-align:left">Bring prompts, model snapshots, RAG indices, and NHIs under one versioned release and CMDB pipeline.</td>
+<td style="text-align:left">Emergency migrations under 60-day vendor sunsets and untracked &quot;zombie&quot; clusters leaking cost and data.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CISO / IAM Lead</strong></td>
+<td style="text-align:left">Govern model-serving NHIs, staging vector stores, and snapshot cutovers as Tier-1 security boundaries.</td>
+<td style="text-align:left">Compromised dormant service keys, residual sensitive data in unpurged indices, and untested guardrail regressions.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Chief Risk Officer / Model Risk</strong></td>
+<td style="text-align:left">Enforce materiality-tiered re-validation (Table 24.1) and automated drift triggers across every model and update.</td>
+<td style="text-align:left">Silent performance decay or fairness drift between annual reviews breaching SR 26-2 or ISO/IEC 42001 duties.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>General Counsel / Privacy Officer</strong></td>
+<td style="text-align:left">Separate live-store purge rules from 6-month / 10-year governance archives and instant FRCP 37(e) legal holds.</td>
+<td style="text-align:left">Unlawful retention of personal embeddings—or court spoliation sanctions when decommissioning wipes evidence.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI / MLOps Engineering</strong></td>
+<td style="text-align:left">Package prompts, schemas, weights, and embedding versions into immutable release bundles tested via shadow diffs.</td>
+<td style="text-align:left">Production incidents triggered by minor vendor updates, broken output parsers, or split vector spaces.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Internal Audit</strong></td>
+<td style="text-align:left">Verify release lineage, shadow-diff logs, drift-trigger records, and sanitization certificates end-to-end.</td>
+<td style="text-align:left">Inability to prove which prompt, snapshot, and RAG corpus governed an audited customer decision months earlier.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="chapter-summary">Chapter Summary <a class="heading-anchor" href="#chapter-summary" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Lifecycle Stage</th>
+<th style="text-align:left">Core Governance Challenge</th>
+<th style="text-align:left">Key Technical &amp; Process Controls</th>
+<th style="text-align:left">Primary Frameworks / Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Snapshot &amp; Vendor Evolution (24.1)</strong></td>
+<td style="text-align:left">Silent behavioral shifts under identical brands; floating aliases; forced deprecation cliffs</td>
+<td style="text-align:left">Ban <code>-latest</code> aliases; track vendor sunset schedules at <code>T-60+</code> days; enforce deterministic output-schema validators</td>
+<td style="text-align:left">Chen et al. (<em>HDSR</em> 2024); Federal Reserve SR 26-2; Vendor deprecation calendars</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Change Management (24.2)</strong></td>
+<td style="text-align:left">CACE ripple effects across prompts, weights, serving stacks, and vector indices</td>
+<td style="text-align:left">4-tier Change-Materiality Matrix (Table 24.1); Git-bundled release manifests; shadow diffing; atomic blue/green re-indexing</td>
+<td style="text-align:left">FDA PCCP; Sculley et al. (CACE); OpenAI 2025 Sycophancy postmortem; He (2025)</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Continuous Monitoring (24.3)</strong></td>
+<td style="text-align:left">Silent semantic decay, stale facts, evaluator bias, recursive collapse</td>
+<td style="text-align:left">Reference-free RAG telemetry (RAGAS); swap-order &amp; cross-family LLM judges; auto-rollback circuit breakers; corpus quarantine</td>
+<td style="text-align:left">Shumailov et al. (<em>Nature</em> 2024); Zheng et al. (NeurIPS 2023); EU AI Act Art. 72</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Decommissioning &amp; Retention (24.4)</strong></td>
+<td style="text-align:left">Orphaned NHIs, residual vector indices, competing privacy vs. audit/litigation clocks</td>
+<td style="text-align:left">Traffic drain; full NHI revocation; NIST SP 800-88r2 sanitization certificates; split 6-month / 10-year / FRCP 37(e) archives</td>
+<td style="text-align:left">NIST SP 800-88r2; OWASP NHI Top 10; EU AI Act Arts. 18 &amp; 26(6); FRCP 37(e); ISO/IEC 42001</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="key-takeaways">Key Takeaways <a class="heading-anchor" href="#key-takeaways" aria-label="Link to section">#</a></h2>
+<ul>
+<li><strong>Static assumptions break immediately in AI:</strong> Pinning dated snapshots only delays change; floating aliases, infrastructure kernel shifts, and 60-day vendor sunsets require continuous migration readiness.</li>
+<li><strong>Prompts, retrieval corpora, and model weights act as one coupled system:</strong> Adjusting a chunk size, embedding model, safety threshold, or prompt clause can destabilize production as severely as swapping weights—every piece belongs in one versioned bundle gated by materiality tiers.</li>
+<li><strong>Infrastructure uptime hides AI failure:</strong> Monitoring requires behavioral telemetry (faithfulness, schema integrity, refusal calibration, human overrides) backed by bias-mitigated evaluators and automated circuit breakers.</li>
+<li><strong>Decommissioning is a security, privacy, and evidentiary act:</strong> Shutting down containers without revoking non-human identities, sanitizing derived vector stores under NIST SP 800-88r2, and preserving role-appropriate audit and legal-hold archives exposes all three domains simultaneously.</li>
+</ul>
+<hr />
+<h2 id="questions-to-ask">Questions to Ask <a class="heading-anchor" href="#questions-to-ask" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Target Team</th>
+<th style="text-align:left">Concrete Diagnostic Question</th>
+<th style="text-align:left">What a Strong Answer Looks Like</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>AI Platform / MLOps</strong></td>
+<td style="text-align:left"><em>&quot;If a core model vendor issues a 60-day snapshot retirement notice tomorrow, how quickly can we validate and cut over to a replacement?&quot;</em></td>
+<td style="text-align:left">Pre-vetted fallback candidates, an automated shadow-diff suite checking schemas and golden accuracy, and cutover runbooks rehearsed inside two weeks.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Engineering &amp; Product</strong></td>
+<td style="text-align:left"><em>&quot;Can we reconstruct the exact prompt, model snapshot ID, guardrail ruleset, and RAG index state behind a production decision from six months ago?&quot;</em></td>
+<td style="text-align:left">Yes—every inference logs an immutable release-bundle digest linked in Git/MLflow to exact prompt, weights, tool definitions, and retrieval-snapshot versions.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Quality / Risk Engineering</strong></td>
+<td style="text-align:left"><em>&quot;How do we catch silent semantic decay when HTTP errors stay at zero, and how are our automated LLM judges calibrated?&quot;</em></td>
+<td style="text-align:left">Rolling RAGAS faithfulness, schema-break, and human-override alerts trigger canary freezes; judges use order-swapped, cross-family scoring audited monthly against human gold labels.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Security / IAM / FinOps</strong></td>
+<td style="text-align:left"><em>&quot;Show me every AI system retired in the past 12 months: how did we prove its vector caches, staging clones, and API keys are gone?&quot;</em></td>
+<td style="text-align:left">Closed decommission tickets include zero-traffic drain logs, IAM token revocation records, NIST SP 800-88r2 sanitization certificates, and billing reconciliation.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Legal / Compliance</strong></td>
+<td style="text-align:left"><em>&quot;When decommissioning scripts purge a retired assistant, do they preserve records required by EU AI Act Art. 18/26(6) and active FRCP 37(e) holds?&quot;</em></td>
+<td style="text-align:left">Yes—live vector caches sanitize on schedule while immutable governance records (<code>10-year</code> technical files / <code>&gt;=6-month</code> deployer logs) reside in WORM archives under automated hold locks.</td>
+</tr>
+</tbody>
+</table></div>
+
+<section class="footnotes" id="notes" aria-label="Notes">
+<h2>References</h2>
+<ol class="footnote-list">
+<li id="fn-c24-02"><span class="fn-body">Lingjiao Chen, Matei Zaharia, and James Zou, &quot;How Is ChatGPT's Behavior Changing Over Time?&quot; <em>Harvard Data Science Review</em> 6, Special Issue 5 (2024), arXiv:2307.09009, doi:10.1162/99608f92.5317da47. <strong>Annotation:</strong> Empirical longitudinal benchmark demonstrating substantial accuracy, formatting, chain-of-thought, and refusal shifts between March and June 2023 GPT-4 and GPT-3.5 snapshots under consistent product branding. <a href="bibliography.html#chen-2024-chatgpt-drift">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c24-02" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c24-02-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c24-01"><span class="fn-body">OpenAI, <em>Deprecations — OpenAI API Documentation</em> (continuously updated platform deprecation schedule and snapshot retirement dates; comparable commercial lifecycle calendars include Anthropic's minimum 60-day advance retirement notice across <code>Active</code> -&gt; <code>Legacy</code> -&gt; <code>Deprecated</code> -&gt; <code>Retired</code> stages and hyperscaler-specific managed retirement windows). <strong>Annotation:</strong> Illustrates why even pinned foundation-model snapshots carry finite lifespans requiring proactive tracking and pre-tested fallback endpoints. <a href="bibliography.html#openai-deprecations">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c24-01" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c24-01-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c24-03"><span class="fn-body">Board of Governors of the Federal Reserve System, Office of the Comptroller of the Currency, and Federal Deposit Insurance Corporation, <em>Revised Guidance on Model Risk Management</em>, SR 26-2 / OCC Bulletin 2026-13 / FIL-15-2026 (April 17, 2026). <strong>Annotation:</strong> Supersedes SR 11-7 and shifts U.S. banking model risk management toward materiality-based proportionality across lifecycle validation, ongoing monitoring, vendor updates, and retirement while expecting generative and agentic AI outside narrow model scope to be governed under broader enterprise risk management. <a href="bibliography.html#fed-2026-sr26-2">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c24-03" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c24-04"><span class="fn-body">U.S. Food and Drug Administration, <em>Marketing Submission Recommendations for a Predetermined Change Control Plan for Artificial Intelligence-Enabled Device Software Functions</em> (Final Guidance, December 2024). <strong>Annotation:</strong> Establishes the pre-specified modification boundary, verification protocol, and impact-assessment discipline used across regulated industries for materiality-gated AI change management. <a href="bibliography.html#fda-2024-ai-samd">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c24-04" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c24-07"><span class="fn-body">D. Sculley, Gary Holt, Daniel Golovin, Eugene Davydov, Todd Phillips, Dietmar Ebner, Vinay Chaudhary, Michael Young, Jean-François Crespo, and Dan Dennison, &quot;Hidden Technical Debt in Machine Learning Systems,&quot; <em>Advances in Neural Information Processing Systems (NeurIPS)</em> 28 (2015). <strong>Annotation:</strong> Introduces the CACE (&quot;Changing Anything Changes Everything&quot;) principle and pipeline-entanglement taxonomy explaining why minor prompt, feature, retrieval, or configuration edits require coupled regression testing. <a href="bibliography.html#sculley-2015-debt">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c24-07" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c24-05"><span class="fn-body">OpenAI, <em>Sycophancy in GPT-4o: What Happened and What We're Doing About It</em> (April 29, 2025 incident postmortem). <strong>Annotation:</strong> Documents how overly weighting short-term positive feedback signals alongside behavioral adjustments shifted real-world calibration toward excessive sycophancy under an unchanged API schema, forcing an emergency rollback. <a href="bibliography.html#openai-2025-sycophancy">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c24-05" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c24-06"><span class="fn-body">Horace He and Thinking Machines Lab, <em>Defeating Nondeterminism in LLM Inference</em> (Technical Essay, September 2025). <strong>Annotation:</strong> Explains how dynamic request batching and kernel execution differences alter outputs even with frozen weights and prompts, bringing serving-stack updates under change control. <a href="bibliography.html#he-2025-nondeterminism">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c24-06" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c24-08"><span class="fn-body">Ilia Shumailov, Zakhar Shumaylov, Yiren Zhao, Nicolas Papernot, Ross Anderson, and Yarin Gal, &quot;AI Models Collapse When Trained on Recursively Generated Data,&quot; <em>Nature</em> 631 (July 2024), pp. 755–759, doi:10.1038/s41586-024-07566-y. <strong>Annotation:</strong> Proves mathematically and empirically that recursive ingestion of uncurated synthetic outputs irreversibly narrows distribution tails and degrades accuracy, motivating synthetic-data quarantine across fine-tuning and RAG pipelines. <a href="bibliography.html#shumailov-2024-collapse">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c24-08" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c24-08-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c24-09"><span class="fn-body">Shahul Es, Jithin James, Luis Espinosa Anke, and Steven Schockaert, &quot;RAGAS: Automated Evaluation of Retrieval Augmented Generation,&quot; <em>Proceedings of the 18th Conference of the European Chapter of the Association for Computational Linguistics (EACL 2024): System Demonstrations</em> (March 2024), arXiv:2309.15217, doi:10.48550/arXiv.2309.15217. <strong>Annotation:</strong> Defines reference-free continuous monitoring metrics—faithfulness, answer relevance, and context precision/recall—isolating whether retrieval decay or generator drift drives RAG quality degradation. <a href="bibliography.html#es-2024-ragas">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c24-09" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c24-10"><span class="fn-body">Lianmin Zheng, Wei-Lin Chiang, Ying Sheng, Siyuan Zhuang, Zhanghao Wu, Yonghao Zhuang, Zi Lin, Zhuohan Li, Dacheng Li, Eric P. Xing, Hao Zhang, Joseph E. Gonzalez, and Ion Stoica, &quot;Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena,&quot; <em>Advances in Neural Information Processing Systems (NeurIPS)</em> 36 (2023), arXiv:2306.05685, doi:10.48550/arXiv.2306.05685. <strong>Annotation:</strong> Establishes that calibrated LLM evaluators exceed 80% agreement with human preferences while identifying position, verbosity, and self-enhancement biases that monitoring pipelines must control. <a href="bibliography.html#zheng-2023-llm-judge">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c24-10" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c24-10-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c24-11"><span class="fn-body">European Parliament and Council of the European Union, <em>Regulation (EU) 2024/1689 (Artificial Intelligence Act)</em>, Official Journal of the EU, July 12, 2024 — specifically Articles 18 (10-year provider technical documentation and conformity-declaration retention), 26(6) (at least 6-month deployer operational log retention), 61/Annex IV (substantial modification reassessment), and 72 (proportionate post-market monitoring throughout lifetime). <strong>Annotation:</strong> Establishes binding EU lifecycle duties separating post-market monitoring, substantial-modification re-certification, and distinct provider versus deployer archival timelines. <a href="bibliography.html#eu-2024-ai-act">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c24-11" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c24-11-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a> <a href="#fnref-c24-11-3" class="fn-backref" title="Back to citation 3">&#8617;&#xfe0e;<sup>3</sup></a></span></li>
+<li id="fn-c24-12"><span class="fn-body">OWASP Foundation, <em>OWASP Non-Human Identities Top 10: 2025</em>, specifically Improper Offboarding (<code>NHI1:2025</code>) and Secret Leakage (<code>NHI2:2025</code>). <strong>Annotation:</strong> Documents why AI agent service principals, API keys, webhook tokens, and sandbox credentials routinely outlive decommissioned deployments unless bound to explicit offboarding workflows. <a href="bibliography.html#owasp-2025-nhi-top10">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c24-12" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c24-13"><span class="fn-body">National Institute of Standards and Technology, <em>Guidelines for Media Sanitization</em>, NIST Special Publication 800-88 Revision 2 (September 2025, superseding Rev. 1). <strong>Annotation:</strong> Defines enterprise sanitization standards—Clear, Purge (including Cryptographic Erase), and Destroy—alongside verification requirements and Certificates of Sanitization applicable to retiring AI model weights, vector indices, backups, and semantic caches. <a href="bibliography.html#nist-2025-800-88r2">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c24-13" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c24-14"><span class="fn-body">Judicial Conference of the United States, <em>Federal Rules of Civil Procedure, Rule 37(e): Failure to Preserve Electronically Stored Information</em> (2015 amendment). <strong>Annotation:</strong> Governs sanctions for spoliation when routine model-retirement scripts, prompt purges, or ephemeral log deletions destroy relevant AI outputs and version evidence after a duty to preserve attaches. <a href="bibliography.html#us-frcp-37e">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c24-14" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c24-15"><span class="fn-body">International Organization for Standardization, <em>ISO/IEC 42001:2023 — Information technology — Artificial intelligence — Management system</em> (December 2023), Clauses 8–10 (Operational Control, Performance Evaluation, and Continual Improvement). <strong>Annotation:</strong> Embeds change control, post-deployment monitoring, controlled AI retirement, and lifecycle evidence archival inside a certifiable Plan-Do-Check-Act management system. <a href="bibliography.html#iso-2023-42001">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c24-15" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+</ol>
+</section>
+        <nav class="pager" aria-label="Chapter navigation"><a class="pager-card pager-prev" href="23-vendor-and-third-party-ai-risk.html"><span class="pager-dir">&larr; Previous</span><span class="pager-title">Chapter 23: Vendor &amp; Third-Party AI Risk</span></a><a class="pager-card pager-next" href="25-operational-resilience-and-business-continuity.html"><span class="pager-dir">Next &rarr;</span><span class="pager-title">Chapter 25: Operational Resilience &amp; Business Continuity</span></a></nav>
+      </article>
+      <footer class="doc-footer">
+        Building Guardrails for Enterprise AI &middot; Built 2026-11-22
+      </footer>
+    </main>
+<aside class="page-toc" aria-label="On this page">
+  <div class="page-toc-inner">
+    <div class="page-toc-title">On this page</div>
+    <ul><li class="toc-l3"><a href="#illustrative-composite-scenario-the-60-day-sunset-and-the-zombie-vector-store">Illustrative Composite Scenario: The 60-Day Sunset and the Zombie Vector Store</a></li><li class="toc-l2"><a href="#241-model-versioning-and-vendor-forced-deprecation">24.1 Model Versioning and Vendor-Forced Deprecation</a></li><li class="toc-l3"><a href="#the-guardrails">The Guardrails</a></li><li class="toc-l2"><a href="#242-re-validating-when-the-underlying-model-changes">24.2 Re-Validating When the Underlying Model Changes</a></li><li class="toc-l3"><a href="#the-guardrails-2">The Guardrails</a></li><li class="toc-l2"><a href="#243-drift-degradation-and-continuous-monitoring">24.3 Drift, Degradation, and Continuous Monitoring</a></li><li class="toc-l3"><a href="#the-guardrails-3">The Guardrails</a></li><li class="toc-l2"><a href="#244-decommissioning-ai-systems-safely">24.4 Decommissioning AI Systems Safely</a></li><li class="toc-l3"><a href="#the-guardrails-4">The Guardrails</a></li><li class="toc-l2"><a href="#why-every-role-cares">Why Every Role Cares</a></li><li class="toc-l2"><a href="#chapter-summary">Chapter Summary</a></li><li class="toc-l2"><a href="#key-takeaways">Key Takeaways</a></li><li class="toc-l2"><a href="#questions-to-ask">Questions to Ask</a></li><li class="toc-l2"><a href="#notes">Notes</a></li></ul>
+  </div>
+</aside>
+  </div>
+</body>
+</html>

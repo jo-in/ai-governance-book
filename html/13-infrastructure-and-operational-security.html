@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chapter 13: Infrastructure &amp; Operational Security — Building Guardrails for Enterprise AI</title>
+  <meta name="description" content="Hardening Enterprise AI Against Hallucinations, Hacks, and Liability" />
+  <script>
+    (function () {
+      var param = null;
+      var saved = null;
+      var winTheme = null;
+      try {
+        param = new URLSearchParams(window.location.search).get("theme");
+      } catch (e) {}
+      try {
+        saved = localStorage.getItem("book-theme");
+      } catch (e) {}
+      try {
+        var wm = (window.name || "").match(/^book-theme:(dark|light)$/);
+        if (wm) winTheme = wm[1];
+      } catch (e) {}
+      var explicit = (param === "dark" || param === "light")
+        ? param
+        : ((saved === "dark" || saved === "light")
+            ? saved
+            : ((winTheme === "dark" || winTheme === "light") ? winTheme : null));
+      if (explicit) {
+        try { localStorage.setItem("book-theme", explicit); } catch (e) {}
+        try { window.name = "book-theme:" + explicit; } catch (e) {}
+        document.documentElement.setAttribute("data-theme-explicit", "1");
+      }
+      var theme = explicit || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="assets/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js" defer></script>
+  <script src="assets/search-index.js" defer></script>
+  <script src="assets/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+        <span aria-hidden="true">&#9776;</span>
+      </button>
+      <a class="brand" href="index.html">
+        <span class="brand-title">Building Guardrails for Enterprise AI</span>
+      </a>
+    </div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="search-focus-btn" type="button" title="Search (/ or Cmd+K)">Search <kbd>/</kbd></button>
+      <button class="icon-btn" id="theme-toggle" type="button" title="Toggle color theme" aria-label="Toggle color theme">&#9680;</button>
+    </div>
+  </header>
+
+  <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
+  <div class="layout">
+<aside class="sidebar" id="sidebar" aria-label="Book navigation">
+  <div class="sidebar-search">
+    <label class="sr-only" for="search-input">Search handbook</label>
+    <input id="search-input" class="search-input" type="search" placeholder="Search handbook… (/)" autocomplete="off" />
+    <div id="search-results" class="search-results" hidden></div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-home" href="index.html">Contents &amp; Overview</a>
+    <div class="nav-group">
+      <div class="nav-group-title">Front Matter</div>
+      <ul class="nav-list">
+        <li><a href="00-front-matter.html">Front Matter</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part I: Foundations</div>
+      <ul class="nav-list">
+        <li><a href="01-why-ai-risk-is-different.html">Chapter 1: Why AI Risk Is Different</a></li>
+        <li><a href="02-reference-frameworks-at-a-glance.html">Chapter 2: Reference Frameworks at a Glance</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part II: Governance &amp; Accountability</div>
+      <ul class="nav-list">
+        <li><a href="03-board-and-executive-oversight.html">Chapter 3: Board &amp; Executive Oversight</a></li>
+        <li><a href="04-ai-governance-operating-model.html">Chapter 4: The AI Governance Operating Model</a></li>
+        <li><a href="05-policies-inventory-and-risk-tiering.html">Chapter 5: Policies, Inventory &amp; Risk Tiering</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part III: Data Risk</div>
+      <ul class="nav-list">
+        <li><a href="06-data-leakage-and-shadow-ai.html">Chapter 6: Data Leakage &amp; Shadow AI</a></li>
+        <li><a href="07-internal-over-exposure-and-permission-aware-ai.html">Chapter 7: Internal Over-Exposure &amp; Permission-Aware AI</a></li>
+        <li><a href="08-data-provenance-consent-and-sovereignty.html">Chapter 8: Data Provenance, Consent &amp; Sovereignty</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part IV: Security</div>
+      <ul class="nav-list">
+        <li><a href="09-ai-threat-landscape.html">Chapter 9: The AI Threat Landscape</a></li>
+        <li><a href="10-prompt-injection-and-manipulation.html">Chapter 10: Prompt Injection &amp; Manipulation</a></li>
+        <li><a href="11-securing-ai-agents.html">Chapter 11: Securing AI Agents</a></li>
+        <li><a href="12-model-and-supply-chain-security.html">Chapter 12: Model &amp; Supply Chain Security</a></li>
+        <li><a href="13-infrastructure-and-operational-security.html" class="is-active" aria-current="page">Chapter 13: Infrastructure &amp; Operational Security</a></li>
+        <li><a href="14-ai-enabled-external-threats.html">Chapter 14: AI-Enabled External Threats</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part V: Output, Trust &amp; Liability</div>
+      <ul class="nav-list">
+        <li><a href="15-hallucinations-and-reliability.html">Chapter 15: Hallucinations &amp; Reliability</a></li>
+        <li><a href="16-bias-fairness-and-discrimination.html">Chapter 16: Bias, Fairness &amp; Discrimination</a></li>
+        <li><a href="17-human-oversight-and-automation-bias.html">Chapter 17: Human Oversight &amp; Automation Bias</a></li>
+        <li><a href="18-transparency-disclosure-and-content-provenance.html">Chapter 18: Transparency, Disclosure &amp; Content Provenance</a></li>
+        <li><a href="19-intellectual-property-and-licensing.html">Chapter 19: Intellectual Property &amp; Licensing</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VI: Regulation &amp; Compliance</div>
+      <ul class="nav-list">
+        <li><a href="20-the-global-regulatory-landscape.html">Chapter 20: The Global Regulatory Landscape</a></li>
+        <li><a href="21-sector-specific-requirements.html">Chapter 21: Sector-Specific Requirements</a></li>
+        <li><a href="22-auditability-assessments-and-evidence.html">Chapter 22: Auditability, Assessments &amp; Evidence</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VII: Third-Party &amp; Lifecycle Risk</div>
+      <ul class="nav-list">
+        <li><a href="23-vendor-and-third-party-ai-risk.html">Chapter 23: Vendor &amp; Third-Party AI Risk</a></li>
+        <li><a href="24-model-lifecycle-and-change-management.html">Chapter 24: Model Lifecycle &amp; Change Management</a></li>
+        <li><a href="25-operational-resilience-and-business-continuity.html">Chapter 25: Operational Resilience &amp; Business Continuity</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Part VIII: Operationalizing the Guardrails</div>
+      <ul class="nav-list">
+        <li><a href="26-testing-evaluation-and-red-teaming.html">Chapter 26: Testing, Evaluation &amp; Red-Teaming</a></li>
+        <li><a href="27-ai-incident-response.html">Chapter 27: AI Incident Response</a></li>
+        <li><a href="28-metrics-kris-and-reporting.html">Chapter 28: Metrics, KRIs &amp; Reporting</a></li>
+        <li><a href="29-building-a-risk-aware-ai-culture.html">Chapter 29: Building a Risk-Aware AI Culture</a></li>
+        <li><a href="30-governance-maturity-model-and-roadmap.html">Chapter 30: Governance Maturity Model &amp; Roadmap</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Appendices</div>
+      <ul class="nav-list">
+        <li><a href="31-appendices.html">Appendices: Templates, Checklists &amp; Reference Toolkit</a></li>
+      </ul>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-title">Reference</div>
+      <ul class="nav-list">
+        <li><a href="bibliography.html">Annotated Bibliography</a></li>
+      </ul>
+    </div>
+  </nav>
+</aside>
+    <main class="main" id="main">
+      <article class="content">
+        <div class="doc-meta-bar"><span class="doc-eyebrow">Part IV: Security</span><span class="doc-reading-meta">4,144 words · ~17 min read</span></div>
+        <h1>Chapter 13: Infrastructure &amp; Operational Security</h1>
+<p><em>Part IV: Security</em></p>
+<blockquote>
+<p><strong>In this chapter</strong></p>
+<ul>
+<li>How API-key sprawl across Jupyter notebooks, repositories, and pods fuels overnight compute theft—and how gateway vaults and automated rotation stop it</li>
+<li>Why reasoning-token &quot;slowdown&quot; attacks (<em>OverThink</em>), sponge inputs, and agent retry loops create <strong>Denial-of-Wallet</strong> exposure (<code>LLM10</code> / <code>AML.T0029</code>)</li>
+<li>Why prompt/response logs and semantic caches are regulated sensitive datastores—illustrated by the DeepSeek ClickHouse breach and OpenAI's <code>redis-py</code> cache leak</li>
+<li>Why vector embeddings can be inverted back into readable text (<code>vec2text</code>, <code>92%</code> recovery) and how to enforce VPC network boundaries and strict multi-tenant isolation</li>
+</ul>
+<p><strong>Essential for:</strong> CISO, Cloud &amp; Platform Engineers, MLOps, FinOps, AI Engineers, DPO · <strong>Reading time:</strong> about 30 minutes</p>
+</blockquote>
+<hr />
+<h2 id="the-debug-log-that-exposed-everything">The Debug Log That Exposed Everything <a class="heading-anchor" href="#the-debug-log-that-exposed-everything" aria-label="Link to section">#</a></h2>
+<p><em>This composite scenario is illustrative; it is not drawn from a specific organization or incident.</em></p>
+<p>A fast-scaling SaaS company ships its customer-support RAG platform and internal coding assistant in back-to-back quarters. Every model prompt and API route goes through diligent application testing—yet operational infrastructure was wired up hurriedly under hackathon deadlines.</p>
+<p>Within ninety days, three operational security failures converge on platform operations and the CISO:</p>
+<p>First, a data scientist leaves a raw commercial LLM API key inside a shared Jupyter notebook pushed to a semi-public repository mirror. Overnight, automated scanners harvest the key and drive <strong>$32,000</strong> in unauthorized token completions before billing dashboards refresh.</p>
+<p>Second, a malicious support attachment containing subtle nested logic puzzles hits an internal reasoning-model triage queue. Nothing crashes, and safety classifiers pass the text cleanly—yet average completion length jumps sixteen-fold per ticket, saturating token quotas and stalling customer response SLAs across the tenant.</p>
+<p>Third, during a routine cloud posture sweep, security engineers discover two twin exposures in staging that mirror production defaults: an LLMOps trace cluster storing six months of unmasked customer chat prompts, credentials, and support screenshots in a public debug dashboard, alongside a self-hosted vector database listening unauthenticated on an internal wildcard security group.</p>
+<p>Chapters 10 through 12 hardened prompts, agent permissions, and model supply chains. Chapter 13 secures the <strong>operational substrate</strong> underneath every deployment—mapping OWASP <strong>LLM02 (Sensitive Information Disclosure)</strong>, <strong>LLM08 (Vector and Embedding Weaknesses)</strong>, and <strong>LLM10 (Unbounded Consumption)</strong><sup class="fn-ref"><a href="#fn-c13-01" id="fnref-c13-01" title="Jump to note 1">[1]</a></sup> alongside MITRE ATLAS <strong><code>AML.T0029</code> (Denial of AI Service)</strong>.<sup class="fn-ref"><a href="#fn-c13-02" id="fnref-c13-02" title="Jump to note 2">[2]</a></sup></p>
+<hr />
+<h2 id="131-managing-api-keys-and-secrets-for-model-providers">13.1 Managing API Keys and Secrets for Model Providers <a class="heading-anchor" href="#131-managing-api-keys-and-secrets-for-model-providers" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-secrets-sprawl-in-ai-engineering">The Challenge: Secrets Sprawl in AI Engineering <a class="heading-anchor" href="#the-challenge-secrets-sprawl-in-ai-engineering" aria-label="Link to section">#</a></h3>
+<p>Machine-learning and AI prototypes almost always begin with someone pasting <code>OPENAI_API_KEY=&quot;sk-...&quot;</code> or an AWS Bedrock credential into a <code>.env</code> file, a Jupyter notebook cell, or a Slack channel while iterating quickly. As pilots harden into services, those keys frequently live on as unrotated, org-wide shared credentials—exacerbating <strong>NHI2:2025 (Secret Leakage)</strong> and <strong>NHI1:2025 (Improper Offboarding)</strong> across non-human identity inventories.<sup class="fn-ref"><a href="#fn-c13-03" id="fnref-c13-03" title="Jump to note 3">[3]</a></sup></p>
+<p>Empirical telemetry shows just how aggressively attackers scan for leaked credentials. In <em><strong>The State of Secrets Sprawl 2025</strong></em> (analyzing public GitHub commits across 2024), <strong>GitGuardian</strong> recorded <strong>23,770,171 newly exposed secrets—a 25% year-over-year increase</strong>.<sup class="fn-ref"><a href="#fn-c13-04" id="fnref-c13-04" title="Jump to note 4">[4]</a></sup> Although GitHub's native push protection sharply reduced leaks of prefixed structured vendor tokens (including standard OpenAI API keys), <strong>58%</strong> of exposed credentials were &quot;generic&quot; unprefixed secrets (database URLs, custom bearer keys, private keys) that bypass simple regex scanners—and <strong>70%</strong> of secrets first exposed years earlier remained active and valid.<sup class="fn-ref"><a href="#fn-c13-04" id="fnref-c13-04-2" title="Jump to note 4">[4]</a></sup></p>
+<p>When leaked keys unlock cloud inference quotas—as <strong>Sysdig's Threat Research Team</strong> proved with <strong>LLMjacking</strong> (Chapter 9)—attackers monetize stolen Bedrock or commercial LLM capacity immediately, burning <strong>$46,000 to over $100,000 per day</strong> without triggering traditional VM or CPU alarms.<sup class="fn-ref"><a href="#fn-c13-05" id="fnref-c13-05" title="Jump to note 5">[5]</a></sup></p>
+<h3 id="the-guardrails-zero-key-developer-workflows-gateway-vaults">The Guardrails: Zero-Key Developer Workflows &amp; Gateway Vaults <a class="heading-anchor" href="#the-guardrails-zero-key-developer-workflows-gateway-vaults" aria-label="Link to section">#</a></h3>
+<ol>
+<li><strong>Remove Raw Vendor Keys From Apps, Notebooks, and Pods:</strong> Applications and data-science notebooks must <strong>never</strong> hold live OpenAI, Anthropic, Google, or Bedrock credentials. Inject static cloud workload identities (IAM roles / OIDC) or short-lived <strong>virtual AI gateway keys</strong> (Chapter 6), keeping real provider secrets strictly inside an enterprise secrets manager (HashiCorp Vault, AWS Secrets Manager, Azure Key Vault) accessed only by the AI gateway.</li>
+<li><strong>Block Leaks Before Git Push (<code>nbstripout</code> + Push Protection):</strong> Mandate pre-commit secret scanners (<code>gitleaks</code>, GitGuardian) plus <strong><code>nbstripout</code></strong> git filters across every ML repository so Jupyter cell outputs and embedded debug prints are stripped automatically before commits ever leave laptops.</li>
+<li><strong>Automate 30–90-Day Rotation and Scoped Spend Caps:</strong> Rotate upstream provider keys automatically via CI/CD secrets pipelines without app restarts; partition downstream virtual keys strictly by project, environment (<code>dev</code> vs. <code>prod</code>), and team with hard dollar alerts attached.</li>
+<li><strong>Revoke Orphaned Pilot Keys (<code>NHI1:2025</code>):</strong> Wire your central AI Registry (Chapter 5) directly to IAM expiration workflows so retired proofs-of-concept lose inference access automatically when projects archive.</li>
+</ol>
+<hr />
+<h2 id="132-unbounded-consumption-and-denial-of-wallet-attacks">13.2 Unbounded Consumption and &quot;Denial-of-Wallet&quot; Attacks <a class="heading-anchor" href="#132-unbounded-consumption-and-denial-of-wallet-attacks" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-paying-by-the-token-changes-availability-risk">The Challenge: Paying by the Token Changes Availability Risk <a class="heading-anchor" href="#the-challenge-paying-by-the-token-changes-availability-risk" aria-label="Link to section">#</a></h3>
+<p>In traditional web applications, flooding an endpoint slows servers down (<code>Denial of Service</code>). In metered generative AI—especially with autonomous multi-step agents and long-chain reasoning models—flooding an endpoint drains your cloud budget first (<strong>&quot;Denial-of-Wallet&quot;</strong>, ranked <strong>LLM10: Unbounded Consumption</strong><sup class="fn-ref"><a href="#fn-c13-01" id="fnref-c13-01-2" title="Jump to note 1">[1]</a></sup> and <strong><code>AML.T0029</code>: Denial of AI Service</strong><sup class="fn-ref"><a href="#fn-c13-02" id="fnref-c13-02-2" title="Jump to note 2">[2]</a></sup>).</p>
+<p>Two distinct attack classes amplify compute costs far beyond simple HTTP request floods:</p>
+<ul>
+<li><strong>Hardware Energy-Latency &quot;Sponge Examples&quot;:</strong> Introduced by <strong>Ilia Shumailov and colleagues</strong> at IEEE EuroS&amp;P 2021, <em>sponge examples</em> are adversarially crafted inputs that force neural architectures into worst-case activation density and execution paths—driving massive spikes in energy draw, memory bandwidth, and inference latency across CPUs, GPUs, and custom accelerators.<sup class="fn-ref"><a href="#fn-c13-06" id="fnref-c13-06" title="Jump to note 6">[6]</a></sup></li>
+<li><strong>Slowdown Attacks on Reasoning LLMs (<em>OverThink</em>):</strong> Modern reasoning models (<code>o1</code>, <code>o1-mini</code>, <code>o3-mini</code>, <code>DeepSeek-R1</code>) generate hidden chain-of-thought &quot;reasoning tokens&quot; billed identically to output tokens. In a February 2025 study titled <em><strong>OverThink: Slowdown Attacks on Reasoning LLMs</strong></em>, <strong>Abhinav Kumar and colleagues at UMass Amherst</strong> demonstrated that injecting benign-looking decoy reasoning puzzles (such as Markov decision processes or subtle constraint traps) into public web pages, RAG documents, or coding-agent repositories evaded safety filters and inflated reasoning-token consumption dramatically—slowing down answers <strong>up to 46× on SQuAD</strong>, <strong>13×–18× on FreshQA</strong>, and <strong>up to 17× in coding-agent repositories</strong> while keeping final answers plausible.<sup class="fn-ref"><a href="#fn-c13-07" id="fnref-c13-07" title="Jump to note 7">[7]</a></sup></li>
+</ul>
+<p>Combined with accidental infinite agent loops (Chapter 11) and 100,000-token context floods, a few dozen concurrent sessions can exhaust monthly budgets or GPU throughput pools in hours.</p>
+<h3 id="hard-consumption-circuit-breaker-controls">Hard Consumption &amp; Circuit-Breaker Controls <a class="heading-anchor" href="#hard-consumption-circuit-breaker-controls" aria-label="Link to section">#</a></h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Control Layer</th>
+<th style="text-align:left">Exact Parameter / Mechanism</th>
+<th style="text-align:left">Operational Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Input &amp; Context Ceilings</strong></td>
+<td style="text-align:left">Enforce strict <code>max_input_tokens</code> per route (e.g., <code>8k</code> for chat, <code>32k</code> for RAG) ahead of serialization</td>
+<td style="text-align:left">Prevents memory exhaustion, O(<em>n</em>²) attention spikes, and Many-Shot context flooding</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Output &amp; Reasoning Budgets</strong></td>
+<td style="text-align:left">Set explicit <code>max_completion_tokens</code> and <code>reasoning_effort</code> / <code>max_reasoning_tokens</code> caps in gateway payloads</td>
+<td style="text-align:left">Neutralizes <em>OverThink</em> slowdown spikes and runaway verbose generations</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Per-Identity &amp; Tenant Quotas</strong></td>
+<td style="text-align:left">Enforce dual-bucket limits: requests per minute (<code>RPM</code>) <strong>and</strong> tokens per minute (<code>TPM</code>) per user/workspace</td>
+<td style="text-align:left">Stops single abusive accounts or compromised keys from starving shared enterprise capacity</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Hard Hourly &amp; Daily Spend Breakers</strong></td>
+<td style="text-align:left">Real-time gateway meter summing input + cached + output + reasoning USD cost; auto-trip to <code>HTTP 429</code> or downgrade</td>
+<td style="text-align:left">Caps maximum overnight <strong>Denial-of-Wallet</strong> blast radius deterministically in code</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Semantic Caching &amp; Model Tiering</strong></td>
+<td style="text-align:left">Cache identical FAQ embeddings/responses cleanly; route simple lookups to lightweight models instead of frontier reasoning</td>
+<td style="text-align:left">Cuts routine spend 40%–70% and reserves reasoning models strictly for verified complex tiers</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="the-guardrails">The Guardrails <a class="heading-anchor" href="#the-guardrails" aria-label="Link to section">#</a></h3>
+<ol>
+<li><strong>Enforce Token Ceilings at the AI Gateway, Not Client Apps:</strong> Never trust browser widgets or agent SDK defaults to cap <code>max_tokens</code> or retry loops; override ceilings server-side inside the central gateway proxy.</li>
+<li><strong>Cap Reasoning Effort by Use Case:</strong> Restrict high-reasoning-budget models (<code>reasoning_effort=high</code>) strictly to approved analytical lanes, never attaching them blindly to public support bots or unvetted external RAG ingestion.</li>
+<li><strong>Wire FinOps Cost Telemetry Into SecOps Alerting:</strong> Alert on 3× hourly velocity anomalies—catching <em>OverThink</em> poisoning, broken agent loops, or <code>LLMjacking</code> within minutes rather than waiting for monthly cloud invoices.</li>
+</ol>
+<hr />
+<h2 id="133-securing-prompt-and-response-logs-logs-are-sensitive-data-too">13.3 Securing Prompt and Response Logs (Logs Are Sensitive Data Too) <a class="heading-anchor" href="#133-securing-prompt-and-response-logs-logs-are-sensitive-data-too" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-observability-pipelines-become-crown-jewel-shadow-stores">The Challenge: Observability Pipelines Become Crown-Jewel Shadow Stores <a class="heading-anchor" href="#the-challenge-observability-pipelines-become-crown-jewel-shadow-stores" aria-label="Link to section">#</a></h3>
+<p>When debugging RAG quality or tracing latency bottlenecks, engineering teams instinctively turn on full payload logging inside ClickHouse, Elasticsearch, Datadog, or third-party LLMOps SaaS platforms. Almost overnight, those &quot;debug telemetry&quot; indexes accumulate source code, customer PII, M&amp;A strategy drafts, legal advice, and employee credentials—often <strong>without encryption keys, deletion workflows, or strict access controls</strong>.</p>
+<p>Two high-profile production incidents demonstrate how catastrophic operational logging and cache mistakes become:</p>
+<ol>
+<li><strong>DeepSeek Exposed ClickHouse Database (January 29, 2025):</strong> Cloud security researcher <strong>Gal Nagli at Wiz Research</strong> discovered two publicly reachable DeepSeek subdomains exposing an <strong>unauthenticated ClickHouse database</strong> (<code>port 9000</code>) allowing anyone on the open internet to run arbitrary SQL queries via HTTP.<sup class="fn-ref"><a href="#fn-c13-08" id="fnref-c13-08" title="Jump to note 8">[8]</a></sup> The exposed tables held <strong>over one million lines of live log streams</strong> containing <strong>plaintext user chat histories, API secret keys, backend operational details, and internal metadata</strong>—secured rapidly only after Wiz's responsible disclosure.<sup class="fn-ref"><a href="#fn-c13-08" id="fnref-c13-08-2" title="Jump to note 8">[8]</a></sup></li>
+<li><strong>OpenAI Redis Cache Data Exposure (March 20–24, 2023):</strong> Prompt privacy breaks not only in cold logs, but inside <em>ephemeral memory caches</em>. In its official postmortem published <strong>March 24, 2023</strong>, <strong>OpenAI</strong> detailed how an <code>asyncio</code> cancellation race condition in the open-source <strong><code>redis-py</code></strong> cluster client caused cancelled requests to return another user's cached payload from pooled connections during a nine-hour outage window—exposing active users' chat titles and initial messages alongside payment details (names, emails, billing addresses, card type, expiration, and last four digits) for <strong>1.2% of active ChatGPT Plus subscribers</strong>.<sup class="fn-ref"><a href="#fn-c13-09" id="fnref-c13-09" title="Jump to note 9">[9]</a></sup> OpenAI patched <code>redis-py</code> upstream and added explicit <strong>server-side caller-ID verification checks</strong> comparing returned cached records against the requesting user identity before rendering responses.<sup class="fn-ref"><a href="#fn-c13-09" id="fnref-c13-09-2" title="Jump to note 9">[9]</a></sup></li>
+</ol>
+<h3 id="privacy-preserving-ai-observability">Privacy-Preserving AI Observability <a class="heading-anchor" href="#privacy-preserving-ai-observability" aria-label="Link to section">#</a></h3>
+<p>You still need telemetry for incident forensics (Chapter 27), SLA tracking, and EU AI Act post-market logging (Chapter 22)—without copying raw secrets into wide-open observability indexes.</p>
+<p>Follow a <strong>split observability pattern</strong> grounded in <strong>OpenTelemetry GenAI Semantic Conventions</strong>:<sup class="fn-ref"><a href="#fn-c13-10" id="fnref-c13-10" title="Jump to note 10">[10]</a></sup></p>
+<ul>
+<li>Keep <strong><code>gen_ai.*</code> content recording disabled by default</strong> in general APM tools, sending strictly safe structural spans (<code>traceparent</code>, <code>gen_ai.operation.name</code>, <code>gen_ai.request.model</code>, token counts, latency, guardrail triggers, and <code>sub</code>/<code>act</code> hashes) to engineering dashboards.</li>
+<li>Where full prompt/response retention is genuinely required (for Red-lane auditability or compliance replay), route payloads through inline <strong>Presidio PII and secret redaction</strong><sup class="fn-ref"><a href="#fn-c13-11" id="fnref-c13-11" title="Jump to note 11">[11]</a></sup> <em>before</em> persistence, store them in a segregated customer-managed-key (<strong>CMEK</strong>) encrypted log vault, enforce automated <strong>7–30-day TTL expiration</strong> (aligned to GDPR/DPDP erasure schedules, Chapter 8), and gate developer access behind <strong>just-in-time (JIT) ticketed RBAC approvals</strong>.</li>
+</ul>
+<h3 id="the-guardrails-2">The Guardrails <a class="heading-anchor" href="#the-guardrails-2" aria-label="Link to section">#</a></h3>
+<ol>
+<li><strong>Never Log Raw Payloads to Shared Developer APMs:</strong> Separate structural latency/token telemetry from redacted payload audit logs.</li>
+<li><strong>Verify Caller Identity on Every Semantic or Redis Cache Hit:</strong> Namespace every cache key by <code>tenant_id:user_id</code> <strong>and</strong> verify ownership explicitly in application logic after deserialization, neutralizing pool-corruption leaks like the March 2023 <code>redis-py</code> bug.<sup class="fn-ref"><a href="#fn-c13-09" id="fnref-c13-09-3" title="Jump to note 9">[9]</a></sup></li>
+<li><strong>Treat Observability Clusters Like Production Customer Databases:</strong> Put ClickHouse, Elasticsearch, and LLMOps log stores behind private VPC endpoints, SSO + MFA, short TTLs, and CMEK encryption—never publicly exposed on port <code>9000</code> or default credentials.<sup class="fn-ref"><a href="#fn-c13-08" id="fnref-c13-08-3" title="Jump to note 8">[8]</a></sup></li>
+</ol>
+<hr />
+<h2 id="134-vector-database-security-and-tenant-isolation">13.4 Vector Database Security and Tenant Isolation <a class="heading-anchor" href="#134-vector-database-security-and-tenant-isolation" aria-label="Link to section">#</a></h2>
+<h3 id="the-challenge-embeddings-are-just-numbers-is-false">The Challenge: &quot;Embeddings Are Just Numbers&quot; Is False <a class="heading-anchor" href="#the-challenge-embeddings-are-just-numbers-is-false" aria-label="Link to section">#</a></h3>
+<p>Because vector databases (Qdrant, Chroma, Milvus, Pinecone, pgvector, Weaviate) store high-dimensional floating-point arrays alongside chunk text, teams frequently leave them exposed on internal networks—or assume raw embeddings are safe to share across customers. Both assumptions fail under scrutiny (<code>LLM08: Vector and Embedding Weaknesses</code>).<sup class="fn-ref"><a href="#fn-c13-01" id="fnref-c13-01-3" title="Jump to note 1">[1]</a></sup></p>
+<p>First, AI infrastructure stacks suffer chronically from <strong>velocity-over-security defaults</strong>. In March 2024, <strong>Oligo Security</strong> uncovered <strong>ShadowRay</strong>, the first active in-the-wild exploitation campaign targeting distributed AI workloads: attackers exploited unauthenticated <strong>Ray</strong> cluster APIs (<code>CVE-2023-48022</code> and subsequent RCE flaws) left open on the internet to hijack compute, steal credentials, and deploy persistent botnets.<sup class="fn-ref"><a href="#fn-c13-12" id="fnref-c13-12" title="Jump to note 12">[12]</a></sup> Self-hosted vector databases exhibit the exact same operational pattern whenever teams launch default Docker images (<code>6333</code>, <code>8000</code>, <code>19530</code>) without TLS, API auth, or VPC firewall rules.</p>
+<p>Second, <strong>embeddings themselves leak readable plaintext</strong>. In a landmark EMNLP 2023 study titled <em><strong>&quot;Text Embeddings Reveal (Almost) As Much As Text,&quot;</strong></em> <strong>John X. Morris, Volodymyr Kuleshov, Vitaly Shmatikov, and Alexander M. Rush</strong> built <strong><code>vec2text</code></strong>—an iterative controlled-decoding attack that repeatedly refines candidate strings against an embedding distance oracle.<sup class="fn-ref"><a href="#fn-c13-13" id="fnref-c13-13" title="Jump to note 13">[13]</a></sup> Their results overturned conventional wisdom: <strong><code>vec2text</code> reconstructed 92% of 32-token input texts verbatim</strong> from standard text embeddings and extracted full patient names and clinical details straight out of medical note vectors.<sup class="fn-ref"><a href="#fn-c13-13" id="fnref-c13-13-2" title="Jump to note 13">[13]</a></sup></p>
+<p>The conclusion for security architects is unequivocal: <strong>protect raw embeddings and vector indexes with the exact same confidentiality, encryption, authentication, and tenant isolation as plaintext SQL databases.</strong></p>
+<h3 id="multi-tenant-vector-isolation-architecture">Multi-Tenant Vector Isolation Architecture <a class="heading-anchor" href="#multi-tenant-vector-isolation-architecture" aria-label="Link to section">#</a></h3>
+<p>When serving multiple enterprise departments or SaaS B2B customers inside one RAG platform, never trust prompt wording or LLM-generated SQL/metadata filters to separate customer data. Enforce isolation strictly in <strong>backend storage architecture</strong>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Isolation Tier</th>
+<th style="text-align:left">How It Works</th>
+<th style="text-align:left">Strengths</th>
+<th style="text-align:left">Residual Risks &amp; Ideal Fit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Tier A: Shared Collection + Mandatory Signed Metadata Filter</strong></td>
+<td style="text-align:left">One physical index; backend middleware injects <code>WHERE tenant_id = jwt.tenant_id</code> cleanly on every query</td>
+<td style="text-align:left">Lowest infrastructure cost; effortless schema upgrades</td>
+<td style="text-align:left">Risk of developer query bug bypassing filter; shared noisy-neighbor latency. Acceptable <strong>only</strong> for low-risk non-regulated internal groups</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Tier B: Dedicated Namespace / Collection per Tenant</strong></td>
+<td style="text-align:left">Physically distinct index partitions or schemas per tenant inside managed cluster</td>
+<td style="text-align:left">Strong logical separation; crisp per-tenant deletion (GDPR Art. 17, Ch. 8); avoids accidental cross-tenant recall</td>
+<td style="text-align:left">Shared underlying cluster compute/memory; <strong>Recommended Enterprise B2B Default</strong></td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Tier C: Dedicated Cluster / VPC + Separate CMEK per Tenant</strong></td>
+<td style="text-align:left">Isolated VM/database instance and customer-managed KMS key per regulated client</td>
+<td style="text-align:left">Complete blast-radius, noisy-neighbor, and cryptographic key isolation (revoke CMEK = instant crypto-shred)</td>
+<td style="text-align:left">Higher unit cost; <strong>Mandatory</strong> for defense, healthcare, banking, and sovereign-cloud tenants</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="hardened-ai-infrastructure-operational-security-plane">Hardened AI Infrastructure &amp; Operational Security Plane <a class="heading-anchor" href="#hardened-ai-infrastructure-operational-security-plane" aria-label="Link to section">#</a></h3>
+<figure class="mermaid-wrap"><pre class="mermaid">flowchart LR
+    APP[&quot;Apps, Agents &amp; Notebooks&lt;br/&gt;(Zero Raw Provider Keys)&quot;] --&gt;|&quot;Virtual Token + Trace Context&quot;| GW[&quot;Enterprise AI Gateway&lt;br/&gt;(Vault Secrets, Token Caps, Spend Breakers)&quot;]
+    GW --&gt;|&quot;Encrypted Inference&quot;| LLM[&quot;Sanctioned Model Endpoints&lt;br/&gt;(ZDR Commercial / Private VPC GPUs)&quot;]
+    GW --&gt;|&quot;Safe GenAI OTel Metrics&quot;| APM[&quot;Engineering APM&lt;br/&gt;(Latency, Costs, No Raw Prompts)&quot;]
+    GW --&gt;|&quot;Presidio Redacted Payloads&quot;| LOG[&quot;Audit Log Vault&lt;br/&gt;(CMEK, 7–30d TTL, JIT RBAC)&quot;]
+    APP --&gt;|&quot;Scoped Tenant JWT&quot;| RET[&quot;Backend Retrieval Service&lt;br/&gt;(Caller-ID Cache Check + Mandatory Filter)&quot;]
+    RET --&gt;|&quot;mTLS Private VPC&quot;| VDB[&quot;Vector Database&lt;br/&gt;(Auth Enforced, Tenant Namespaces / CMEK)&quot;]</pre></figure>
+<h3 id="the-guardrails-3">The Guardrails <a class="heading-anchor" href="#the-guardrails-3" aria-label="Link to section">#</a></h3>
+<ol>
+<li><strong>Zero Public Exposure &amp; CSPM AI Port Scanning:</strong> Bind all vector stores, ClickHouse log stores, Ray dashboards, and local model servers (<code>6333</code>, <code>8000</code>, <code>19530</code>, <code>8265</code>, <code>9000</code>, <code>11434</code>) exclusively inside private VPC subnets with <code>mTLS</code> and token auth; configure Cloud Security Posture Management (CSPM) to alert immediately if any AI infrastructure port listens publicly.</li>
+<li><strong>Never Let the LLM Construct Tenant Filters:</strong> Derive <code>tenant_id</code> and ACL groups exclusively from verified server-side JWT/OIDC claims (<code>sub</code>, <code>tenant_id</code>, Chapter 7)—never from model-generated tool parameters.</li>
+<li><strong>Encrypt Embeddings at Rest with Tenant-Aware Keys &amp; Enforce Deletion SLAs:</strong> Treat vector databases as plaintext-equivalent PII datastores under GDPR/DPDP, applying CMEK encryption, backup expiry, and deterministic delete-by-tenant workflows (Chapter 8).</li>
+</ol>
+<hr />
+<h2 id="why-every-role-cares">Why Every Role Cares <a class="heading-anchor" href="#why-every-role-cares" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">What this means for you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board / CEO</strong></td>
+<td style="text-align:left">Simple infrastructure hygiene gaps—exposed debug logs (DeepSeek), unauthenticated AI clusters (<em>ShadowRay</em>), or leaked notebook keys—drive rapid front-page breaches and $46k–$100k+/day token loss faster than exotic AI exploits.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO</strong></td>
+<td style="text-align:left">Centralizing provider secrets inside one AI gateway, separating structural telemetry from encrypted log vaults, and standardizing Tier B/C vector isolation keeps platform operations auditable and predictable at scale.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CISO</strong></td>
+<td style="text-align:left">Pair pre-commit <code>nbstripout</code>/secrets scanning with CSPM port monitoring (<code>6333</code>, <code>8265</code>, <code>9000</code>, <code>19530</code>); enforce caller-ID verification on caches; and classify vector stores as plaintext-equivalent crown jewels (<code>vec2text</code>).</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CDO / Data Stewards</strong></td>
+<td style="text-align:left">Because embeddings recover <code>92%</code> of source text verbatim and unredacted traces hoard PII, apply Presidio-style masking before log persistence and tie tenant namespaces cleanly to statutory TTL and deletion rules.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>General Counsel / Compliance</strong></td>
+<td style="text-align:left">Short log TTLs (7–30 days), split structural vs. payload observability, and verifiable tenant isolation prevent regulatory &quot;shadow retention&quot; violations after customers exercise GDPR/CCPA/DPDP deletion rights.</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Engineers</strong></td>
+<td style="text-align:left">Strip Jupyter outputs cleanly, never log unmasked payloads into shared APMs, enforce gateway <code>max_tokens</code> and <code>reasoning_effort</code> limits against <em>OverThink</em> spikes, and bind every vector and cache lookup to verified caller IDs.</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="chapter-summary">Chapter Summary <a class="heading-anchor" href="#chapter-summary" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Section</th>
+<th style="text-align:left">Core risk</th>
+<th style="text-align:left">Primary guardrail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">13.1 Model Provider API Keys &amp; Secrets</td>
+<td style="text-align:left">23.8M+ annual leaked GitHub secrets (58% generic, 70% still valid) enabling overnight billing drains and <code>LLMjacking</code></td>
+<td style="text-align:left">Zero raw provider keys in repos/pods; gateway-managed secrets vaults, <code>nbstripout</code> + push protection, automated 30–90d rotation</td>
+</tr>
+<tr>
+<td style="text-align:left">13.2 Unbounded Consumption &amp; Denial-of-Wallet</td>
+<td style="text-align:left">Sponge inputs, runaway agent retries, and <em>OverThink</em> decoy reasoning tasks (<code>13×</code>–<code>46×</code> token inflation) draining budgets (<code>LLM10</code> / <code>AML.T0029</code>)</td>
+<td style="text-align:left">Server-side <code>max_input</code>/<code>max_completion</code>/<code>max_reasoning</code> caps, per-tenant RPM/TPM quotas, hourly USD circuit breakers, semantic caching</td>
+</tr>
+<tr>
+<td style="text-align:left">13.3 Prompt &amp; Response Logs &amp; Caches</td>
+<td style="text-align:left">Unauthenticated log stores (DeepSeek ClickHouse) and pooled cache races (OpenAI <code>redis-py</code>) leaking chat histories and payment data</td>
+<td style="text-align:left">Split structural OTel metrics from Presidio-redacted CMEK log vaults (7–30d TTL, JIT RBAC); verify caller ID on every cache read</td>
+</tr>
+<tr>
+<td style="text-align:left">13.4 Vector Databases &amp; Tenant Isolation</td>
+<td style="text-align:left">Open AI ports (<em>ShadowRay</em>), metadata filter bugs, and <code>vec2text</code> inversion recovering <code>92%</code> of text verbatim from raw embeddings (<code>LLM08</code>)</td>
+<td style="text-align:left">Private VPC + <code>mTLS</code> + auth + CSPM port alerts; backend-enforced tenant namespaces or dedicated CMEK instances</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2 id="key-takeaways">Key Takeaways <a class="heading-anchor" href="#key-takeaways" aria-label="Link to section">#</a></h2>
+<ul>
+<li><strong>Remove raw AI vendor keys from developer laptops and application repos completely.</strong> Route workloads through virtual gateway tokens backed by centralized secrets vaults, <code>nbstripout</code>, push protection, and automated 30–90-day key rotation.</li>
+<li><strong>Treat Denial-of-Wallet like production DDoS (<code>LLM10</code> / <code>AML.T0029</code>).</strong> Reasoning slowdown attacks (<em>OverThink</em>) bypass safety classifiers and multiply token bills by <code>13×</code>–<code>46×</code>; cap context size, completion/reasoning tokens, and hourly dollar spend deterministically at the gateway.</li>
+<li><strong>Prompt logs and response caches are sensitive customer datastores.</strong> Separate safe OpenTelemetry metrics from Presidio-masked, CMEK-encrypted payload logs on tight TTLs, and always assert caller identity after cache deserialization.</li>
+<li><strong>Protect vector embeddings exactly like plaintext documents.</strong> Because <code>vec2text</code> recovers up to <code>92%</code> of embedded text verbatim, enforce private VPC boundaries, strong authentication, CSPM scanning on AI ports, and backend tenant namespaces or dedicated CMEK clusters.</li>
+</ul>
+<h2 id="questions-to-ask">Questions to Ask <a class="heading-anchor" href="#questions-to-ask" aria-label="Link to section">#</a></h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:left">Role</th>
+<th style="text-align:left">Question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><strong>Board / CEO</strong></td>
+<td style="text-align:left">Are our cloud AI spend limits and emergency circuit breakers automated in code so an accidental loop or <em>OverThink</em> attack halts within minutes rather than on next month's invoice?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CIO</strong></td>
+<td style="text-align:left">Can we confirm every production model call routes through a central AI gateway holding real vendor credentials—and zero teams embed raw keys in notebooks or CI scripts?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CISO</strong></td>
+<td style="text-align:left">Does our CSPM continuously alert if vector databases, Ray clusters, or ClickHouse log stores expose unauthenticated ports (<code>6333</code>, <code>8000</code>, <code>8265</code>, <code>9000</code>, <code>19530</code>, <code>11434</code>)—and do caches verify caller identity per read?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>CDO / Data Stewards</strong></td>
+<td style="text-align:left">How many days are raw prompt/response logs retained, are secrets and PII masked before writing to disk, and do vector embeddings receive plaintext-equivalent classification controls?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>General Counsel / Compliance</strong></td>
+<td style="text-align:left">When a customer requests GDPR or DPDP deletion, do our LLMOps traces, semantic caches, and tenant vector namespaces purge or expire in sync?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>AI Engineers</strong></td>
+<td style="text-align:left">Are <code>max_input_tokens</code>, <code>max_completion_tokens</code>, and <code>reasoning_effort</code> ceilings enforced server-side in our gateway—and is <code>tenant_id</code> injected strictly from verified JWTs rather than LLM arguments?</td>
+</tr>
+<tr>
+<td style="text-align:left"><strong>Business Owners</strong></td>
+<td style="text-align:left">Does our RAG platform guarantee logical namespace or dedicated cluster isolation between different enterprise customers and high-sensitivity internal departments?</td>
+</tr>
+</tbody>
+</table></div>
+
+<section class="footnotes" id="notes" aria-label="Notes">
+<h2>References</h2>
+<ol class="footnote-list">
+<li id="fn-c13-01"><span class="fn-body">OWASP Foundation, <em>OWASP Top 10 for LLM Applications 2025</em> (OWASP GenAI Security Project, November 2024), <code>LLM02</code>, <code>LLM08</code>, and <code>LLM10</code>, <a href="https://genai.owasp.org/llm-top-10/" target="_blank" rel="noopener noreferrer">https://genai.owasp.org/llm-top-10/</a>. <strong>Annotation:</strong> Defines Sensitive Information Disclosure (<code>LLM02</code>), Vector and Embedding Weaknesses (<code>LLM08</code>), and Unbounded Consumption (<code>LLM10</code>) across AI infrastructure and operations. <a href="bibliography.html#owasp-2024-llm-top10">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c13-01" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c13-01-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a> <a href="#fnref-c13-01-3" class="fn-backref" title="Back to citation 3">&#8617;&#xfe0e;<sup>3</sup></a></span></li>
+<li id="fn-c13-02"><span class="fn-body">MITRE Corporation, &quot;ATLAS: Adversarial Threat Landscape for Artificial-Intelligence Systems,&quot; accessed November 17, 2026, <a href="https://atlas.mitre.org/" target="_blank" rel="noopener noreferrer">https://atlas.mitre.org/</a>. <strong>Annotation:</strong> Tracks Denial of AI Service (<code>AML.T0029</code>) techniques exhausting compute, inference quotas, or API budgets via adversarial inputs or abusive query rates. <a href="bibliography.html#mitre-atlas">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c13-02" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c13-02-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c13-03"><span class="fn-body">OWASP Foundation, <em>OWASP Non-Human Identities Top 10: 2025</em> (OWASP NHI Project, 2025), <code>NHI1:2025</code> and <code>NHI2:2025</code>, <a href="https://owasp.org/www-project-non-human-identities-top-10/" target="_blank" rel="noopener noreferrer">https://owasp.org/www-project-non-human-identities-top-10/</a>. <strong>Annotation:</strong> Highlights Improper Offboarding (<code>NHI1:2025</code>) and Secret Leakage (<code>NHI2:2025</code>) of static service keys across code repositories, notebooks, and CI/CD pipelines. <a href="bibliography.html#owasp-2025-nhi-top10">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c13-03" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c13-04"><span class="fn-body">GitGuardian, <em>The State of Secrets Sprawl 2025</em> (Paris: GitGuardian, 2025), <a href="https://www.gitguardian.com/state-of-secrets-sprawl-report-2025" target="_blank" rel="noopener noreferrer">https://www.gitguardian.com/state-of-secrets-sprawl-report-2025</a>. <strong>Annotation:</strong> Empirical telemetry study documenting 23,770,171 newly exposed hardcoded secrets on public GitHub in 2024 (+25% YoY), noting that 58% are unprefixed generic secrets bypassing basic regex scanners and 70% of older leaked keys remain valid. <a href="bibliography.html#gitguardian-2025-secrets">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c13-04" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c13-04-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+<li id="fn-c13-05"><span class="fn-body">Sysdig Threat Research Team, &quot;LLMjacking: Stolen Cloud Credentials Used in New AI Attack,&quot; Sysdig Blog, May 6, 2024, <a href="https://sysdig.com/blog/llmjacking-stolen-cloud-credentials-used-in-new-ai-attack/" target="_blank" rel="noopener noreferrer">https://sysdig.com/blog/llmjacking-stolen-cloud-credentials-used-in-new-ai-attack/</a>. <strong>Annotation:</strong> Demonstrates how leaked cloud credentials enable unauthorized abuse of managed LLM quotas (Amazon Bedrock) burning over $46,000 per day at baseline quotas and over $100,000 per day in proxy-resale operations. <a href="bibliography.html#sysdig-2024-llmjacking">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c13-05" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c13-06"><span class="fn-body">Ilia Shumailov, Yiren Zhao, Daniel Bates, Nicolas Papernot, Robert Mullins, and Ross Anderson, &quot;Sponge Examples: Energy-Latency Attacks on Neural Networks,&quot; in <em>2021 IEEE European Symposium on Security and Privacy (EuroS&amp;P)</em> (September 2021), arXiv:2006.03463, <a href="https://doi.org/10.1109/EuroSP51992.2021.00024" target="_blank" rel="noopener noreferrer">https://doi.org/10.1109/EuroSP51992.2021.00024</a>. <strong>Annotation:</strong> Introduces &quot;sponge examples&quot;—inputs crafted to maximize activation density, energy draw, and hardware inference latency across CPUs, GPUs, and ASICs. <a href="bibliography.html#shumailov-2021-sponge">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c13-06" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c13-07"><span class="fn-body">Abhinav Kumar, Jaechul Roh, Ali Naseh, Marzena Karpinska, Mohit Iyyer, Amir Houmansadr, and Eugene Bagdasarian, &quot;OverThink: Slowdown Attacks on Reasoning LLMs,&quot; arXiv:2502.02542 (February 2025), <a href="https://doi.org/10.48550/arXiv.2502.02542" target="_blank" rel="noopener noreferrer">https://doi.org/10.48550/arXiv.2502.02542</a>. <strong>Annotation:</strong> Demonstrates that injecting benign decoy reasoning problems into external RAG or coding-agent contexts evades safety filters and multiplies reasoning-token generation by 13×–18× on FreshQA, up to 17× in code agents, and up to 46× on SQuAD across <code>o1</code>, <code>o3-mini</code>, and <code>DeepSeek-R1</code>. <a href="bibliography.html#kumar-2025-overthink">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c13-07" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c13-08"><span class="fn-body">Gal Nagli, &quot;Wiz Research Uncovers Exposed DeepSeek Database Leaking Sensitive Information, Including Chat History,&quot; Wiz Blog, January 29, 2025, <a href="https://www.wiz.io/blog/wiz-research-uncovers-exposed-deepseek-database-leak" target="_blank" rel="noopener noreferrer">https://www.wiz.io/blog/wiz-research-uncovers-exposed-deepseek-database-leak</a>. <strong>Annotation:</strong> Discloses DeepSeek's publicly exposed, unauthenticated ClickHouse log database (<code>port 9000</code>) allowing arbitrary SQL queries across over one million lines of chat histories, API keys, and internal operational metadata. <a href="bibliography.html#nagli-2025-deepseek-wiz">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c13-08" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c13-08-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a> <a href="#fnref-c13-08-3" class="fn-backref" title="Back to citation 3">&#8617;&#xfe0e;<sup>3</sup></a></span></li>
+<li id="fn-c13-09"><span class="fn-body">OpenAI, &quot;March 20 ChatGPT Outage: Here's What Happened,&quot; OpenAI Blog, March 24, 2023, <a href="https://openai.com/index/march-20-chatgpt-outage/" target="_blank" rel="noopener noreferrer">https://openai.com/index/march-20-chatgpt-outage/</a>. <strong>Annotation:</strong> Official postmortem detailing the <code>redis-py</code> <code>asyncio</code> cluster pool race condition that leaked chat titles/first messages and payment metadata for 1.2% of active ChatGPT Plus subscribers—prompting mandatory caller-ID cache verification checks. <a href="bibliography.html#openai-2023-redis-outage">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c13-09" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c13-09-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a> <a href="#fnref-c13-09-3" class="fn-backref" title="Back to citation 3">&#8617;&#xfe0e;<sup>3</sup></a></span></li>
+<li id="fn-c13-10"><span class="fn-body">OpenTelemetry, &quot;Semantic Conventions for Generative AI Systems,&quot; OpenTelemetry Specification Documentation, accessed November 21, 2026, <a href="https://opentelemetry.io/docs/specs/semconv/gen-ai/" target="_blank" rel="noopener noreferrer">https://opentelemetry.io/docs/specs/semconv/gen-ai/</a>. <strong>Annotation:</strong> Defines standardized <code>gen_ai.*</code> observability spans separating safe structural metrics (model names, token usage, latency, <code>traceparent</code>) from opt-in raw prompt and completion body recording. <a href="bibliography.html#otel-genai-semconv">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c13-10" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c13-11"><span class="fn-body">Microsoft and Data Privacy Stack, <em>Presidio: Data Protection and De-Identification SDK</em>, GitHub repository and documentation, accessed November 21, 2026, <a href="https://github.com/data-privacy-stack/presidio" target="_blank" rel="noopener noreferrer">https://github.com/data-privacy-stack/presidio</a>. <strong>Annotation:</strong> Open-source detection and masking toolkit used ahead of observability storage to scrub PII, secrets, and regulated identifiers from prompt/response traces. <a href="bibliography.html#presidio-oss">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c13-11" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c13-12"><span class="fn-body">Oligo Security, &quot;ShadowRay: First Known Attack Campaign Targeting AI Workloads Exploited In The Wild,&quot; Oligo Security Blog, March 2024, <a href="https://www.oligo.security/blog/shadowray" target="_blank" rel="noopener noreferrer">https://www.oligo.security/blog/shadowray</a>. <strong>Annotation:</strong> Documents active in-the-wild hijacking of unauthenticated Ray AI clusters (<code>CVE-2023-48022</code>), exemplifying the systemic internet-exposure risk across AI compute and vector infrastructure deployed with default no-auth configurations. <a href="bibliography.html#oligo-2024-shadowray">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c13-12" class="fn-backref" title="Back to text">&#8617;&#xfe0e;</a></span></li>
+<li id="fn-c13-13"><span class="fn-body">John X. Morris, Volodymyr Kuleshov, Vitaly Shmatikov, and Alexander M. Rush, &quot;Text Embeddings Reveal (Almost) As Much As Text,&quot; in <em>Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing (EMNLP 2023)</em> (December 2023), arXiv:2310.06816, <a href="https://doi.org/10.48550/arXiv.2310.06816" target="_blank" rel="noopener noreferrer">https://doi.org/10.48550/arXiv.2310.06816</a>. <strong>Annotation:</strong> Introduces iterative embedding inversion (<code>vec2text</code>), proving that dense vector embeddings allow near-exact reconstruction (<code>92%</code> of 32-token inputs) including sensitive names and clinical text—establishing that vector databases require plaintext-equivalent security. <a href="bibliography.html#morris-2023-vec2text">↗ Bibliography</a></span><span class="fn-backrefs"> <a href="#fnref-c13-13" class="fn-backref" title="Back to citation 1">&#8617;&#xfe0e;<sup>1</sup></a> <a href="#fnref-c13-13-2" class="fn-backref" title="Back to citation 2">&#8617;&#xfe0e;<sup>2</sup></a></span></li>
+</ol>
+</section>
+        <nav class="pager" aria-label="Chapter navigation"><a class="pager-card pager-prev" href="12-model-and-supply-chain-security.html"><span class="pager-dir">&larr; Previous</span><span class="pager-title">Chapter 12: Model &amp; Supply Chain Security</span></a><a class="pager-card pager-next" href="14-ai-enabled-external-threats.html"><span class="pager-dir">Next &rarr;</span><span class="pager-title">Chapter 14: AI-Enabled External Threats</span></a></nav>
+      </article>
+      <footer class="doc-footer">
+        Building Guardrails for Enterprise AI &middot; Built 2026-11-22
+      </footer>
+    </main>
+<aside class="page-toc" aria-label="On this page">
+  <div class="page-toc-inner">
+    <div class="page-toc-title">On this page</div>
+    <ul><li class="toc-l2"><a href="#the-debug-log-that-exposed-everything">The Debug Log That Exposed Everything</a></li><li class="toc-l2"><a href="#131-managing-api-keys-and-secrets-for-model-providers">13.1 Managing API Keys and Secrets for Model Providers</a></li><li class="toc-l3"><a href="#the-challenge-secrets-sprawl-in-ai-engineering">The Challenge: Secrets Sprawl in AI Engineering</a></li><li class="toc-l3"><a href="#the-guardrails-zero-key-developer-workflows-gateway-vaults">The Guardrails: Zero-Key Developer Workflows &amp; Gateway Vaults</a></li><li class="toc-l2"><a href="#132-unbounded-consumption-and-denial-of-wallet-attacks">13.2 Unbounded Consumption and &quot;Denial-of-Wallet&quot; Attacks</a></li><li class="toc-l3"><a href="#the-challenge-paying-by-the-token-changes-availability-risk">The Challenge: Paying by the Token Changes Availability Risk</a></li><li class="toc-l3"><a href="#hard-consumption-circuit-breaker-controls">Hard Consumption &amp; Circuit-Breaker Controls</a></li><li class="toc-l3"><a href="#the-guardrails">The Guardrails</a></li><li class="toc-l2"><a href="#133-securing-prompt-and-response-logs-logs-are-sensitive-data-too">13.3 Securing Prompt and Response Logs (Logs Are Sensitive Data Too)</a></li><li class="toc-l3"><a href="#the-challenge-observability-pipelines-become-crown-jewel-shadow-stores">The Challenge: Observability Pipelines Become Crown-Jewel Shadow Stores</a></li><li class="toc-l3"><a href="#privacy-preserving-ai-observability">Privacy-Preserving AI Observability</a></li><li class="toc-l3"><a href="#the-guardrails-2">The Guardrails</a></li><li class="toc-l2"><a href="#134-vector-database-security-and-tenant-isolation">13.4 Vector Database Security and Tenant Isolation</a></li><li class="toc-l3"><a href="#the-challenge-embeddings-are-just-numbers-is-false">The Challenge: &quot;Embeddings Are Just Numbers&quot; Is False</a></li><li class="toc-l3"><a href="#multi-tenant-vector-isolation-architecture">Multi-Tenant Vector Isolation Architecture</a></li><li class="toc-l3"><a href="#hardened-ai-infrastructure-operational-security-plane">Hardened AI Infrastructure &amp; Operational Security Plane</a></li><li class="toc-l3"><a href="#the-guardrails-3">The Guardrails</a></li><li class="toc-l2"><a href="#why-every-role-cares">Why Every Role Cares</a></li><li class="toc-l2"><a href="#chapter-summary">Chapter Summary</a></li><li class="toc-l2"><a href="#key-takeaways">Key Takeaways</a></li><li class="toc-l2"><a href="#questions-to-ask">Questions to Ask</a></li><li class="toc-l2"><a href="#notes">Notes</a></li></ul>
+  </div>
+</aside>
+  </div>
+</body>
+</html>

@@ -82,15 +82,55 @@ flowchart LR
 
 You do not need to read all thirty chapters cover to cover before acting. Start with Chapter 1, then follow the path for your role:
 
-| Role | Core Chapters (Read First) | Recommended Next | Key Templates (Appendices) |
-| :--- | :--- | :--- | :--- |
-| **Board Members & CEO** | 1, 3, 5, 14, 28, 30 | 20, 23 | App. A (Board Cheat Sheet), App. B (RACI) |
-| **CIO & CTO** | 1, 4, 5, 23, 24, 25, 30 | 11, 13, 26, 28 | App. C (Intake Form), App. F (Pre-Flight Checklist) |
-| **CISO & Security Architects** | 1, 9, 10, 11, 12, 13, 14, 27 | 6, 7, 23, 26 | App. F (Pre-Flight Checklist), App. H (Incident Playbook) |
-| **CDO, Data Stewards & Privacy (DPO)** | 1, 6, 7, 8, 15, 16, 22 | 5, 18, 20, 24 | App. C (Intake Form), App. E (Acceptable Use Policy) |
-| **General Counsel, Legal & Compliance** | 1, 3, 8, 15, 18, 19, 20, 21, 22, 23 | 5, 16, 17, 27 | App. D (Vendor Due Diligence), App. G (Regulatory Crosswalk) |
-| **AI Engineers & ML Architects** | 1, 7, 10, 11, 12, 13, 15, 24, 26 | 2, 16, 17, 18, 25 | App. F (Pre-Flight Checklist), App. H (Incident Playbook) |
-| **Business & Product Owners** | 1, 5, 15, 16, 17, 28 | 6, 18, 23, 29 | App. A (Role Questions), App. C (Intake Form) |
+```mermaid
+flowchart LR
+    START(["Start Here<br/>Ch. 1: Why AI Risk<br/>Is Different"])
+
+    R1["Board Members & CEO"]
+    C1["Core (Read First)<br/>Ch. 3, 5, 14, 28, 30"]
+    N1("Recommended Next<br/>Ch. 20, 23")
+    T1[["App. A: Board Cheat Sheet<br/>App. B: RACI"]]
+
+    R2["CIO & CTO"]
+    C2["Core (Read First)<br/>Ch. 4, 5, 23–25, 30"]
+    N2("Recommended Next<br/>Ch. 11, 13, 26, 28")
+    T2[["App. C: Intake Form<br/>App. F: Pre-Flight Checklist"]]
+
+    R3["CISO & Security<br/>Architects"]
+    C3["Core (Read First)<br/>Ch. 9–14, 27"]
+    N3("Recommended Next<br/>Ch. 6, 7, 23, 26")
+    T3[["App. F: Pre-Flight Checklist<br/>App. H: Incident Playbook"]]
+
+    R4["CDO, Data Stewards &<br/>Privacy (DPO)"]
+    C4["Core (Read First)<br/>Ch. 6–8, 15, 16, 22"]
+    N4("Recommended Next<br/>Ch. 5, 18, 20, 24")
+    T4[["App. C: Intake Form<br/>App. E: Acceptable Use Policy"]]
+
+    R5["General Counsel,<br/>Legal & Compliance"]
+    C5["Core (Read First)<br/>Ch. 3, 8, 15, 18–23"]
+    N5("Recommended Next<br/>Ch. 5, 16, 17, 27")
+    T5[["App. D: Vendor Due Diligence<br/>App. G: Regulatory Crosswalk"]]
+
+    R6["AI Engineers &<br/>ML Architects"]
+    C6["Core (Read First)<br/>Ch. 7, 10–13, 15, 24, 26"]
+    N6("Recommended Next<br/>Ch. 2, 16–18, 25")
+    T6[["App. F: Pre-Flight Checklist<br/>App. H: Incident Playbook"]]
+
+    R7["Business &<br/>Product Owners"]
+    C7["Core (Read First)<br/>Ch. 5, 15–17, 28"]
+    N7("Recommended Next<br/>Ch. 6, 18, 23, 29")
+    T7[["App. A: Role Questions<br/>App. C: Intake Form"]]
+
+    START --> R1 --> C1 -.-> N1 --> T1
+    START --> R2 --> C2 -.-> N2 --> T2
+    START --> R3 --> C3 -.-> N3 --> T3
+    START --> R4 --> C4 -.-> N4 --> T4
+    START --> R5 --> C5 -.-> N5 --> T5
+    START --> R6 --> C6 -.-> N6 --> T6
+    START --> R7 --> C7 -.-> N7 --> T7
+```
+
+*Follow your role's row left to right: start with Chapter 1, read your core chapters first (solid arrows), continue to recommended next chapters (dashed arrows), and keep the paired Appendix templates (double-bordered boxes) on hand.*
 
 ---
 
